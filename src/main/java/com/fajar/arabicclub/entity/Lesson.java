@@ -32,7 +32,7 @@ public class Lesson extends BaseEntity {
 	@Column(unique = true)
 	@FormField
 	private String title;
-	@Column(length = 2000)
+	@Column(length = 20000)
 	@FormField(type = FieldType.FIELD_TYPE_TEXTEDITOR)
 	private String content;
 	@Column

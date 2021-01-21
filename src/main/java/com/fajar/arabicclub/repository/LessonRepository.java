@@ -14,7 +14,7 @@ public interface LessonRepository extends JpaRepository<Lesson	, Long> {
 	public List<Lesson> findByCategory_code(String code, Pageable pageable);
 	@Query(nativeQuery = true,
 			value="select count(lesson.id) from lesson"
-					+ " left join lesson_category on lesson_category.id = lesson.id "
+					+ " left join lesson_category on lesson_category.id = lesson.category_id "
 					+ " where lesson_category.code = ?1")
 	public BigInteger findLessonCountByCategoryCode(String code);
 }
