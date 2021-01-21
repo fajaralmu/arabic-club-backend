@@ -45,11 +45,11 @@ public class BaseEntity implements Serializable{
 	private Long id;
 	
 	@Column(name = "created_date")
-	@JsonIgnore
+//	@JsonIgnore
 //	@FormField
 	private Date createdDate;
 	@Column(name = "modified_date")
-	@JsonIgnore
+//	@JsonIgnore
 	private Date modifiedDate; 
 	@Column(name = "deleted")
 	@JsonIgnore

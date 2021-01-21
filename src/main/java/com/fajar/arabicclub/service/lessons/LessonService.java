@@ -29,7 +29,11 @@ public class LessonService {
 		if (null == category) {
 			throw new RuntimeException("Category Not Found");
 		}
-		List<Lesson> lessons = lessonRepository.findByCategory_code(categoryCode, PageRequest.of(page, size));
+		Object filter = webRequest.getFilter().getFieldsFilter().get(("value"));
+		if (null == filter) {
+			filter = "";
+		}
+		List<Lesson> lessons = lessonRepository.findByCategoryCodeAndFilter(categoryCode, String.valueOf(filter), PageRequest.of(page, size));
 		Integer totalData = 0;
 		try {
 			totalData = lessonRepository.findLessonCountByCategoryCode(categoryCode).intValue();
