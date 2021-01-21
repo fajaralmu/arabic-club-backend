@@ -15,7 +15,8 @@ public enum FieldType {
 	 FIELD_TYPE_DYNAMIC_LIST ( "dynamiclist"),
 	 FIELD_TYPE_TEXTAREA ( "textarea"),
 	 FIELD_TYPE_PLAIN_LIST ( "plainlist"),
-	 FIELD_TYPE_DATE ( "date");
+	 FIELD_TYPE_DATE ( "date"),
+	 FIELD_TYPE_TEXTEDITOR ( "texteditor");
 	public final String value;
 	private FieldType(String val) {
 		this.value = val;

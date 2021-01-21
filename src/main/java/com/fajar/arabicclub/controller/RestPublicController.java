@@ -21,6 +21,7 @@ import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.service.config.DefaultCategoriesService;
+import com.fajar.arabicclub.service.lessons.LessonService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +33,8 @@ public class RestPublicController extends BaseController {
  
 	@Autowired
 	private DefaultCategoriesService defaultCategoriesService;
+	@Autowired
+	private LessonService lessonService;
 	@PostConstruct
 	public void init() {
 		LogProxyFactory.setLoggers(this);
@@ -49,13 +52,19 @@ public class RestPublicController extends BaseController {
 		WebResponse response = userSessionService.generateRequestId(httpRequest, httpResponse);
 		return response;
 	}
-	@PostMapping(value = "/categories/{code}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/categories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse getCategories(@PathVariable(name = "code") String code, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
 		
 		log.info("getCategories: {}", code);
 		WebResponse response = defaultCategoriesService.getCategories(code);
 		return response;
 	}
-
+	@PostMapping(value = "/lessons/{categoryCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public WebResponse getLessons(@PathVariable(name = "categoryCode") String categoryCode, @RequestBody WebRequest webRequest) throws IOException {
+		
+		log.info("getLessons");
+		WebResponse response = lessonService.getLessons(categoryCode, webRequest);
+		return response;
+	}
 	
 }
