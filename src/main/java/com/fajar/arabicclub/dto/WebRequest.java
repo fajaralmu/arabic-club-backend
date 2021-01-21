@@ -6,9 +6,15 @@ import java.util.List;
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.entity.ApplicationProfile;
 import com.fajar.arabicclub.entity.BaseEntity;
-import com.fajar.arabicclub.entity.Category;
-import com.fajar.arabicclub.entity.RegisteredRequest;
+import com.fajar.arabicclub.entity.DocumentCategory;
+import com.fajar.arabicclub.entity.Documents;
+import com.fajar.arabicclub.entity.ImageCategory;
+import com.fajar.arabicclub.entity.Images;
+import com.fajar.arabicclub.entity.Lesson;
+import com.fajar.arabicclub.entity.LessonCategory;
 import com.fajar.arabicclub.entity.User;
+import com.fajar.arabicclub.entity.VideoCategory;
+import com.fajar.arabicclub.entity.Videos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,8 +42,18 @@ public class WebRequest implements Serializable {
 	private String entity;
 	private User user; 
 	private ApplicationProfile profile; 
-	private Category category;
-	private RegisteredRequest registeredrequest;  
+	private Lesson lesson;
+	private LessonCategory lessoncategory;
+	
+	private Videos videos;
+	private VideoCategory videocategory;
+	
+	private Images images;
+	private ImageCategory imagecategory;
+	
+	private Documents documents;
+	private DocumentCategory documentcategory;
+	
 
 	/**
 	 * ==========end entity============

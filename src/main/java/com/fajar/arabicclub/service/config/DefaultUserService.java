@@ -17,7 +17,6 @@ import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.repository.AuthorityRepository;
 import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.repository.UserRepository;
-import com.fajar.arabicclub.service.ProgressService;
 import com.fajar.arabicclub.service.SessionValidationService;
 import com.fajar.arabicclub.service.resources.FileService;
 

@@ -78,7 +78,15 @@ public class EntityManagementPageService {
 	public WebResponse getManagementPages() {
 		
 		List<Object> result = new ArrayList<>(); 
-		result.add(entityRepository.getConfig("category").setIconClassName("fas fa-tags"));  
+		
+		result.add(entityRepository.getConfig("lesson").setIconClassName("fas fa-book"));
+		result.add(entityRepository.getConfig("lessoncategory").setIconClassName("fas fa-tags"));  
+		result.add(entityRepository.getConfig("images").setIconClassName("fas fa-book"));
+		result.add(entityRepository.getConfig("imagecategory").setIconClassName("fas fa-tags")); 
+		result.add(entityRepository.getConfig("videos").setIconClassName("fas fa-book"));
+		result.add(entityRepository.getConfig("videocategory").setIconClassName("fas fa-tags")); 
+		result.add(entityRepository.getConfig("documents").setIconClassName("fas fa-book")); 
+		result.add(entityRepository.getConfig("documentcategory").setIconClassName("fas fa-tags")); 
 		
 		return WebResponse.builder().generalList(result).build();
 	}

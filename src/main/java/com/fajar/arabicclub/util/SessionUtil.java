@@ -1,14 +1,9 @@
 package com.fajar.arabicclub.util;
 
-import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fajar.arabicclub.dto.UserSessionModel;
 import com.fajar.arabicclub.dto.WebResponse;
-import com.fajar.arabicclub.entity.RegisteredRequest;
-import com.fajar.arabicclub.entity.User;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,23 +64,7 @@ public class SessionUtil {
 		httpRequest.getSession(false).setAttribute(ATTR_REGISTERED_REQUEST_ID, requestIdResponse.getMessage());
 
 	}
-
-	public static RegisteredRequest buildRegisteredRequest(HttpServletRequest servletRequest, String requestId) {
-		String ipAddress = servletRequest.getHeader("X-FORWARDED-FOR");
-		if (ipAddress == null) {
-			ipAddress = servletRequest.getRemoteAddr();
-		}
-
-		String referrer = servletRequest.getHeader("Referer");
-		String userAgent = servletRequest.getHeader("User-Agent");
-
-		RegisteredRequest request = RegisteredRequest.builder().ipAddress(ipAddress).referrer(referrer)
-				.userAgent(userAgent).requestId(requestId).created(new Date()).value(null).build();
-		return request;
-	}
-
  
-
 	public static String getRequestToken(HttpServletRequest httpRequest) {
 		try {
 			return httpRequest.getHeader(HEADER_REQUEST_TOKEN).toString();

@@ -56,7 +56,6 @@ public class WebResponse implements Serializable {
 	
 	private Long maxValue;
 	private Integer quantity;
-	private SessionData sessionData;
 	private ApplicationProfile applicationProfile;
 
 	private double percentage;

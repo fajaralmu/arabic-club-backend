@@ -14,12 +14,12 @@ import org.apache.commons.io.FileUtils;
 
 import com.fajar.arabicclub.util.EntityUtil;
 public class TypeScriptModelCreators {
-	final static String inputDir = "D:\\Development\\Eclipse\\universal-good-shop-v2\\src\\"
-			+ "main\\java\\com\\fajar\\arabicclub\\entity\\setting\\";
-	final static String outputDir = "D:\\Development\\Front End\\universalshop\\good-shop-v2\\src\\models\\";
+	final static String inputDir = "D:\\Development\\Kafila Projects\\arabic-club-backend\\src\\"
+			+ "main\\java\\com\\fajar\\arabicclub\\dto\\";
+	final static String outputDir = "D:\\Development\\Kafila Projects\\models\\";
 	public static void main(String[] args) {
 		List<String> names = getJavaFiles(inputDir);
-		List<Class> classes = getJavaClasses("com.fajar.arabicclub.entity.setting", names);
+		List<Class> classes = getJavaClasses("com.fajar.arabicclub.dto", names);
 		for (Class class1 : classes) {
 			String content = printClass(class1);
 			writeFile(outputDir+class1.getSimpleName()+".ts", content);
@@ -98,14 +98,16 @@ public class TypeScriptModelCreators {
 			if (isNumeric) {
 				fieldType = "number";
 			}else if (field.getType().isEnum()) {
-				fieldType = "String";
+				fieldType = "string";
+			} else if (field.getType().equals(String.class)) {
+				fieldType = "string";
 			} else if (field.getType().getCanonicalName().startsWith("com.fajar")) {
 				fieldType = field.getType().getSimpleName();
 				importedClassNames.put(fieldType, true);
 			} else if(field.getType().isArray()) {
-				fieldType = "[]";
+				fieldType = "any[]";
 			} else if(EntityUtil.hasInterface(field.getType(), Collection.class)) {
-				fieldType = "[]";
+				fieldType = "any[]";
 //				Type[] genericTypes = CollectionUtil.getGenericTypes(field);
 //				Type genericType = genericTypes[0];
 //				fieldType = "Set<"

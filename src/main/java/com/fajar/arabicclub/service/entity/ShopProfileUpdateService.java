@@ -1,5 +1,7 @@
 package com.fajar.arabicclub.service.entity;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Service;
 
 import com.fajar.arabicclub.dto.WebResponse;
@@ -10,7 +12,7 @@ public class ShopProfileUpdateService extends BaseEntityUpdateService<Applicatio
  
 	
 	@Override
-	public WebResponse saveEntity(ApplicationProfile baseEntity, boolean newRecord){
+	public WebResponse saveEntity(ApplicationProfile baseEntity, boolean newRecord, HttpServletRequest httoHttpServletRequest){
 		ApplicationProfile shopProfile = (ApplicationProfile) copyNewElement(baseEntity, newRecord);
 		 
 		validateEntityFields(shopProfile, newRecord);

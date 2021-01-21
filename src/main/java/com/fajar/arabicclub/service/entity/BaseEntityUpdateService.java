@@ -1,12 +1,12 @@
 package com.fajar.arabicclub.service.entity;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +15,11 @@ import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.annotation.StoreValueTo;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.BaseEntity;
+import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.entity.setting.EntityUpdateInterceptor;
 import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.service.LogProxyFactory;
+import com.fajar.arabicclub.service.SessionValidationService;
 import com.fajar.arabicclub.service.resources.FileService;
 import com.fajar.arabicclub.util.CollectionUtil;
 import com.fajar.arabicclub.util.EntityUtil;
@@ -32,13 +34,15 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 	protected FileService fileService;
 	@Autowired
 	protected EntityRepository entityRepository;
+	@Autowired
+	private SessionValidationService sessionValidationService;
 	
 	@PostConstruct
 	public void init() {
 		LogProxyFactory.setLoggers(this);
 	}
 
-	public WebResponse saveEntity(T baseEntity, boolean newRecord ) throws Exception {
+	public WebResponse saveEntity(T baseEntity, boolean newRecord, HttpServletRequest httoHttpServletRequest) throws Exception {
 		log.error("saveEntity Method not implemented");
 		return WebResponse.failed("method not implemented");
 	}
@@ -62,6 +66,10 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 		}
 		return result;
 
+	}
+	
+	protected User getLoggedUser(HttpServletRequest httpServletRequest) {
+		return sessionValidationService.getLoggedUser(httpServletRequest);
 	}
 	
 	protected EntityUpdateInterceptor<T> getUpdateInterceptor(T baseEntity){
