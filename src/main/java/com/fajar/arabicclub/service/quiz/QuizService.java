@@ -57,7 +57,7 @@ public class QuizService {
 		progressService.sendProgress(10, httpServletRequest);
 		for (QuizQuestion quizQuestion : quiz.getQuestions()) {
 			quizQuestion.setQuiz(savedQuiz);
-			QuizQuestion savedQuestion = saveQuestiion(quizQuestion);
+			QuizQuestion savedQuestion = saveQuestion(quizQuestion);
 			if (null != savedQuestion) {
 				savedQuestions.add(savedQuestion);
 			}
@@ -97,7 +97,7 @@ public class QuizService {
 
 	private void deleteQuestionAndChoices(QuizQuestion quizQuestion) {
 		
-		List<QuizChoice> choices = quizChoiceRepository.findByQuestion(quizQuestion);
+		List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
 		for (QuizChoice quizChoice : choices) {
 			quizChoiceRepository.delete(quizChoice);
 		}
@@ -112,7 +112,7 @@ public class QuizService {
 		}
 	}
 
-	private QuizQuestion saveQuestiion(QuizQuestion quizQuestion) {
+	private QuizQuestion saveQuestion(QuizQuestion quizQuestion) {
 		if (null == quizQuestion.getChoices() || quizQuestion.getChoices().size() == 0) {
 			log.info("quizQuestion.getChoices() empty!");
 			return null;
@@ -138,7 +138,7 @@ public class QuizService {
 			progressService.sendProgress(20, httpServletRequest);
 
 			for (QuizQuestion quizQuestion : questions) {
-				List<QuizChoice> choices = quizChoiceRepository.findByQuestion(quizQuestion);
+				List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
 				quizQuestion.setChoices(choices);
 
 				progressService.sendProgress(1, questions.size(), 80, httpServletRequest);

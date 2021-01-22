@@ -9,6 +9,6 @@ import com.fajar.arabicclub.entity.QuizQuestion;
 
 public interface QuizChoiceRepository extends JpaRepository<QuizChoice	, Long> {
 
-	List<QuizChoice> findByQuestion(QuizQuestion quizQuestion); 
+	List<QuizChoice> findByQuestionOrderByAnswerCode(QuizQuestion quizQuestion); 
 
 }
