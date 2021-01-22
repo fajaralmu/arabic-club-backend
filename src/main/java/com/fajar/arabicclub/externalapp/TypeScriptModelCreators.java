@@ -15,11 +15,11 @@ import org.apache.commons.io.FileUtils;
 import com.fajar.arabicclub.util.EntityUtil;
 public class TypeScriptModelCreators {
 	final static String inputDir = "D:\\Development\\Kafila Projects\\arabic-club-backend\\src\\"
-			+ "main\\java\\com\\fajar\\arabicclub\\dto\\";
+			+ "main\\java\\com\\fajar\\arabicclub\\entity\\";
 	final static String outputDir = "D:\\Development\\Kafila Projects\\models\\";
 	public static void main(String[] args) {
 		List<String> names = getJavaFiles(inputDir);
-		List<Class> classes = getJavaClasses("com.fajar.arabicclub.dto", names);
+		List<Class> classes = getJavaClasses("com.fajar.arabicclub.entity", names);
 		for (Class class1 : classes) {
 			String content = printClass(class1);
 			writeFile(outputDir+class1.getSimpleName()+".ts", content);
