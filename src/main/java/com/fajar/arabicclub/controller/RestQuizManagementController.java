@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,8 +47,14 @@ public class RestQuizManagementController extends BaseController {
 	@PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@CustomRequestInfo(withRealtimeProgress = true)
 	public WebResponse add(@RequestBody WebRequest request, HttpServletRequest httpRequest) {
-		log.info("add quiz {}", request.getEntity());
+		log.info("add quiz ");
 		return quizService.addQuiz(request, httpRequest);
+	}
+	@PostMapping(value = "/getquiz/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@CustomRequestInfo(withRealtimeProgress = true)
+	public WebResponse getQuiz(@PathVariable(name="id") Long id, HttpServletRequest httpRequest) {
+		log.info("getQuiz quiz {}", id);
+		return quizService.getQuiz(id, httpRequest);
 	}
  
 

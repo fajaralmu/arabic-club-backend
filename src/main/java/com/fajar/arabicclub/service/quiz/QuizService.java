@@ -14,6 +14,9 @@ import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizChoice;
 import com.fajar.arabicclub.entity.QuizQuestion;
 import com.fajar.arabicclub.repository.EntityRepository;
+import com.fajar.arabicclub.repository.QuizChoiceRepository;
+import com.fajar.arabicclub.repository.QuizQuestionRepository;
+import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,12 @@ public class QuizService {
 	private ProgressService progressService;
 	@Autowired
 	private EntityRepository entityRepository;
+	@Autowired
+	private QuizRepository quizRepository;
+	@Autowired
+	private QuizQuestionRepository quizQuestionRepository;
+	@Autowired
+	private QuizChoiceRepository quizChoiceRepository;
 
 	public WebResponse addQuiz(WebRequest request, HttpServletRequest httpServletRequest) {
 		WebResponse response = new WebResponse();
@@ -46,6 +55,7 @@ public class QuizService {
 			progressService.sendProgress(1, quiz.getQuestions().size(), 90, httpServletRequest);
 		}
 
+		log.info("savedQuestions: {}",savedQuestions.size());
 		savedQuiz.setQuestions(savedQuestions);
 		response.setQuiz(savedQuiz);
 		return response;
@@ -63,8 +73,35 @@ public class QuizService {
 			savedChoices.add(entityRepository.save(choice));
 		}
 		
+		log.info("savedChoices: {}", savedChoices.size());
 		savedQuestion.setChoices(savedChoices);
 		return savedQuestion;
+	}
+
+	public WebResponse getQuiz(Long id, HttpServletRequest httpServletRequest) {
+		try {
+			
+			WebResponse response = new WebResponse();
+			Quiz quiz = quizRepository.findById(id).get();
+			List<QuizQuestion> questions = quizQuestionRepository.findByQuiz(quiz);
+			progressService.sendProgress(20, httpServletRequest);
+			
+			for (QuizQuestion quizQuestion : questions) {
+				List<QuizChoice> choices = quizChoiceRepository.findByQuestion(quizQuestion);
+				quizQuestion.setChoices(choices);
+				
+				progressService.sendProgress(1, questions.size(), 80, httpServletRequest);
+			}
+			
+			quiz.setQuestions(questions);
+			response.setQuiz(quiz);
+			return response;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw e;
+		}
+		
 	}
 
 }
