@@ -9,6 +9,7 @@ import java.util.Map;
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.entity.ApplicationProfile;
 import com.fajar.arabicclub.entity.BaseEntity;
+import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.entity.setting.EntityProperty;
 import com.fajar.arabicclub.util.CollectionUtil;
@@ -49,9 +50,9 @@ public class WebResponse implements Serializable {
 	private List<?> generalList;
 	
 	private BaseEntity entity;
+	private Quiz quiz;
 	private Filter filter;
-	private Integer totalData; 
-	private Map<String, Object> storage;
+	private Integer totalData;  
 	private EntityProperty entityProperty;
 	
 	private Long maxValue;

@@ -12,6 +12,7 @@ import com.fajar.arabicclub.entity.ImageCategory;
 import com.fajar.arabicclub.entity.Images;
 import com.fajar.arabicclub.entity.Lesson;
 import com.fajar.arabicclub.entity.LessonCategory;
+import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.entity.VideoCategory;
 import com.fajar.arabicclub.entity.Videos;
@@ -53,6 +54,8 @@ public class WebRequest implements Serializable {
 	
 	private Documents documents;
 	private DocumentCategory documentcategory;
+	
+	private Quiz quiz;
 	
 
 	/**

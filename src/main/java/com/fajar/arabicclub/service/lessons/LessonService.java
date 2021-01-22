@@ -36,7 +36,7 @@ public class LessonService {
 		List<Lesson> lessons = lessonRepository.findByCategoryCodeAndFilter(categoryCode, String.valueOf(filter), PageRequest.of(page, size));
 		Integer totalData = 0;
 		try {
-			totalData = lessonRepository.findLessonCountByCategoryCode(categoryCode).intValue();
+			totalData = lessonRepository.findLessonCountByCategoryCodeAndFIlter(categoryCode,String.valueOf(filter)).intValue();
 		} catch (Exception e) { 
 		}
 		return WebResponse.builder().entity(category).totalData(totalData ).entities(CollectionUtil.convertList(lessons)).build();

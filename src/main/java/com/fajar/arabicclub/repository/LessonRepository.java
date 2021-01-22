@@ -21,4 +21,9 @@ public interface LessonRepository extends JpaRepository<Lesson	, Long> {
 					+ " left join lesson_category on lesson_category.id = lesson.category_id "
 					+ " where lesson_category.code = ?1")
 	public BigInteger findLessonCountByCategoryCode(String code);
+	@Query("select count(lesson) from Lesson lesson"
+			+ " left join lesson.category category "
+			+ " where category.code = ?1 and "
+			+ " ( lower(lesson.content) like lower(concat('%', ?2,'%')) or  lower(lesson.title) like lower(concat('%', ?2,'%')) or  lower(lesson.description) like lower(concat('%', ?2,'%')) )")
+	public BigInteger findLessonCountByCategoryCodeAndFIlter(String code, String filter);
 }
