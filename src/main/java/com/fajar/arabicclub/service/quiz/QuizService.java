@@ -2,6 +2,7 @@ package com.fajar.arabicclub.service.quiz;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,33 +37,83 @@ public class QuizService {
 	@Autowired
 	private QuizChoiceRepository quizChoiceRepository;
 
-	public WebResponse addQuiz(WebRequest request, HttpServletRequest httpServletRequest) {
+	public WebResponse submit(WebRequest request, HttpServletRequest httpServletRequest) {
 		WebResponse response = new WebResponse();
 		List<QuizQuestion> savedQuestions = new ArrayList<>();
 		Quiz quiz = request.getQuiz();
-		if (null == quiz.getQuestions() || 0 == quiz.getQuestions().size()) {
-			throw new RuntimeException("Empty Question");
+		
+		boolean isNewRecord = quiz.getId() == null;
+		List<QuizQuestion> existingQuestions = new ArrayList<>();
+		if (!isNewRecord) {
+			Optional<Quiz> existingQuiz = quizRepository.findById(quiz.getId());
+			if (existingQuiz.isPresent() == false) {
+				throw new RuntimeException("Existing record not found!");
+			}
+			existingQuestions = quizQuestionRepository.findByQuiz(quiz);
 		}
+		validateQuestions(quiz);
 
 		Quiz savedQuiz = entityRepository.save(quiz);
 		progressService.sendProgress(10, httpServletRequest);
 		for (QuizQuestion quizQuestion : quiz.getQuestions()) {
 			quizQuestion.setQuiz(savedQuiz);
-			QuizQuestion savedQuestion = saveQuesting(quizQuestion);
+			QuizQuestion savedQuestion = saveQuestiion(quizQuestion);
 			if (null != savedQuestion) {
 				savedQuestions.add(savedQuestion);
 			}
 			progressService.sendProgress(1, quiz.getQuestions().size(), 90, httpServletRequest);
 		}
-
-		log.info("savedQuestions: {}",savedQuestions.size());
+		
+		if (!isNewRecord) {
+			deleteNotSavedQuestion(existingQuestions, savedQuestions);
+		}
+		
+		log.info("savedQuestions: {}", savedQuestions.size());
 		savedQuiz.setQuestions(savedQuestions);
 		response.setQuiz(savedQuiz);
 		return response;
 	}
 
-	private QuizQuestion saveQuesting(QuizQuestion quizQuestion) {
-		if (null ==quizQuestion.getChoices() || quizQuestion.getChoices().size() ==0) {
+	private void deleteNotSavedQuestion(List<QuizQuestion> existingQuestions, List<QuizQuestion> savedQuestions) {
+		for (QuizQuestion existingQuestion : existingQuestions) {
+			for (QuizQuestion savedQuestion : savedQuestions) {
+				if (savedQuestion.getId().equals(existingQuestion.getId())) {
+					existingQuestion.setId(null);
+				}
+			}
+		}
+		
+		int deletedCount = 0;
+		for (QuizQuestion existingQuestion : existingQuestions) {
+			if (existingQuestion.getId() != null) {
+				deleteQuestionAndChoices(existingQuestion);
+				deletedCount++;
+			}
+		}
+		
+		log.info("deletedCount: {}", deletedCount);
+		
+	}
+
+	private void deleteQuestionAndChoices(QuizQuestion quizQuestion) {
+		
+		List<QuizChoice> choices = quizChoiceRepository.findByQuestion(quizQuestion);
+		for (QuizChoice quizChoice : choices) {
+			quizChoiceRepository.delete(quizChoice);
+		}
+		quizQuestionRepository.delete(quizQuestion);
+		
+	}
+
+	private void validateQuestions(Quiz quiz) {
+
+		if (null == quiz.getQuestions() || 0 == quiz.getQuestions().size()) {
+			throw new RuntimeException("Empty Question");
+		}
+	}
+
+	private QuizQuestion saveQuestiion(QuizQuestion quizQuestion) {
+		if (null == quizQuestion.getChoices() || quizQuestion.getChoices().size() == 0) {
 			log.info("quizQuestion.getChoices() empty!");
 			return null;
 		}
@@ -72,7 +123,7 @@ public class QuizService {
 			choice.setQuestion(savedQuestion);
 			savedChoices.add(entityRepository.save(choice));
 		}
-		
+
 		log.info("savedChoices: {}", savedChoices.size());
 		savedQuestion.setChoices(savedChoices);
 		return savedQuestion;
@@ -80,19 +131,19 @@ public class QuizService {
 
 	public WebResponse getQuiz(Long id, HttpServletRequest httpServletRequest) {
 		try {
-			
+
 			WebResponse response = new WebResponse();
 			Quiz quiz = quizRepository.findById(id).get();
 			List<QuizQuestion> questions = quizQuestionRepository.findByQuiz(quiz);
 			progressService.sendProgress(20, httpServletRequest);
-			
+
 			for (QuizQuestion quizQuestion : questions) {
 				List<QuizChoice> choices = quizChoiceRepository.findByQuestion(quizQuestion);
 				quizQuestion.setChoices(choices);
-				
+
 				progressService.sendProgress(1, questions.size(), 80, httpServletRequest);
 			}
-			
+
 			quiz.setQuestions(questions);
 			response.setQuiz(quiz);
 			return response;
@@ -101,7 +152,7 @@ public class QuizService {
 			e.printStackTrace();
 			throw e;
 		}
-		
+
 	}
 
 }

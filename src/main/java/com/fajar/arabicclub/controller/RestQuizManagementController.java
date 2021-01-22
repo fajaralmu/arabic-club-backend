@@ -44,11 +44,11 @@ public class RestQuizManagementController extends BaseController {
 		LogProxyFactory.setLoggers(this);
 	}
 
-	@PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/submit", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@CustomRequestInfo(withRealtimeProgress = true)
 	public WebResponse add(@RequestBody WebRequest request, HttpServletRequest httpRequest) {
 		log.info("add quiz ");
-		return quizService.addQuiz(request, httpRequest);
+		return quizService.submit(request, httpRequest);
 	}
 	@PostMapping(value = "/getquiz/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@CustomRequestInfo(withRealtimeProgress = true)
