@@ -1,5 +1,6 @@
 package com.fajar.arabicclub.service.quiz;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,7 @@ import com.fajar.arabicclub.repository.QuizChoiceRepository;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
+import com.fajar.arabicclub.service.resources.FileService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +39,8 @@ public class QuizService {
 	private QuizQuestionRepository quizQuestionRepository;
 	@Autowired
 	private QuizChoiceRepository quizChoiceRepository;
+	@Autowired
+	private FileService fileService;
 
 	public WebResponse submit(WebRequest request, HttpServletRequest httpServletRequest) {
 		WebResponse response = new WebResponse();
@@ -119,6 +123,18 @@ public class QuizService {
 			return null;
 		}
 		List<QuizChoice> savedChoices = new ArrayList<>();
+		
+		if (quizQuestion.getImage() != null && quizQuestion.getImage().startsWith("data:image")) {
+			try {
+				String savedFileName = fileService.writeImage(QuizQuestion.class.getSimpleName(), quizQuestion.getImage());
+				quizQuestion.setImage(savedFileName);
+			} catch (IOException e) {
+				e.printStackTrace();
+				quizQuestion.setImage(null);
+			}
+			
+		}
+		
 		QuizQuestion savedQuestion = entityRepository.save(quizQuestion);
 		for (QuizChoice choice : quizQuestion.getChoices()) {
 			choice.setQuestion(savedQuestion);
