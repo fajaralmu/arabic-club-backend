@@ -136,6 +136,10 @@ public class QuizService {
 		}
 		
 		QuizQuestion savedQuestion = entityRepository.save(quizQuestion);
+		if (null ==savedQuestion) {
+			log.info("Question Not Saved");
+			return null;
+		}
 		for (QuizChoice choice : quizQuestion.getChoices()) {
 			choice.setQuestion(savedQuestion);
 			savedChoices.add(entityRepository.save(choice));
