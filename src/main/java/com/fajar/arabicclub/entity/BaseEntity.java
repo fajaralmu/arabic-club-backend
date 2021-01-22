@@ -130,4 +130,13 @@ public class BaseEntity implements Serializable{
 			}
 		}
 	}
+	
+	public static <T extends BaseEntity> List<Long> getIdList(List<T> list) {
+		
+		List<Long> idList = new ArrayList<>();
+		for (T object : list) {
+			idList.add(object.getId());
+		}
+		return idList ;
+	}
 }

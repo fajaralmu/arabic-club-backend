@@ -50,11 +50,17 @@ public class RestQuizManagementController extends BaseController {
 		log.info("add quiz ");
 		return quizService.submit(request, httpRequest);
 	}
-	@PostMapping(value = "/getquiz/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/getquiz/{id}" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@CustomRequestInfo(withRealtimeProgress = true)
 	public WebResponse getQuiz(@PathVariable(name="id") Long id, HttpServletRequest httpRequest) {
-		log.info("getQuiz quiz {}", id);
+		log.info("getQuiz id {}", id);
 		return quizService.getQuiz(id, httpRequest);
+	}
+	@PostMapping(value = "/deletequiz/{id}" , produces = MediaType.APPLICATION_JSON_VALUE)
+	@CustomRequestInfo(withRealtimeProgress = true)
+	public WebResponse deletequiz(@PathVariable(name="id") Long id,HttpServletRequest httpRequest) {
+		log.info("Delete id {}", id);
+		return quizService.deleteQuiz(id, httpRequest);
 	}
  
 

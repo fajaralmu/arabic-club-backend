@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
+import com.fajar.arabicclub.entity.BaseEntity;
 import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizChoice;
 import com.fajar.arabicclub.entity.QuizQuestion;
@@ -153,6 +154,29 @@ public class QuizService {
 			throw e;
 		}
 
+	}
+
+	public WebResponse deleteQuiz(Long id, HttpServletRequest httpServletRequest) {
+		Optional<Quiz> existingQuiz = quizRepository.findById(id);
+		if (existingQuiz.isPresent() == false) {
+			throw new RuntimeException("Existing record not found!");
+		}
+		List<QuizQuestion> questions = quizQuestionRepository.findByQuiz(existingQuiz.get());
+		progressService.sendProgress(10, httpServletRequest);
+		log.info("question count: {}", questions.size());
+		for (QuizQuestion quizQuestion : questions) {
+			List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
+			for (QuizChoice choice : choices) {
+				quizChoiceRepository.delete(choice);
+			}
+			quizQuestionRepository.delete(quizQuestion);
+			
+			progressService.sendProgress(1, questions.size(),80, httpServletRequest);
+		}
+		quizRepository.delete(existingQuiz.get());
+		progressService.sendProgress(10, httpServletRequest);
+		WebResponse response = new WebResponse();
+		return response ;
 	}
 
 }
