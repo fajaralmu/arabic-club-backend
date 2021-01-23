@@ -41,43 +41,48 @@ public class QuizCreationService {
 	@Autowired
 	private QuizChoiceRepository quizChoiceRepository;
 	@Autowired
-	private FileService fileService;
+	private QuizDataService quizDataService;
 
+	/**
+	 * create or update quiz
+	 * @param request
+	 * @param httpServletRequest
+	 * @return
+	 */
 	public WebResponse submit(WebRequest request, HttpServletRequest httpServletRequest) {
 		WebResponse response = new WebResponse();
 		List<QuizQuestion> savedQuestions = new ArrayList<>();
 		Quiz quiz = request.getQuiz();
-		
-		boolean isNewRecord = quiz.getId() == null;
-		List<QuizQuestion> existingQuestions = new ArrayList<>();
-		if (!isNewRecord) {
-			Optional<Quiz> existingQuiz = quizRepository.findById(quiz.getId());
-			if (existingQuiz.isPresent() == false) {
-				throw new RuntimeException("Existing record not found!");
-			}
-			existingQuestions = quizQuestionRepository.findByQuiz(quiz);
-		}
-		validateQuestions(quiz);
 
+		boolean isNewRecord = quiz.getId() == null;
+		
+		validateQuizAndQuestions(quiz);
+		List<QuizQuestion> existingQuestions = isNewRecord == false ? getExistingQuestion(quiz) : new ArrayList<>();
 		Quiz savedQuiz = entityRepository.save(quiz);
 		progressService.sendProgress(10, httpServletRequest);
+		
 		for (QuizQuestion quizQuestion : quiz.getQuestions()) {
 			quizQuestion.setQuiz(savedQuiz);
-			QuizQuestion savedQuestion = saveQuestion(quizQuestion);
+			QuizQuestion savedQuestion = quizDataService.saveQuestionAndItsChoices(quizQuestion);
 			if (null != savedQuestion) {
 				savedQuestions.add(savedQuestion);
 			}
 			progressService.sendProgress(1, quiz.getQuestions().size(), 90, httpServletRequest);
 		}
-		
+
 		if (!isNewRecord) {
 			deleteNotSavedQuestion(existingQuestions, savedQuestions);
 		}
-		
+
 		log.info("savedQuestions: {}", savedQuestions.size());
 		savedQuiz.setQuestions(savedQuestions);
 		response.setQuiz(savedQuiz);
 		return response;
+	}
+
+	private List<QuizQuestion> getExistingQuestion(Quiz quiz) {
+		List<QuizQuestion> existingQuestions = quizQuestionRepository.findByQuiz(quiz);
+		return existingQuestions;
 	}
 
 	private void deleteNotSavedQuestion(List<QuizQuestion> existingQuestions, List<QuizQuestion> savedQuestions) {
@@ -88,7 +93,7 @@ public class QuizCreationService {
 				}
 			}
 		}
-		
+
 		int deletedCount = 0;
 		for (QuizQuestion existingQuestion : existingQuestions) {
 			if (existingQuestion.getId() != null) {
@@ -96,103 +101,51 @@ public class QuizCreationService {
 				deletedCount++;
 			}
 		}
-		
+
 		log.info("deletedCount: {}", deletedCount);
-		
+
 	}
 
 	private void deleteQuestionAndChoices(QuizQuestion quizQuestion) {
-		
+
 		List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
 		for (QuizChoice quizChoice : choices) {
 			quizChoiceRepository.delete(quizChoice);
 		}
 		quizQuestionRepository.delete(quizQuestion);
-		
+
 	}
 
-	private void validateQuestions(Quiz quiz) {
+	private void validateQuizAndQuestions(Quiz quiz) {
 		if (null == quiz.getQuestions() || 0 == quiz.getQuestions().size()) {
 			throw new RuntimeException("Empty Question");
 		}
-	}
-
-	private QuizQuestion saveQuestion(QuizQuestion quizQuestion) {
-		if (null == quizQuestion.getChoices() || quizQuestion.getChoices().size() == 0) {
-			log.info("quizQuestion.getChoices() empty!");
-			return null;
+		if (quiz.getId() == null) {
+			return;
+		}
+		Optional<Quiz> existingQuiz = quizRepository.findById(quiz.getId());
+		if (existingQuiz.isPresent() == false) {
+			throw new RuntimeException("Existing record not found!");
 		}
 		
-		quizQuestion.validateNullValues();
-		uploadImage(quizQuestion);
-		
-		QuizQuestion savedQuestion = entityRepository.save(quizQuestion);
-		if (null ==savedQuestion) {
-			log.info("Question Not Saved");
-			return null;
-		}
-		
-		List<QuizChoice> savedChoices =  saveChoices(quizQuestion.getChoices(), savedQuestion);
-
-		log.info("savedChoices: {}", savedChoices.size());
-		savedQuestion.setChoices(savedChoices);
-		return savedQuestion;
-	}
-	
-	private List<QuizChoice> saveChoices(List<QuizChoice> choices, QuizQuestion savedQuestion) {
-		List<QuizChoice> savedChoices = new ArrayList<>();
-		for (QuizChoice choice : choices) {
-			choice.setQuestion(savedQuestion);
-			QuizChoice savedChoice = saveChoice(choice);
-			savedChoices.add(savedChoice);
-		}
-		return savedChoices;
 	}
 
-	private QuizChoice saveChoice(QuizChoice choice) {
-		choice.validateNullValues();
-		uploadImage(choice);
-		QuizChoice savedChoice = entityRepository.save(choice);
-		return savedChoice;
-	}
-	
-	private void uploadImage(SingleImageModel singleImageModel) {
-		String image = singleImageModel.getImage();
-		if (image != null && image.startsWith("data:image")) {
-			try {
-				String savedFileName = fileService.writeImage(QuizChoice.class.getSimpleName(), image);
-				singleImageModel.setImage(savedFileName);
-			} catch (IOException e) {
-				e.printStackTrace();
-				singleImageModel.setImage(null);
-			}
-			
-		}
-	}
-	
+	 
 	/*------------------------ get quiz --------------------------*/
 
+	/**
+	 * get quiz for admin page
+	 * @param id
+	 * @param httpServletRequest
+	 * @return
+	 * @throws Exception
+	 */
 	public WebResponse getQuiz(Long id, HttpServletRequest httpServletRequest) throws Exception {
 		try {
 
 			WebResponse response = new WebResponse();
-			Optional<Quiz> quizOpt = quizRepository.findById(id);
-			if (!quizOpt.isPresent()) {
-				throw new Exception("Data not found");
-			}
-			Quiz quiz = quizOpt.get();
-			List<QuizQuestion> questions = quizQuestionRepository.findByQuiz(quiz);
-			progressService.sendProgress(20, httpServletRequest);
-
-			for (QuizQuestion quizQuestion : questions) {
-				List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
-				quizQuestion.setChoices(choices);
-
-				progressService.sendProgress(1, questions.size(), 80, httpServletRequest);
-			}
-
-			quiz.setQuestions(questions);
-			response.setQuiz(quiz);
+			Quiz fullQuiz = quizDataService.getFullQuiz(id, httpServletRequest, false);
+			response.setQuiz(fullQuiz);
 			return response;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -200,33 +153,39 @@ public class QuizCreationService {
 		}
 
 	}
-	
+
 	/*--------------------- Delete ---------------------------*/
 
+	/**
+	 * delete quiz, its questions, and its choices
+	 * @param id
+	 * @param httpServletRequest
+	 * @return
+	 */
 	public WebResponse deleteQuiz(Long id, HttpServletRequest httpServletRequest) {
 		Optional<Quiz> existingQuiz = quizRepository.findById(id);
 		if (existingQuiz.isPresent() == false) {
 			throw new RuntimeException("Existing record not found!");
 		}
-		deleteQuestions(existingQuiz.get(),httpServletRequest);
+		deleteQuestions(existingQuiz.get(), httpServletRequest);
 		quizRepository.delete(existingQuiz.get());
 		progressService.sendProgress(10, httpServletRequest);
 		WebResponse response = new WebResponse();
-		return response ;
+		return response;
 	}
 
 	private void deleteQuestions(Quiz existingQuiz, HttpServletRequest httpServletRequest) {
-		 
+
 		List<QuizQuestion> questions = quizQuestionRepository.findByQuiz(existingQuiz);
 		progressService.sendProgress(10, httpServletRequest);
 		log.info("question count: {}", questions.size());
 		for (QuizQuestion quizQuestion : questions) {
 			List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
 			deleteChoices(choices);
-			
+
 			quizQuestionRepository.delete(quizQuestion);
-			
-			progressService.sendProgress(1, questions.size(),80, httpServletRequest);
+
+			progressService.sendProgress(1, questions.size(), 80, httpServletRequest);
 		}
 	}
 
@@ -234,7 +193,7 @@ public class QuizCreationService {
 		for (QuizChoice choice : choices) {
 			quizChoiceRepository.delete(choice);
 		}
-		
+
 	}
 
 }
