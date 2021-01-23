@@ -21,7 +21,7 @@ import com.fajar.arabicclub.entity.setting.EntityProperty;
 import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.service.entity.EntityManagementPageService;
 import com.fajar.arabicclub.service.entity.EntityService;
-import com.fajar.arabicclub.service.quiz.QuizService;
+import com.fajar.arabicclub.service.quiz.QuizCreationService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RestQuizManagementController extends BaseController {
 
 	@Autowired
-	private QuizService quizService;
+	private QuizCreationService quizService;
 	 
 
 	public RestQuizManagementController() {

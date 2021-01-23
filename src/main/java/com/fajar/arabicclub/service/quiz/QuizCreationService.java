@@ -16,6 +16,7 @@ import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizChoice;
 import com.fajar.arabicclub.entity.QuizQuestion;
+import com.fajar.arabicclub.entity.SingleImageModel;
 import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.repository.QuizChoiceRepository;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
@@ -27,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class QuizService {
+public class QuizCreationService {
 
 	@Autowired
 	private ProgressService progressService;
@@ -111,7 +112,6 @@ public class QuizService {
 	}
 
 	private void validateQuestions(Quiz quiz) {
-
 		if (null == quiz.getQuestions() || 0 == quiz.getQuestions().size()) {
 			throw new RuntimeException("Empty Question");
 		}
@@ -122,51 +122,55 @@ public class QuizService {
 			log.info("quizQuestion.getChoices() empty!");
 			return null;
 		}
-		List<QuizChoice> savedChoices = new ArrayList<>();
 		
 		quizQuestion.validateNullValues();
-		if (quizQuestion.getImage() != null && quizQuestion.getImage().startsWith("data:image")) {
-			try {
-				String savedFileName = fileService.writeImage(QuizQuestion.class.getSimpleName(), quizQuestion.getImage());
-				quizQuestion.setImage(savedFileName);
-			} catch (IOException e) {
-				e.printStackTrace();
-				quizQuestion.setImage(null);
-			}
-			
-		}
+		uploadImage(quizQuestion);
 		
 		QuizQuestion savedQuestion = entityRepository.save(quizQuestion);
 		if (null ==savedQuestion) {
 			log.info("Question Not Saved");
 			return null;
 		}
-		for (QuizChoice choice : quizQuestion.getChoices()) {
-			choice.setQuestion(savedQuestion);
-			QuizChoice savedChoice = saveChoice(choice);
-			savedChoices.add(savedChoice);
-		}
+		
+		List<QuizChoice> savedChoices =  saveChoices(quizQuestion.getChoices(), savedQuestion);
 
 		log.info("savedChoices: {}", savedChoices.size());
 		savedQuestion.setChoices(savedChoices);
 		return savedQuestion;
 	}
 	
+	private List<QuizChoice> saveChoices(List<QuizChoice> choices, QuizQuestion savedQuestion) {
+		List<QuizChoice> savedChoices = new ArrayList<>();
+		for (QuizChoice choice : choices) {
+			choice.setQuestion(savedQuestion);
+			QuizChoice savedChoice = saveChoice(choice);
+			savedChoices.add(savedChoice);
+		}
+		return savedChoices;
+	}
+
 	private QuizChoice saveChoice(QuizChoice choice) {
 		choice.validateNullValues();
-		if (choice.getImage() != null && choice.getImage().startsWith("data:image")) {
-			try {
-				String savedFileName = fileService.writeImage(QuizChoice.class.getSimpleName(), choice.getImage());
-				choice.setImage(savedFileName);
-			} catch (IOException e) {
-				e.printStackTrace();
-				choice.setImage(null);
-			}
-			
-		}
+		uploadImage(choice);
 		QuizChoice savedChoice = entityRepository.save(choice);
 		return savedChoice;
 	}
+	
+	private void uploadImage(SingleImageModel singleImageModel) {
+		String image = singleImageModel.getImage();
+		if (image != null && image.startsWith("data:image")) {
+			try {
+				String savedFileName = fileService.writeImage(QuizChoice.class.getSimpleName(), image);
+				singleImageModel.setImage(savedFileName);
+			} catch (IOException e) {
+				e.printStackTrace();
+				singleImageModel.setImage(null);
+			}
+			
+		}
+	}
+	
+	/*------------------------ get quiz --------------------------*/
 
 	public WebResponse getQuiz(Long id, HttpServletRequest httpServletRequest) throws Exception {
 		try {
@@ -196,28 +200,41 @@ public class QuizService {
 		}
 
 	}
+	
+	/*--------------------- Delete ---------------------------*/
 
 	public WebResponse deleteQuiz(Long id, HttpServletRequest httpServletRequest) {
 		Optional<Quiz> existingQuiz = quizRepository.findById(id);
 		if (existingQuiz.isPresent() == false) {
 			throw new RuntimeException("Existing record not found!");
 		}
-		List<QuizQuestion> questions = quizQuestionRepository.findByQuiz(existingQuiz.get());
-		progressService.sendProgress(10, httpServletRequest);
-		log.info("question count: {}", questions.size());
-		for (QuizQuestion quizQuestion : questions) {
-			List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
-			for (QuizChoice choice : choices) {
-				quizChoiceRepository.delete(choice);
-			}
-			quizQuestionRepository.delete(quizQuestion);
-			
-			progressService.sendProgress(1, questions.size(),80, httpServletRequest);
-		}
+		deleteQuestions(existingQuiz.get(),httpServletRequest);
 		quizRepository.delete(existingQuiz.get());
 		progressService.sendProgress(10, httpServletRequest);
 		WebResponse response = new WebResponse();
 		return response ;
+	}
+
+	private void deleteQuestions(Quiz existingQuiz, HttpServletRequest httpServletRequest) {
+		 
+		List<QuizQuestion> questions = quizQuestionRepository.findByQuiz(existingQuiz);
+		progressService.sendProgress(10, httpServletRequest);
+		log.info("question count: {}", questions.size());
+		for (QuizQuestion quizQuestion : questions) {
+			List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
+			deleteChoices(choices);
+			
+			quizQuestionRepository.delete(quizQuestion);
+			
+			progressService.sendProgress(1, questions.size(),80, httpServletRequest);
+		}
+	}
+
+	private void deleteChoices(List<QuizChoice> choices) {
+		for (QuizChoice choice : choices) {
+			quizChoiceRepository.delete(choice);
+		}
+		
 	}
 
 }

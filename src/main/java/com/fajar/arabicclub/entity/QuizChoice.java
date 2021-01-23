@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuizChoice extends BaseEntity {
+public class QuizChoice extends BaseEntity  implements SingleImageModel{
 
 	/**
 	* 
