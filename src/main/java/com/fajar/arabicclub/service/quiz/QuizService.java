@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.fajar.arabicclub.config.exception.DataNotFoundException;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
-import com.fajar.arabicclub.entity.BaseEntity;
 import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizChoice;
 import com.fajar.arabicclub.entity.QuizQuestion;
@@ -24,7 +23,6 @@ import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
 import com.fajar.arabicclub.service.resources.FileService;
 
-import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -145,12 +143,29 @@ public class QuizService {
 		}
 		for (QuizChoice choice : quizQuestion.getChoices()) {
 			choice.setQuestion(savedQuestion);
-			savedChoices.add(entityRepository.save(choice));
+			QuizChoice savedChoice = saveChoice(choice);
+			savedChoices.add(savedChoice);
 		}
 
 		log.info("savedChoices: {}", savedChoices.size());
 		savedQuestion.setChoices(savedChoices);
 		return savedQuestion;
+	}
+	
+	private QuizChoice saveChoice(QuizChoice choice) {
+		choice.validateNullValues();
+		if (choice.getImage() != null && choice.getImage().startsWith("data:image")) {
+			try {
+				String savedFileName = fileService.writeImage(QuizChoice.class.getSimpleName(), choice.getImage());
+				choice.setImage(savedFileName);
+			} catch (IOException e) {
+				e.printStackTrace();
+				choice.setImage(null);
+			}
+			
+		}
+		QuizChoice savedChoice = entityRepository.save(choice);
+		return savedChoice;
 	}
 
 	public WebResponse getQuiz(Long id, HttpServletRequest httpServletRequest) throws Exception {
