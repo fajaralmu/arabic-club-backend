@@ -110,8 +110,6 @@ public class BaseEntity implements Serializable{
 	@Transient
 	public EntityUpdateInterceptor modelUpdateInterceptor() {
 		return new EntityUpdateInterceptor<BaseEntity>() {
-			private static final long serialVersionUID = 2878932467536346251L;
-
 			@Override
 			public BaseEntity preUpdate(BaseEntity object) {
 				return object;

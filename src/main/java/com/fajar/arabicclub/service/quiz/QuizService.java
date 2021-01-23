@@ -126,6 +126,7 @@ public class QuizService {
 		}
 		List<QuizChoice> savedChoices = new ArrayList<>();
 		
+		quizQuestion.validateNullValues();
 		if (quizQuestion.getImage() != null && quizQuestion.getImage().startsWith("data:image")) {
 			try {
 				String savedFileName = fileService.writeImage(QuizQuestion.class.getSimpleName(), quizQuestion.getImage());
