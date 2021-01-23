@@ -52,7 +52,7 @@ public class RestQuizManagementController extends BaseController {
 	}
 	@PostMapping(value = "/getquiz/{id}" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@CustomRequestInfo(withRealtimeProgress = true)
-	public WebResponse getQuiz(@PathVariable(name="id") Long id, HttpServletRequest httpRequest) {
+	public WebResponse getQuiz(@PathVariable(name="id") Long id, HttpServletRequest httpRequest) throws Exception{
 		log.info("getQuiz id {}", id);
 		return quizService.getQuiz(id, httpRequest);
 	}

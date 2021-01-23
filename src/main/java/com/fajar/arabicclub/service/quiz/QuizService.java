@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fajar.arabicclub.config.exception.DataNotFoundException;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.BaseEntity;
@@ -23,6 +24,7 @@ import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
 import com.fajar.arabicclub.service.resources.FileService;
 
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -150,11 +152,15 @@ public class QuizService {
 		return savedQuestion;
 	}
 
-	public WebResponse getQuiz(Long id, HttpServletRequest httpServletRequest) {
+	public WebResponse getQuiz(Long id, HttpServletRequest httpServletRequest) throws Exception {
 		try {
 
 			WebResponse response = new WebResponse();
-			Quiz quiz = quizRepository.findById(id).get();
+			Optional<Quiz> quizOpt = quizRepository.findById(id);
+			if (!quizOpt.isPresent()) {
+				throw new Exception("Data not found");
+			}
+			Quiz quiz = quizOpt.get();
 			List<QuizQuestion> questions = quizQuestionRepository.findByQuiz(quiz);
 			progressService.sendProgress(20, httpServletRequest);
 
@@ -169,9 +175,8 @@ public class QuizService {
 			response.setQuiz(quiz);
 			return response;
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
-			throw e;
+			throw new DataNotFoundException(e.getMessage());
 		}
 
 	}

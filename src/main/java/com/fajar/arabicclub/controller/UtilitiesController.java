@@ -6,13 +6,14 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fajar.arabicclub.annotation.CustomRequestInfo;
+import com.fajar.arabicclub.dto.WebResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,9 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("web")
 public class UtilitiesController extends BaseController{  
+	private ObjectMapper objectMapper;
 	
 	public UtilitiesController() {
 		log.info("-----------------UtilitiesController------------------");
+		objectMapper = new ObjectMapper();
 	}
 
 
@@ -46,6 +49,27 @@ public class UtilitiesController extends BaseController{
 		errorPage.addObject("errorMessage", getAttribute(httpRequest, "javax.servlet.error.exception"));
 		printHttpRequestAttrs(httpRequest);
 		return errorPage;
+	}
+	
+	@RequestMapping(value = "/error-not-found", produces = MediaType.APPLICATION_JSON_VALUE, method = {RequestMethod.POST, RequestMethod.GET}) 
+	public void errorNotFound(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+		 
+		int httpErrorCode = getErrorCode(httpRequest);
+
+		if (200 == httpErrorCode) {
+			httpResponse.sendRedirect(httpRequest.getContextPath()+"/index");
+			return;
+		}
+
+		Object message = getAttribute(httpRequest, "javax.servlet.error.exception");
+		WebResponse payload = WebResponse.failed(String.valueOf(message));
+		payload.setCode("404");
+		httpResponse.setStatus(404);
+
+		String jsonString = objectMapper.writeValueAsString(payload); 
+		httpResponse.getWriter().write(jsonString);
+		printHttpRequestAttrs(httpRequest);
+		
 	}
 
 	private void printHttpRequestAttrs(HttpServletRequest httpRequest) {
