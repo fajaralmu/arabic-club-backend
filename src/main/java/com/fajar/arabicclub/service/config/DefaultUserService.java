@@ -19,6 +19,7 @@ import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.repository.UserRepository;
 import com.fajar.arabicclub.service.SessionValidationService;
 import com.fajar.arabicclub.service.resources.FileService;
+import com.fajar.arabicclub.service.resources.ImageUploadService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,11 +30,12 @@ public class DefaultUserService {
 	@Autowired
 	private AuthorityRepository authorityRepository;
 	@Autowired
-	private SessionValidationService sessionValidationService; 
-	@Autowired
-	private FileService fileService;
+	private SessionValidationService sessionValidationService;  
 	@Autowired
 	private EntityRepository entityRepository;
+	
+	@Autowired
+	private ImageUploadService imageUploadService;
 	
 	
 	private BCryptPasswordEncoder passwordEncoder;
@@ -122,13 +124,10 @@ public class DefaultUserService {
 		if (user.getPassword() != null && !user.getPassword().isEmpty()) {
 			loggedUser.setPassword(passwordEncoder.encode(user.getPassword()));
 		}
+		
 		if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
-			try {
-				String newName = fileService.writeImage(User.class.getSimpleName(), user.getProfileImage(), httpServletRequest);
-				loggedUser.setProfileImage(newName);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			loggedUser.setProfileImage(user.getProfileImage());
+			imageUploadService.uploadImage(loggedUser);
 		}
 		entityRepository.save(loggedUser);
 	}

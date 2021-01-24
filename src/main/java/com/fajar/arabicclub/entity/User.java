@@ -32,7 +32,7 @@ import lombok.Builder.Default;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends BaseEntity {
+public class User extends BaseEntity implements SingleImageModel {
 
 	/**
 	 * 
@@ -71,6 +71,16 @@ public class User extends BaseEntity {
 	@Transient
 	@JsonIgnore
 	private Date processingDate; // for transaction
+
+	@Override
+	public void setImage(String image) {
+		this.profileImage = image;
+	}
+
+	@Override
+	public String getImage() {
+		return this.profileImage;
+	}
 
 	 
 

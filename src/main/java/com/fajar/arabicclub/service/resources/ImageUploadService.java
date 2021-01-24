@@ -13,17 +13,19 @@ public class ImageUploadService {
 	@Autowired
 	private FileService fileService;
 
-	public  void uploadImage(SingleImageModel singleImageModel) {
+	public  String uploadImage(SingleImageModel singleImageModel) {
 		String image = singleImageModel.getImage();
 		if (image != null && image.startsWith("data:image")) {
 			try {
-				String savedFileName = fileService.writeImage(QuizChoice.class.getSimpleName(), image);
+				String savedFileName = fileService.writeImage(singleImageModel.getClass().getSimpleName(), image);
 				singleImageModel.setImage(savedFileName);
+				return savedFileName;
 			} catch (IOException e) {
 				e.printStackTrace();
 				singleImageModel.setImage(null);
 			}
 
 		}
+		return image;
 	}
 }
