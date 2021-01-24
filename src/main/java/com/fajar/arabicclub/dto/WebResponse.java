@@ -51,6 +51,7 @@ public class WebResponse implements Serializable {
 	
 	private BaseEntity entity;
 	private Quiz quiz;
+	private QuizResult quizResult;
 	private Filter filter;
 	private Integer totalData;  
 	private EntityProperty entityProperty;

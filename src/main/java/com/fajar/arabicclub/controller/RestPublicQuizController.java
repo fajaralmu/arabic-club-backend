@@ -15,11 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fajar.arabicclub.annotation.CustomRequestInfo;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.service.LogProxyFactory;
-import com.fajar.arabicclub.service.config.DefaultCategoriesService;
-import com.fajar.arabicclub.service.lessons.LessonService;
 import com.fajar.arabicclub.service.quiz.PublicQuizService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +54,14 @@ public class RestPublicQuizController extends BaseController {
 		
 		log.info("getQuiz By ID : {}", id);
 		WebResponse response = publicQuizService.getQuiz(id, httpRequest);
+		return response;
+	}
+	@PostMapping(value = "/submit", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@CustomRequestInfo(withRealtimeProgress = true)
+	public WebResponse submitAnswers(@RequestBody WebRequest webRequest, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+		
+		log.info("submitAnswers");
+		WebResponse response = publicQuizService.submitAnswers(webRequest, httpRequest);
 		return response;
 	}
 	 

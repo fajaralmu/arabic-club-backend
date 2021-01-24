@@ -99,7 +99,9 @@ public class QuizDataService {
 
 		for (QuizQuestion quizQuestion : questions) {
 			List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
+			choices.stream().forEach(q->q.setQuestion(null));
 			quizQuestion.setChoices(choices);
+			quizQuestion.setQuiz(null);
 			
 			if (hideAnswer) {
 				quizQuestion.setAnswerCode(null);
