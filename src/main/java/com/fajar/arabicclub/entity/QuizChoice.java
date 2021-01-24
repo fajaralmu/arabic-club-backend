@@ -7,8 +7,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fajar.arabicclub.constants.AnswerCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(value = Include.NON_NULL)
 public class QuizChoice extends BaseEntity  implements SingleImageModel{
 
 	/**
@@ -38,7 +43,9 @@ public class QuizChoice extends BaseEntity  implements SingleImageModel{
 	
 	@JoinColumn(name = "question_id", nullable = false)
 	@ManyToOne
+	@JsonIgnore
 	private QuizQuestion question; 
   
+	
 
 }

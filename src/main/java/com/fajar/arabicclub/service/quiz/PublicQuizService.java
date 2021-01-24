@@ -89,7 +89,7 @@ public class PublicQuizService {
 			Quiz fullQuiz = quizDataService.getFullQuiz(submittedQuiz.getId(), httpServletRequest, false);
 			
 			QuizResult quizResult = calculateAnswers(submittedQuiz, fullQuiz, httpServletRequest);
-			response.setQuiz(fullQuiz);
+			 
 			response.setQuizResult(quizResult);
 			return response;
 		} catch (Exception e) {
@@ -120,6 +120,7 @@ public class PublicQuizService {
 		}
 		wrongAnswer = totalQuestion - correctAnswer;
 		
+		result.setSubmittedQuiz(submittedQuiz);
 		result.setCorrectAnswer(correctAnswer);
 		result.setWrongAnswer(wrongAnswer);
 		result.calculateScore();
@@ -132,7 +133,9 @@ public class PublicQuizService {
 	private int isCorrectAnswer(QuizQuestion actualQuestion, List<QuizQuestion> submittedQuestions) {
 		innerLoop: for (int j = 0; j < submittedQuestions.size(); j++) {
 			final QuizQuestion submittedQuestion =  submittedQuestions.get(j);
+			
 			if (submittedQuestion.getId().equals(actualQuestion.getId())) {
+				submittedQuestion.setCorrectChoice(actualQuestion.getAnswerCode());
 				if (submittedQuestion.getAnswerCode().equals(actualQuestion.getAnswerCode())) {
 					return 1;
 				}

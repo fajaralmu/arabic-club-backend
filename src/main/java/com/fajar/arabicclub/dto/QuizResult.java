@@ -21,7 +21,6 @@ public class QuizResult implements Serializable {
 	private static final long serialVersionUID = 7914795420031765969L;
 	
 	private Quiz submittedQuiz;
-	private Quiz quiz;
 	private int correctAnswer;
 	private int wrongAnswer;
 	private int totalQuestion;
@@ -32,6 +31,6 @@ public class QuizResult implements Serializable {
 		Double wrong = Double.valueOf(wrongAnswer);
 		
 		setTotalQuestion(correctAnswer+ wrongAnswer);
-		setScore(correct/(correct+wrong));
+		setScore((correct*100.d)/(correct+wrong));
 	}
 }

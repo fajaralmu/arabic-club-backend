@@ -12,6 +12,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fajar.arabicclub.constants.AnswerCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(value=Include.NON_NULL)
 public class QuizQuestion extends BaseEntity implements SingleImageModel{
 
 	/**
@@ -38,7 +42,8 @@ public class QuizQuestion extends BaseEntity implements SingleImageModel{
 	private String statement;
 	
 	@JoinColumn(name = "quiz_id", nullable = false)
-	@ManyToOne 
+	@ManyToOne
+	@JsonIgnore
 	private Quiz quiz; 
 	
 	@Column
@@ -46,6 +51,8 @@ public class QuizQuestion extends BaseEntity implements SingleImageModel{
 	
 	@Transient
 	private List<QuizChoice> choices;
+	@Transient
+	private AnswerCode correctChoice;
   
 
 }
