@@ -67,10 +67,7 @@ public class WebResponse implements Serializable {
 	private String token;
  
 	private Boolean loggedIn;
-
-	@Builder.Default
-	@JsonIgnore
-	private boolean success = true;
+ 
 	@JsonIgnore
 	private Class<? extends BaseEntity> entityClass; 
 	

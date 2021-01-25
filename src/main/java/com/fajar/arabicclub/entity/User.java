@@ -14,18 +14,15 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.fajar.arabicclub.annotation.Dto;
-import com.fajar.arabicclub.annotation.FormField;
-import com.fajar.arabicclub.constants.FieldType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Builder.Default;
 
-@Dto(commonManagementPage = false, updateService = "userUpdateService")
+ 
 @Entity
 @Table(name = "users")
 @Builder
@@ -38,18 +35,13 @@ public class User extends BaseEntity implements SingleImageModel {
 	 * 
 	 */
 	private static final long serialVersionUID = -3896877759244837620L;
-	@Column(unique = true)
-	@FormField
+	@Column(unique = true) 
 	private String username;
-	@Column(name = "display_name")
-	@FormField
+	@Column(name = "display_name") 
 	private String displayName;
 	@Column
-	@FormField
-//	@JsonIgnore
 	private String password;
-
-	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = false, defaultValue = "DefaultIcon.BMP")
+ 
 	@Column(name = "profile_image")
 	private String profileImage;
 

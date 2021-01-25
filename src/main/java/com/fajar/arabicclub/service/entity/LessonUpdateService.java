@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LessonUpdateService extends BaseEntityUpdateService<Lesson> {
 
 	@Autowired
-	private LessonRepository lessonRepository; 
+	private LessonRepository lessonRepository;  
 
 	/**
 	 * add & update lesson
@@ -33,7 +33,7 @@ public class LessonUpdateService extends BaseEntityUpdateService<Lesson> {
 	 * @throws Exception
 	 */
 	@Override
-	public WebResponse saveEntity(Lesson baseEntity, boolean newRecord, HttpServletRequest httoHttpServletRequest) throws Exception {
+	public WebResponse saveEntity(Lesson baseEntity, boolean newRecord, HttpServletRequest httpServletRequest) throws Exception {
 
 		Lesson lesson = (Lesson) copyNewElement(baseEntity, newRecord);
 		Optional<Lesson> dbLesson = Optional.empty();
@@ -44,16 +44,16 @@ public class LessonUpdateService extends BaseEntityUpdateService<Lesson> {
 				throw new Exception("Existing record not found");
 			}
 		} else {
-			lesson.setUser(getLoggedUser(httoHttpServletRequest));
+			lesson.setUser(getLoggedUser(httpServletRequest));
 		}
-		String imageData = lesson.getBannerImages();
+		final	String imageData = lesson.getBannerImages();
 		if (imageData != null && !imageData.equals("")) {
 			log.info("lesson image will be updated");
 			String imageUrl = null;
 			if (newRecord) {
-				imageUrl = writeNewImages(lesson, imageData);
+				imageUrl = writeNewImages(lesson, httpServletRequest);
 			} else {
-				imageUrl = updateImages(lesson, dbLesson, imageData);
+				imageUrl = updateImages(lesson, dbLesson, httpServletRequest);
 			}
 			lesson.setBannerImages(imageUrl);
 		} else {
@@ -69,8 +69,8 @@ public class LessonUpdateService extends BaseEntityUpdateService<Lesson> {
 		return WebResponse.builder().entity(newLesson).build();
 	}
 
-	private String writeNewImages(Lesson lesson, String imageData) {
-		String[] rawImageList = imageData.split("~");
+	private String writeNewImages(Lesson lesson, HttpServletRequest httpServletRequest) {
+		String[] rawImageList = lesson.getBannerImages().split("~");
 		if (rawImageList == null || rawImageList.length == 0) {
 			return null;
 		}
@@ -80,7 +80,7 @@ public class LessonUpdateService extends BaseEntityUpdateService<Lesson> {
 			if (base64Image == null || base64Image.equals(""))
 				continue;
 			try {
-				String imageName = fileService.writeImage(lesson.getClass().getSimpleName(), base64Image);
+				String imageName = fileService.writeImage(lesson.getClass().getSimpleName(), base64Image, httpServletRequest);
 				if (null != imageName) {
 					imageUrls.add(imageName);
 				}
@@ -101,8 +101,8 @@ public class LessonUpdateService extends BaseEntityUpdateService<Lesson> {
 		return imageUrlArray;
 	}
 
-	private String updateImages(Lesson lesson, Optional<Lesson> dbLesson, String imageData) {
-		final String[] rawImageList = imageData.split("~");
+	private String updateImages(Lesson lesson, Optional<Lesson> dbLesson, HttpServletRequest httpServletRequest) {
+		final String[] rawImageList = lesson.getBannerImages().split("~");
 		if (rawImageList == null || rawImageList.length == 0 || dbLesson.isPresent() == false) {
 			return null;
 		}
