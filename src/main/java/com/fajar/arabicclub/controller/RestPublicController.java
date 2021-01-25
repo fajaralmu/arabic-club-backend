@@ -19,6 +19,7 @@ import com.fajar.arabicclub.annotation.Authenticated;
 import com.fajar.arabicclub.annotation.CustomRequestInfo;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
+import com.fajar.arabicclub.gallery.GalleryService;
 import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.service.config.DefaultCategoriesService;
 import com.fajar.arabicclub.service.lessons.LessonService;
@@ -35,6 +36,8 @@ public class RestPublicController extends BaseController {
 	private DefaultCategoriesService defaultCategoriesService;
 	@Autowired
 	private LessonService lessonService;
+	@Autowired
+	private GalleryService galleryService;
 	@PostConstruct
 	public void init() {
 		LogProxyFactory.setLoggers(this);
@@ -64,6 +67,13 @@ public class RestPublicController extends BaseController {
 		
 		log.info("getLessons");
 		WebResponse response = lessonService.getLessons(categoryCode, webRequest);
+		return response;
+	}
+	
+	@PostMapping(value = "/gallery/pictures", consumes=MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public WebResponse getPictures(@RequestBody WebRequest webRequest, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+		 
+		WebResponse response = galleryService.getPictures(webRequest);
 		return response;
 	}
 	
