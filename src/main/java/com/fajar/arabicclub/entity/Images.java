@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Images extends BaseEntity {
+public class Images extends BaseEntity implements MultipleImageModel {
 
 	/**
 	* 
@@ -45,5 +45,20 @@ public class Images extends BaseEntity {
 	@Column(name = "images" , nullable = false)
 	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = true, multipleImage = true, defaultValue = "Default.BMP")
 	private String images; // type:BLOB
+	
+	@Override
+	public void setImageNames(String[] imageNames) {
+		setImages(String.join("~", imageNames));
+		
+	}
+
+	@Override
+	public String[] getImageNames() {
+		if (null == this.images) 
+		{
+			return new String[] {};
+		}
+		return this.images.split("~");
+	}
 
 }

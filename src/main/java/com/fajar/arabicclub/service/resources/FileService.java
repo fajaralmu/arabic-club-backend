@@ -47,9 +47,10 @@ public class FileService {
 	private String uploadType;
 	@Value("${app.resources.apiUploadEndpoint}")
 	private String apiUploadEndpoint; 
-	static ObjectMapper mapper = new ObjectMapper();
 	@Autowired
 	private ProgressService progressService;
+	
+	RestTemplate restTemplate = new RestTemplate();
 
 	@PostConstruct
 	public void init() {
@@ -129,7 +130,7 @@ public class FileService {
 		try {
 			List<AttachmentInfo> attachments = AttachmentInfo.extractAttachmentInfos(data, imageFileName, imageType);
 			for (int i = 0; i < attachments.size(); i++) {
-				String response = uploadViaAPIv2(attachments.get(i), apiUploadEndpoint);
+				String response = uploadViaAPIv2(attachments.get(i));
 				System.out.println("response: " + i + " => " + response);
 				progressService.sendProgress(1, attachments.size(), 80, httpServletRequest);
 			}
@@ -145,11 +146,11 @@ public class FileService {
 		AttachmentInfo request = (AttachmentInfo.builder().name("TEST.jpg").data("dddd").extension("jpg").build());
 	}
 
-	public static String uploadViaAPIv2(AttachmentInfo request, String url) {
+	public String uploadViaAPIv2(AttachmentInfo request ) {
 
 		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		String response;
-		RestTemplate rt = new RestTemplate();
+		
 		try {
 			map.add("partialData", request.getData());
 			map.add("order", request.getOrder());
@@ -161,7 +162,7 @@ public class FileService {
 			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 			HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
-			ResponseEntity<String> responseEntity = rt.postForEntity(url, requestEntity, String.class);
+			ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUploadEndpoint, requestEntity, String.class);
 			log.info("code: {}", responseEntity.getStatusCode());
 			response = responseEntity.getBody();
 

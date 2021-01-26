@@ -1,14 +1,22 @@
 package com.fajar.arabicclub.service.resources;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fajar.arabicclub.entity.QuizChoice;
+import com.fajar.arabicclub.entity.MultipleImageModel;
 import com.fajar.arabicclub.entity.SingleImageModel;
+import com.fajar.arabicclub.util.CollectionUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ImageUploadService {
 	@Autowired
 	private FileService fileService;
@@ -27,5 +35,97 @@ public class ImageUploadService {
 
 		}
 		return image;
+	}
+	
+	public String writeNewImages(MultipleImageModel multipleImageModel, HttpServletRequest httpServletRequest) {
+		String[] rawImageList = multipleImageModel.getImageNames();
+		if (rawImageList == null || rawImageList.length == 0) {
+			return null;
+		}
+		List<String> imageUrls = new ArrayList<>();
+		for (int i = 0; i < rawImageList.length; i++) {
+			String base64Image = rawImageList[i];
+			if (base64Image == null || base64Image.equals(""))
+				continue;
+			try {
+				String imageName = fileService.writeImage(multipleImageModel.getClass().getSimpleName(), base64Image, httpServletRequest);
+				if (null != imageName) {
+					imageUrls.add(imageName);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if (imageUrls.size() == 0) {
+			return null;
+		}
+
+		String[] arrayOfString = imageUrls.toArray(new String[] {});
+		CollectionUtil.printArray(arrayOfString);
+
+		String imageUrlArray = String.join("~", arrayOfString);
+		multipleImageModel.setImageNames(arrayOfString);
+
+		return imageUrlArray;
+	}
+
+	public String updateImages(MultipleImageModel multipleImageModel, MultipleImageModel exixstingMultipleImageModel, HttpServletRequest httpServletRequest) {
+		final String[] rawImageList = multipleImageModel.getImageNames();
+		if (rawImageList == null || rawImageList.length == 0 || exixstingMultipleImageModel == null) {
+			return null;
+		}
+		final boolean oldValueExist = exixstingMultipleImageModel.getImageNames().length > 0;
+		final String[] oldValueStringArr = oldValueExist ? multipleImageModel.getImageNames() : new String[] {};
+		final List<String> imageUrls = new ArrayList<>();
+		//loop
+		log.info("rawImageList length: {}", rawImageList.length);
+		for (int i = 0; i < rawImageList.length; i++) {
+			final String rawImage = rawImageList[i];
+			if (rawImage == null || rawImage.equals(""))
+				continue;
+			String imageName = null;
+			if (isBase64(rawImage)) {
+				try {
+					imageName = fileService.writeImage(multipleImageModel.getClass().getSimpleName(), rawImage);
+					log.info("saved base64 image {}", imageName);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+
+				if (oldValueExist && inArray(rawImage, oldValueStringArr)) {
+					imageName = rawImage;
+				}
+			}
+
+			if (imageName != null) {
+				imageUrls.add(imageName);
+			}
+		}
+		if (imageUrls.size() == 0) {
+			return null;
+		}
+
+		String[] arrayOfString = imageUrls.toArray(new String[] {});
+		CollectionUtil.printArray(arrayOfString);
+
+		String imageUrlArray = String.join("~", arrayOfString);
+		multipleImageModel.setImageNames(arrayOfString);
+
+		return imageUrlArray;
+	}
+
+	private boolean inArray(String imageName, String[] array) {
+		for (int i = 0; i < array.length; i++) {
+			if (imageName.equals(array[i]))
+				return true;
+		}
+		
+		return false;
+	}
+
+	private boolean isBase64(String rawImage) {
+
+		return rawImage.startsWith("data:image");
 	}
 }

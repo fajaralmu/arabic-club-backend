@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Lesson extends BaseEntity {
+public class Lesson extends BaseEntity implements MultipleImageModel {
 
 	/**
 	* 
@@ -51,6 +51,21 @@ public class Lesson extends BaseEntity {
 	@JoinColumn(name = "user_id", nullable = false)
 	@ManyToOne
 	private User user;
+
+	@Override
+	public void setImageNames(String[] imageNames) {
+		setBannerImages(String.join("~", imageNames));
+		
+	}
+
+	@Override
+	public String[] getImageNames() {
+		if (null == this.bannerImages) 
+		{
+			return new String[] {};
+		}
+		return this.bannerImages.split("~");
+	}
 
 
 }
