@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fajar.arabicclub.entity.BaseEntity;
 import com.fajar.arabicclub.entity.MultipleImageModel;
 import com.fajar.arabicclub.entity.SingleImageModel;
+import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.util.CollectionUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +22,25 @@ import lombok.extern.slf4j.Slf4j;
 public class ImageUploadService {
 	@Autowired
 	private FileService fileService;
+	@Autowired
+	private EntityRepository entityRepository;
+	@Autowired
+	private ImageRemovalService imageRemovalService;
 
-	public  String uploadImage(SingleImageModel singleImageModel) {
+	/**
+	 * upload single image
+	 * 
+	 * @param singleImageModel
+	 * @return
+	 */
+	public String uploadImage(SingleImageModel singleImageModel) {
+
 		String image = singleImageModel.getImage();
 		if (image != null && image.startsWith("data:image")) {
+
+			if (null != singleImageModel.getId()) {
+				removeOldImage(singleImageModel);
+			}
 			try {
 				String savedFileName = fileService.writeImage(singleImageModel.getClass().getSimpleName(), image);
 				singleImageModel.setImage(savedFileName);
@@ -36,7 +53,25 @@ public class ImageUploadService {
 		}
 		return image;
 	}
-	
+
+	private void removeOldImage(SingleImageModel singleImageModel) {
+		BaseEntity existingRecord = entityRepository.findById(((BaseEntity)singleImageModel).getClass(), singleImageModel.getId());
+		if (null == existingRecord) {
+			return;
+		}
+		SingleImageModel existingImageModel = (SingleImageModel) existingRecord;
+		if (null != existingImageModel.getImage()) {
+			imageRemovalService.removeImage(existingImageModel.getImage());
+		}
+	}
+
+	/**
+	 * upload multiple images
+	 * 
+	 * @param multipleImageModel
+	 * @param httpServletRequest
+	 * @return
+	 */
 	public String writeNewImages(MultipleImageModel multipleImageModel, HttpServletRequest httpServletRequest) {
 		String[] rawImageList = multipleImageModel.getImageNames();
 		if (rawImageList == null || rawImageList.length == 0) {
@@ -48,7 +83,8 @@ public class ImageUploadService {
 			if (base64Image == null || base64Image.equals(""))
 				continue;
 			try {
-				String imageName = fileService.writeImage(multipleImageModel.getClass().getSimpleName(), base64Image, httpServletRequest);
+				String imageName = fileService.writeImage(multipleImageModel.getClass().getSimpleName(), base64Image,
+						httpServletRequest);
 				if (null != imageName) {
 					imageUrls.add(imageName);
 				}
@@ -69,7 +105,16 @@ public class ImageUploadService {
 		return imageUrlArray;
 	}
 
-	public String updateImages(MultipleImageModel multipleImageModel, MultipleImageModel exixstingMultipleImageModel, HttpServletRequest httpServletRequest) {
+	/**
+	 * update multiple images
+	 * 
+	 * @param multipleImageModel
+	 * @param exixstingMultipleImageModel
+	 * @param httpServletRequest
+	 * @return
+	 */
+	public String updateImages(MultipleImageModel multipleImageModel, MultipleImageModel exixstingMultipleImageModel,
+			HttpServletRequest httpServletRequest) {
 		final String[] rawImageList = multipleImageModel.getImageNames();
 		if (rawImageList == null || rawImageList.length == 0 || exixstingMultipleImageModel == null) {
 			return null;
@@ -77,14 +122,14 @@ public class ImageUploadService {
 		final boolean oldValueExist = exixstingMultipleImageModel.getImageNames().length > 0;
 		final String[] oldValueStringArr = oldValueExist ? multipleImageModel.getImageNames() : new String[] {};
 		final List<String> imageUrls = new ArrayList<>();
-		//loop
+		// loop
 		log.info("rawImageList length: {}", rawImageList.length);
 		for (int i = 0; i < rawImageList.length; i++) {
 			final String rawImage = rawImageList[i];
 			if (rawImage == null || rawImage.equals(""))
 				continue;
 			String imageName = null;
-			if (isBase64(rawImage)) {
+			if (isBase64Image(rawImage)) {
 				try {
 					imageName = fileService.writeImage(multipleImageModel.getClass().getSimpleName(), rawImage);
 					log.info("saved base64 image {}", imageName);
@@ -120,11 +165,11 @@ public class ImageUploadService {
 			if (imageName.equals(array[i]))
 				return true;
 		}
-		
+
 		return false;
 	}
 
-	private boolean isBase64(String rawImage) {
+	private boolean isBase64Image(String rawImage) {
 
 		return rawImage.startsWith("data:image");
 	}

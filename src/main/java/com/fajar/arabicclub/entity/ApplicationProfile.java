@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ApplicationProfile extends BaseEntity {
+public class ApplicationProfile extends BaseEntity  implements SingleImageModel{
 
 	/**
 	* 
@@ -90,6 +90,15 @@ public class ApplicationProfile extends BaseEntity {
 			return "fa fa-home"; 
 		}
 		return footerIconClass.value;
+	}
+	@Override
+	public void setImage(String image) {
+		pageIcon = image;
+		
+	}
+	@Override
+	public String getImage() {
+		return pageIcon;
 	}
 	
 	
