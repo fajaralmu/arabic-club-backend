@@ -38,7 +38,7 @@ public class Quiz extends BaseEntity {/**
 	@Column
 	private boolean publicQuiz;
 	@FormField(type = FieldType.FIELD_TYPE_NUMBER, lableName = "Duration (Second)")
-	@Column
+	@Column(nullable = false)
 	private Long duration;
 	
 	@Transient
