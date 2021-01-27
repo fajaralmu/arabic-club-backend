@@ -20,39 +20,46 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
- 
+
 @Entity
 @Table(name = "quiz_question")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(value=Include.NON_NULL)
-public class QuizQuestion extends BaseEntity implements SingleImageModel{
+@JsonInclude(value = Include.NON_NULL)
+public class QuizQuestion extends BaseEntity implements SingleImageModel {
 
 	/**
 	* 
 	*/
 	private static final long serialVersionUID = 3494963248002164943L;
-	@Column(nullable = false,name="answer_code") 
+	@Column(nullable = false, name = "answer_code")
 	@Enumerated(EnumType.STRING)
 	private AnswerCode answerCode;
-	
-	@Column(nullable = false) 
+
+	@Column(nullable = false)
 	private String statement;
-	
+
 	@JoinColumn(name = "quiz_id", nullable = false)
 	@ManyToOne
 	@JsonIgnore
-	private Quiz quiz; 
-	
+	private Quiz quiz;
+
 	@Column
 	private String image;
-	
+
 	@Transient
 	private List<QuizChoice> choices;
 	@Transient
 	private AnswerCode correctChoice;
-  
+
+	@JsonIgnore
+	public Long getQuizId() {
+		if (quiz == null) {
+			return null;
+		}
+		return quiz.getId();
+	}
 
 }

@@ -2,6 +2,7 @@ package com.fajar.arabicclub.service.quiz;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,6 +18,7 @@ import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizQuestion;
+import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
 import com.fajar.arabicclub.util.CollectionUtil;
@@ -31,6 +33,8 @@ public class PublicQuizService {
 	private QuizRepository quizRepository;
 	@Autowired
 	private QuizDataService quizDataService;
+	@Autowired
+	private QuizQuestionRepository quizQuestionRepository;
 	@Autowired
 	private ProgressService progressService;
 
@@ -48,11 +52,29 @@ public class PublicQuizService {
 		Page<Quiz> quizes = quizRepository.findAll(PageRequest.of(filter.getPage(), filter.getLimit()));
 		BigInteger quizCount = quizRepository.findCountAll();
 		List<Quiz> quizList = quizes.getContent();
+		List<QuizQuestion> questions = quizQuestionRepository.findByQuizIn(quizList);
+		
+		mapQuizAndQuestions(quizList, questions);
 
 		WebResponse response = new WebResponse();
 		response.setEntities(CollectionUtil.convertList(quizList));
 		response.setTotalData(quizCount == null ? 0 : quizCount.intValue());
 		return response;
+	}
+
+	private static void mapQuizAndQuestions(List<Quiz> quizList, List<QuizQuestion> questions) {
+		 
+		for (final Quiz quiz : quizList) {
+			questions.forEach(new Consumer<QuizQuestion>() { 
+				@Override
+				public void accept(QuizQuestion question) {
+					 if (question.getQuizId().equals(quiz.getId())) {
+						 question.setAnswerCode(null);
+						 quiz.addQuestion(question);
+					 }
+				}
+			});
+		}
 	}
 
 	/**

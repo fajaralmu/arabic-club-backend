@@ -50,7 +50,7 @@ public class QuizDataService {
 	 * @param quizQuestion
 	 * @return
 	 */
-	public QuizQuestion saveQuestionAndItsChoices(QuizQuestion quizQuestion, Session session) {
+	private QuizQuestion saveQuestionAndItsChoices(QuizQuestion quizQuestion, Session session) {
 		if (null == quizQuestion.getChoices() || quizQuestion.getChoices().size() == 0) {
 			log.info("quizQuestion.getChoices() empty!");
 			return null;
