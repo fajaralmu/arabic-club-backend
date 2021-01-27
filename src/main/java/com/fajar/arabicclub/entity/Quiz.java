@@ -37,6 +37,9 @@ public class Quiz extends BaseEntity {/**
 	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
 	@Column
 	private boolean publicQuiz;
+	@FormField(type = FieldType.FIELD_TYPE_NUMBER, lableName = "Duration (Second)")
+	@Column
+	private Long duration;
 	
 	@Transient
 	private List<QuizQuestion> questions;
