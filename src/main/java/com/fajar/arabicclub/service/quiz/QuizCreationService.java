@@ -7,6 +7,9 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,7 @@ import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
 import com.fajar.arabicclub.service.resources.FileService;
+import com.fajar.arabicclub.service.resources.ImageRemovalService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +37,7 @@ public class QuizCreationService {
 	@Autowired
 	private ProgressService progressService;
 	@Autowired
-	private EntityRepository entityRepository;
+	private SessionFactory sessionFactory;
 	@Autowired
 	private QuizRepository quizRepository;
 	@Autowired
@@ -45,75 +49,20 @@ public class QuizCreationService {
 
 	/**
 	 * create or update quiz
+	 * 
 	 * @param request
 	 * @param httpServletRequest
 	 * @return
 	 */
 	public WebResponse submit(WebRequest request, HttpServletRequest httpServletRequest) {
 		WebResponse response = new WebResponse();
-		List<QuizQuestion> savedQuestions = new ArrayList<>();
+
 		Quiz quiz = request.getQuiz();
-
-		boolean isNewRecord = quiz.getId() == null;
-		
 		validateQuizAndQuestions(quiz);
-		List<QuizQuestion> existingQuestions = isNewRecord == false ? getExistingQuestion(quiz) : new ArrayList<>();
-		Quiz savedQuiz = entityRepository.save(quiz);
-		progressService.sendProgress(10, httpServletRequest);
-		
-		for (QuizQuestion quizQuestion : quiz.getQuestions()) {
-			quizQuestion.setQuiz(savedQuiz);
-			QuizQuestion savedQuestion = quizDataService.saveQuestionAndItsChoices(quizQuestion);
-			if (null != savedQuestion) {
-				savedQuestions.add(savedQuestion);
-			}
-			progressService.sendProgress(1, quiz.getQuestions().size(), 90, httpServletRequest);
-		}
 
-		if (!isNewRecord) {
-			deleteNotSavedQuestion(existingQuestions, savedQuestions);
-		}
-
-		log.info("savedQuestions: {}", savedQuestions.size());
-		savedQuiz.setQuestions(savedQuestions);
+		Quiz savedQuiz = quizDataService.saveFullQuiz(quiz, httpServletRequest);
 		response.setQuiz(savedQuiz);
 		return response;
-	}
-
-	private List<QuizQuestion> getExistingQuestion(Quiz quiz) {
-		List<QuizQuestion> existingQuestions = quizQuestionRepository.findByQuiz(quiz);
-		return existingQuestions;
-	}
-
-	private void deleteNotSavedQuestion(List<QuizQuestion> existingQuestions, List<QuizQuestion> savedQuestions) {
-		for (QuizQuestion existingQuestion : existingQuestions) {
-			for (QuizQuestion savedQuestion : savedQuestions) {
-				if (savedQuestion.getId().equals(existingQuestion.getId())) {
-					existingQuestion.setId(null);
-				}
-			}
-		}
-
-		int deletedCount = 0;
-		for (QuizQuestion existingQuestion : existingQuestions) {
-			if (existingQuestion.getId() != null) {
-				deleteQuestionAndChoices(existingQuestion);
-				deletedCount++;
-			}
-		}
-
-		log.info("deletedCount: {}", deletedCount);
-
-	}
-
-	private void deleteQuestionAndChoices(QuizQuestion quizQuestion) {
-
-		List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
-		for (QuizChoice quizChoice : choices) {
-			quizChoiceRepository.delete(quizChoice);
-		}
-		quizQuestionRepository.delete(quizQuestion);
-
 	}
 
 	private void validateQuizAndQuestions(Quiz quiz) {
@@ -127,14 +76,14 @@ public class QuizCreationService {
 		if (existingQuiz.isPresent() == false) {
 			throw new RuntimeException("Existing record not found!");
 		}
-		
+
 	}
 
-	 
 	/*------------------------ get quiz --------------------------*/
 
 	/**
 	 * get quiz for admin page
+	 * 
 	 * @param id
 	 * @param httpServletRequest
 	 * @return
@@ -158,42 +107,44 @@ public class QuizCreationService {
 
 	/**
 	 * delete quiz, its questions, and its choices
+	 * 
 	 * @param id
 	 * @param httpServletRequest
 	 * @return
 	 */
 	public WebResponse deleteQuiz(Long id, HttpServletRequest httpServletRequest) {
-		Optional<Quiz> existingQuiz = quizRepository.findById(id);
-		if (existingQuiz.isPresent() == false) {
-			throw new RuntimeException("Existing record not found!");
+		Session session = sessionFactory.openSession();
+		Transaction transaction = session.beginTransaction();
+		try {
+			Optional<Quiz> existingQuiz = quizRepository.findById(id);
+			if (existingQuiz.isPresent() == false) {
+				throw new RuntimeException("Existing record not found!");
+			}
+			deleteQuestions(existingQuiz.get(), session, httpServletRequest);
+			session.delete(existingQuiz.get());
+			progressService.sendProgress(10, httpServletRequest);
+			WebResponse response = new WebResponse();
+			transaction.commit();
+			return response;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			throw e;
+		} finally {
+			session.close();
 		}
-		deleteQuestions(existingQuiz.get(), httpServletRequest);
-		quizRepository.delete(existingQuiz.get());
-		progressService.sendProgress(10, httpServletRequest);
-		WebResponse response = new WebResponse();
-		return response;
 	}
 
-	private void deleteQuestions(Quiz existingQuiz, HttpServletRequest httpServletRequest) {
+	private void deleteQuestions(Quiz existingQuiz, Session session, HttpServletRequest httpServletRequest) {
 
 		List<QuizQuestion> questions = quizQuestionRepository.findByQuiz(existingQuiz);
 		progressService.sendProgress(10, httpServletRequest);
 		log.info("question count: {}", questions.size());
 		for (QuizQuestion quizQuestion : questions) {
-			List<QuizChoice> choices = quizChoiceRepository.findByQuestionOrderByAnswerCode(quizQuestion);
-			deleteChoices(choices);
-
-			quizQuestionRepository.delete(quizQuestion);
-
+			quizDataService.deleteQuestionAndChoices(quizQuestion, session);
 			progressService.sendProgress(1, questions.size(), 80, httpServletRequest);
 		}
-	}
-
-	private void deleteChoices(List<QuizChoice> choices) {
-		for (QuizChoice choice : choices) {
-			quizChoiceRepository.delete(choice);
-		}
-
 	}
 
 }

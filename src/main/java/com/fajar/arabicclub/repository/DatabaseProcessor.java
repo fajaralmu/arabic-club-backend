@@ -312,4 +312,19 @@ public class DatabaseProcessor {
 		 
 	}
 
+	/**
+	 * inser new record or update
+	 * @param <T>
+	 * @param object
+	 * @param hibernateSession
+	 * @return
+	 */
+	public static <T extends BaseEntity> T save(T object, Session hibernateSession) {
+		if (object.getId()!=null) {
+			return (T) hibernateSession.merge(object);
+		}
+		Serializable savedId = hibernateSession.save(object);
+		object.setId(Long.valueOf(savedId.toString()));
+		return object;
+	}
 }
