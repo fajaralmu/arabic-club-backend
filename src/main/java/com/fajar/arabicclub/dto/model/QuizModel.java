@@ -47,7 +47,7 @@ public class QuizModel extends BaseModel<Quiz> {
 	
 	@Override 
 	public Quiz  toEntity() {
-		Quiz  e = super.toEntity();
+		Quiz  e = copy(new Quiz(), "questions");
 		if (null != questions) {
 			questions.forEach(q -> {
 				e.addQuestion(q.toEntity());

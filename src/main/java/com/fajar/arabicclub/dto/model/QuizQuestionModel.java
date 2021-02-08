@@ -1,16 +1,13 @@
 package com.fajar.arabicclub.dto.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.constants.AnswerCode;
+import com.fajar.arabicclub.entity.QuizChoice;
 import com.fajar.arabicclub.entity.QuizQuestion;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -53,4 +50,17 @@ public class QuizQuestionModel extends BaseModel<QuizQuestion> {
 		return quiz.getId();
 	}
 
+	@Override
+	public QuizQuestion toEntity() {
+		QuizQuestion model = copy(new QuizQuestion(), "choices");
+		List<QuizChoice > choicesModel = new ArrayList<QuizChoice>();
+		
+		if (null != choices) {
+			choices.forEach(q -> {
+				choicesModel.add(q.toEntity());
+			});
+		}
+		model.setChoices(choicesModel );
+		return model;
+	}
 }
