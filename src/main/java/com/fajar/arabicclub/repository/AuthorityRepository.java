@@ -2,8 +2,8 @@ package com.fajar.arabicclub.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.fajar.arabicclub.constants.AuthorityType;
 import com.fajar.arabicclub.entity.Authority;
-import com.fajar.arabicclub.entity.AuthorityType;
 
 public interface AuthorityRepository extends JpaRepository<Authority, Long> {
 

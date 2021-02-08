@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.fajar.arabicclub.annotation.Dto;
-import com.fajar.arabicclub.entity.ApplicationProfile;
+import com.fajar.arabicclub.dto.model.ApplicationProfileModel;
+import com.fajar.arabicclub.dto.model.BaseModel;
+import com.fajar.arabicclub.dto.model.QuizModel;
 import com.fajar.arabicclub.entity.BaseEntity;
-import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.entity.setting.EntityProperty;
 import com.fajar.arabicclub.util.CollectionUtil;
@@ -45,12 +45,12 @@ public class WebResponse implements Serializable {
 	private String message = "success";
 	@Builder.Default
 	@Setter(value = AccessLevel.NONE)
-	private List<BaseEntity> entities = new ArrayList<>();
+	private List<? extends BaseModel> entities = new ArrayList<>();
 	
 	private List<?> generalList;
 	
-	private BaseEntity entity;
-	private Quiz quiz;
+	private BaseModel entity;
+	private QuizModel quiz;
 	private QuizResult quizResult;
 	private Filter filter;
 	private Integer totalData;  
@@ -58,7 +58,7 @@ public class WebResponse implements Serializable {
 	
 	private Long maxValue;
 	private Integer quantity;
-	private ApplicationProfile applicationProfile;
+	private ApplicationProfileModel applicationProfile;
 
 	private Double percentage;
 	private Integer[] transactionYears;

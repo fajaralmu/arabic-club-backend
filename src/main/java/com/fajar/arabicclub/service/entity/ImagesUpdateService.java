@@ -1,8 +1,5 @@
 package com.fajar.arabicclub.service.entity;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +11,6 @@ import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Images;
 import com.fajar.arabicclub.repository.ImageRepository;
 import com.fajar.arabicclub.service.resources.ImageUploadService;
-import com.fajar.arabicclub.util.CollectionUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,7 +31,7 @@ public class ImagesUpdateService extends BaseEntityUpdateService<Images> {
 	 * @throws Exception
 	 */
 	@Override
-	public WebResponse saveEntity(Images baseEntity, boolean newRecord, HttpServletRequest httpServletRequest)
+	public Images saveEntity(Images baseEntity, boolean newRecord, HttpServletRequest httpServletRequest)
 			throws Exception {
 
 		Images images = (Images) copyNewElement(baseEntity, newRecord);
@@ -65,6 +61,6 @@ public class ImagesUpdateService extends BaseEntityUpdateService<Images> {
 
 		Images newImages = entityRepository.save(images);
 
-		return WebResponse.builder().entity(newImages).build();
+		return newImages;
 	}
 }

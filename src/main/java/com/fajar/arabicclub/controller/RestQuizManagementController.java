@@ -20,7 +20,7 @@ import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.setting.EntityProperty;
 import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.service.entity.EntityManagementPageService;
-import com.fajar.arabicclub.service.entity.EntityService;
+import com.fajar.arabicclub.service.entity.MasterDataService;
 import com.fajar.arabicclub.service.quiz.QuizCreationService;
 
 import lombok.extern.slf4j.Slf4j;

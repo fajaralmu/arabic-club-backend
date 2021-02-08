@@ -11,13 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.fajar.arabicclub.config.exception.DataNotFoundException;
 import com.fajar.arabicclub.dto.Filter;
 import com.fajar.arabicclub.dto.QuizResult;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizQuestion;
+import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
@@ -89,7 +89,7 @@ public class PublicQuizService {
 			log.info("take quiz with id: {}", id);
 			WebResponse response = new WebResponse();
 			Quiz fullQuiz = quizDataService.getFullQuiz(id, httpServletRequest, true);
-			response.setQuiz(fullQuiz);
+			response.setQuiz(fullQuiz.toModel());
 			return response;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -105,7 +105,7 @@ public class PublicQuizService {
 	 */
 	public WebResponse submitAnswers(WebRequest webRequest, HttpServletRequest httpServletRequest) {
 		try {
-			final Quiz submittedQuiz = webRequest.getQuiz();
+			final Quiz submittedQuiz = webRequest.getQuiz().toEntity();
 			log.info("submitAnswers with id: {}", submittedQuiz.getId());
 			WebResponse response = new WebResponse();
 			Quiz fullQuiz = quizDataService.getFullQuiz(submittedQuiz.getId(), httpServletRequest, false);

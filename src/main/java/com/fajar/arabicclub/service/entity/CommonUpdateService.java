@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.BaseEntity;
 import com.fajar.arabicclub.entity.setting.EntityUpdateInterceptor;
 
@@ -14,16 +13,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CommonUpdateService extends BaseEntityUpdateService<BaseEntity> {
 
+	
 	@Override
-	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, HttpServletRequest httoHttpServletRequest) {
+	public BaseEntity saveEntity(BaseEntity entity, boolean newRecord, HttpServletRequest httpServletRequest) {
 		log.info("saving entity: {}", entity.getClass());
 		entity = copyNewElement(entity, newRecord);
-
-		validateEntityFields(entity, newRecord);
+		
+		validateEntityFields(entity, newRecord, httpServletRequest);
+		
 		interceptPreUpdate(entity);
 		BaseEntity newEntity = entityRepository.save(entity);
-
-		return WebResponse.builder().entity(newEntity).build();
+		return newEntity;
 	}
 
 	/**

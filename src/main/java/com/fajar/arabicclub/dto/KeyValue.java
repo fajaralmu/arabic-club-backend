@@ -20,6 +20,7 @@ public class KeyValue<K, V> implements Serializable, Entry<K, V>{/**
 	private V value;
 	@Builder.Default
 	private boolean valid = true;
+	private boolean multiKey;
 	
 	@Override
 	public K getKey() {
@@ -42,6 +43,17 @@ public class KeyValue<K, V> implements Serializable, Entry<K, V>{/**
 	}
 	public void setKey(K key) {
 		this.key = key;
+	}
+	public boolean isMultiKey() {
+		return multiKey;
+	}
+	public void setMultiKey(boolean multiKey) {
+		this.multiKey = multiKey;
+	}
+	public KeyValue(K k, V b, boolean v) { 
+		this.key = k;
+		this.value = b;
+		this.valid = v;
 	}
 	
 	

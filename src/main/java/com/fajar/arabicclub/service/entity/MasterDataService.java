@@ -15,18 +15,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 
+import com.fajar.arabicclub.config.LogProxyFactory;
 import com.fajar.arabicclub.dto.Filter;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
+import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.entity.BaseEntity;
-import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.entity.setting.EntityManagementConfig;
 import com.fajar.arabicclub.entity.setting.EntityProperty;
+import com.fajar.arabicclub.exception.ApplicationException;
 import com.fajar.arabicclub.repository.CustomRepositoryImpl;
 import com.fajar.arabicclub.repository.DatabaseProcessor;
 import com.fajar.arabicclub.repository.EntityRepository;
-import com.fajar.arabicclub.service.LogProxyFactory;
-import com.fajar.arabicclub.service.SessionValidationService;
 import com.fajar.arabicclub.util.CollectionUtil;
 import com.fajar.arabicclub.util.EntityUtil;
 
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class EntityService {
+public class MasterDataService {
 
 	public static final String ORIGINAL_PREFFIX = "{ORIGINAL>>";
 
@@ -47,16 +47,11 @@ public class EntityService {
 	@Autowired
 	private EntityRepository entityRepository; 
 	@Autowired
-	private EntityManagementPageService entityManagementPageService;  
-	@Autowired
-	private SessionValidationService sessionValidationService;
+	private EntityManagementPageService entityManagementPageService;   
 	
 	@PostConstruct
 	public void init() {
-		LogProxyFactory.setLoggers(this);
-//		filterDatabaseProcessor = customRepository.createDatabaseProcessor();
-//		databaseProcessorNotifier.register(filterDatabaseProcessor);
-//		filterDatabaseProcessor.setId(this.getClass().getSimpleName());
+		LogProxyFactory.setLoggers(this); 
 	}
 
 	private EntityManagementConfig getEntityManagementConfig(String key) {
@@ -73,67 +68,35 @@ public class EntityService {
 	 */
 	public WebResponse saveEntity(WebRequest request, HttpServletRequest servletRequest, boolean newRecord) {
 
-		try {
-
 			final String key = request.getEntity().toLowerCase();
 			EntityManagementConfig entityConfig = getEntityManagementConfig(key);
-			
 			BaseEntityUpdateService updateService = entityConfig.getEntityUpdateService();
 			String fieldName = entityConfig.getFieldName();
-			Object entityValue = null;
+			BaseModel entityValue = null;
 
 			try {
 				Field entityField = EntityUtil.getDeclaredField(WebRequest.class, fieldName);
-				entityValue = entityField.get(request);
+				entityValue = (BaseModel) entityField.get(request);
 
 				log.info("save {}", entityField.getName());
 				log.info("newRecord: {}", newRecord);
 				
 				if (entityValue != null) {
-					boolean isUser = newRecord? false: checkIfUser(entityValue, servletRequest);
-					WebResponse saved = updateService.saveEntity((BaseEntity) entityValue, newRecord, servletRequest);
 					 
-					//databaseProcessorNotifier.refresh();
-					return saved;
+					BaseEntity savedEntity = updateService.saveEntity(entityValue.toEntity(), newRecord, servletRequest); 
+					 
+					return WebResponse.builder().entity(savedEntity.toModel()).build();
 				} else {
 					return WebResponse.failed();
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
-				return WebResponse.failed(e.getMessage());
+				throw new ApplicationException(e.getMessage());
 			}
 
-		} catch (Exception e) {
-			return WebResponse.failed(e.getMessage());
-		} finally {
-
-		}
+		 
 	}
-
-	private boolean checkIfUser(Object entityValue, HttpServletRequest servletRequest) {
-		
-//		User user = SessionUtil.getSessionUser(servletRequest);
-//		if(entityValue instanceof User) {
-//			if(!user.getId().equals(((User) entityValue).getId())){
-//				throw new RuntimeException("Invalid User!");
-//			}
-//			return true;
-//		}
-		return false;
-	}
-
-	private void validateInMemoryEntities(final EntityManagementConfig entityConfig) {
-//		ThreadUtil.run(()->{
-//			if(entityConfig.getEntityClass().equals(Page.class)) {
-//				webConfigService.refreshPages(true);
-//			}else if(entityConfig.getEntityClass().equals(Menu.class)) {
-//				webConfigService.refreshMenus(true);
-//			}
-//		});
-
-	}
-
+ 
 	/**
 	 * get list of entities filtered
 	 * 
@@ -155,28 +118,22 @@ public class EntityService {
 		try {
 
 			String entityName = request.getEntity().toLowerCase();
-			EntityManagementConfig config = getEntityManagementConfig(entityName);
-			log.info("entityName: {}, config: {}", entityName, config);
-			entityClass = config.getEntityClass();
-
-			if (null == entityClass) {
-				throw new Exception("Invalid entity");
+			EntityManagementConfig entityConfig = getEntityManagementConfig(entityName);
+			log.info("entityName: {}, config: {}", entityName, entityConfig);
+			if (null == entityConfig) {
+				throw new Exception("Invalid entity:"+entityName);
 			}
-			EntityResult entityResult;
-			if (false && User.class.equals(entityClass)) {
-//				User user = SessionUtil.getSessionUser(httpRequest); 
-//				entityResult = EntityResult.builder().count(1).entities(CollectionUtil.listOf(user)).build();
-			} else {
-
-				entityResult = filterEntities(filter, entityClass);
-			}
+			BaseEntityUpdateService updateService = entityConfig.getEntityUpdateService();
+			entityClass = entityConfig.getEntityClass();
+			EntityResult entityResult = filterEntities(filter, entityClass);
+			updateService.postFilter(entityResult.getEntities());
 			return WebResponse.builder()
-					.entities(EntityValidation.validateDefaultValues(entityResult.entities, entityRepository))
-					.totalData(entityResult.count).filter(request.getFilter()).entityClass(entityClass).build();
+					.entities(BaseModel.toModels(entityResult.entities))
+					.totalData(entityResult.count).filter(request.getFilter()).build();
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			return WebResponse.failed(ex.getMessage());
+			throw new ApplicationException(ex);
 		}
 	}
 
@@ -195,7 +152,7 @@ public class EntityService {
 			count.put("value", 0L);
 			e.printStackTrace();
 		}
-		filterDatabaseProcessor.refresh();
+		 
 		return EntityResult.builder().entities(CollectionUtil.convertList(entities))
 				.count(count.get("value").intValue()).build();
 	}
@@ -205,36 +162,21 @@ public class EntityService {
 	 * 
 	 * @param request
 	 * @return
+	 * @throws Exception 
 	 */
-	public WebResponse delete(WebRequest request) {
+	public WebResponse delete(WebRequest request, HttpServletRequest httpRequest) throws Exception {
 		DatabaseProcessor filterDatabaseProcessor = customRepository.createDatabaseProcessor();
 		try {
 			Map<String, Object> filter = request.getFilter().getFieldsFilter();
 			Long id = Long.parseLong(filter.get("id").toString());
 			String entityName = request.getEntity().toLowerCase();
-
-			Class<? extends BaseEntity> entityClass = getEntityManagementConfig(entityName).getEntityClass();
-
-			if (null == entityClass || User.class.equals(entityClass)) {
-				throw new Exception("Invalid entity");
-			}
-			if(null == entityRepository.findById(entityClass, id)) {
-				throw new RuntimeException("Record does not exist");
-			}
-			
-			boolean result = filterDatabaseProcessor.deleteObjectById(entityClass, id);
-			if(!result) {
-				throw new RuntimeException("Failed deleting");
-			}
-			//databaseProcessorNotifier.refresh();
-			return WebResponse.builder().code("00").message("deleted :" + result).build();
-
-		} catch (Exception ex) {
-
-			ex.printStackTrace();
-			return WebResponse.builder().code("01").message("failed: " + ex.getMessage()).build();
+			EntityManagementConfig entityConfig = getEntityManagementConfig(entityName);
+			BaseEntityUpdateService updateService = entityConfig.getEntityUpdateService();
+			return updateService.deleteEntity(id, entityConfig.getEntityClass(), httpRequest);
+		} catch (Exception e) {
+			throw new ApplicationException(e.getMessage());
 		} finally {
-			filterDatabaseProcessor.refresh();
+			 
 		}
 	}
  

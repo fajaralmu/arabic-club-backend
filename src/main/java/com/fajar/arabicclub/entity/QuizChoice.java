@@ -7,9 +7,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.fajar.arabicclub.constants.AnswerCode;
+import com.fajar.arabicclub.dto.model.QuizChoiceModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(value = Include.NON_NULL)
-public class QuizChoice extends BaseEntity  implements SingleImageModel{
+public class QuizChoice extends BaseEntity<QuizChoiceModel>  implements SingleImageModel{
 
 	/**
 	* 

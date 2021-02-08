@@ -17,9 +17,9 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.fajar.arabicclub.constants.AuthorityType;
 import com.fajar.arabicclub.controller.LoginController;
 import com.fajar.arabicclub.dto.WebResponse;
-import com.fajar.arabicclub.entity.AuthorityType;
 import com.fajar.arabicclub.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

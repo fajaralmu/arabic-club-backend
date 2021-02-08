@@ -1,7 +1,5 @@
 package com.fajar.arabicclub.entity;
 
-import static com.fajar.arabicclub.constants.FieldType.FIELD_TYPE_TEXTAREA;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,73 +7,56 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.fajar.arabicclub.annotation.Dto;
-import com.fajar.arabicclub.annotation.FormField;
-import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.constants.FontAwesomeIcon;
+import com.fajar.arabicclub.dto.model.ApplicationProfileModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-@Dto(ignoreBaseField = false, updateService = "shopProfileUpdateService")
+ 
 @Entity
 @Table(name = "shop_profile")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ApplicationProfile extends BaseEntity  implements SingleImageModel{
+public class ApplicationProfile extends BaseEntity<ApplicationProfileModel>  implements SingleImageModel{
 
 	/**
 	* 
 	*/
 	private static final long serialVersionUID = 4095664637854922384L;
-	@Column 
-	@FormField
+	@Column  
 	private String name;
-	@Column(name = "mart_code", unique = true)
-	@FormField(type = FieldType.FIELD_TYPE_HIDDEN)
+	@Column(name = "mart_code", unique = true) 
 	private String appCode;
-	@Column(name = "short_description")
-	@FormField(type = FIELD_TYPE_TEXTAREA)
+	@Column(name = "short_description") 
 	private String shortDescription;
-	@Column
-	@FormField(type = FIELD_TYPE_TEXTAREA)
+	@Column 
 	private String about;
-	@Column(name = "welcoming_message")
-	@FormField(type = FIELD_TYPE_TEXTAREA)
+	@Column(name = "welcoming_message") 
 	private String welcomingMessage;
-	@Column
-	@FormField(type = FIELD_TYPE_TEXTAREA)
+	@Column 
 	private String address;
 
-	@Column
-	@FormField(type = FIELD_TYPE_TEXTAREA)
+	@Column 
 	private String contact;
-	@Column
-	@FormField
-	private String website;
-	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = false, defaultValue = "DefaultIcon.BMP")
+	@Column 
+	private String website; 
 	@Column(name = "icon_url")
-	private String iconUrl;
-	@FormField(type = FieldType.FIELD_TYPE_IMAGE, iconImage = true, required = false, defaultValue = "DefaultIcon.BMP")
+	private String iconUrl; 
 	@Column(name = "page_icon_url")
-	private String pageIcon;
-	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = false, defaultValue = "DefaultBackground.BMP")
+	private String pageIcon; 
 	@Column(name = "background_url")
 	private String backgroundUrl;
-	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, hasPreview = true, previewLink = "fa-preview" , required = false, defaultValue = "home")
-	@Column(name= "footer_icon_class")
+	 @Column(name= "footer_icon_class")
 	@Enumerated(EnumType.STRING) 
 	private FontAwesomeIcon footerIconClass; 
-	
-	@FormField(type = FieldType.FIELD_TYPE_COLOR, required = false, defaultValue = "#1e1e1e")
+	 
 	@Column(name = "general_color")
-	private String color;
-	@FormField(type = FieldType.FIELD_TYPE_COLOR, required = false, defaultValue = "#f5f5f5")
+	private String color; 
 	@Column(name = "font_color")
 	private String fontColor;
 	

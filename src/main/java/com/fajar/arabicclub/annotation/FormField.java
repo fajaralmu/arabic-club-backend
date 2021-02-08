@@ -14,7 +14,7 @@ public @interface FormField {
 	
 	public FieldType type() default FieldType.FIELD_TYPE_TEXT; 
 	
-	public String lableName() default ""; 
+	public String labelName() default ""; 
 	public String optionItemName() default "";  
 	public String defaultValue() default ""; 
 	public String[] availableValues() default {};
@@ -29,6 +29,8 @@ public @interface FormField {
 	public boolean iconImage() default false;
 	
 	public boolean hasPreview() default false;
+	public boolean editable() default true;
+	public boolean filterable() default true;
 	//LINK = /api/component/{previewLink}/{elementValue}
 	public String previewLink() default "";
 

@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository< User	, Long> {
 	
 	/**
 	 * 
-	 * @param authorityType {@linkplain com.fajar.entity.AuthorityType}
+	 * @param authorityType {@linkplain com.fajar.arabicclub.constants.entity.AuthorityType}
 	 * @return
 	 */
 	@Query(value="select * from users left join user_authority " + 

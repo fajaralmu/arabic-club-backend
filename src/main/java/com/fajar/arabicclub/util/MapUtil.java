@@ -1,5 +1,6 @@
 package com.fajar.arabicclub.util;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,12 +10,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.math3.stat.descriptive.summary.Product;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MapUtil {
 
-	public static <T> List<T> convertMapList(List<Map<?, ?>> mapList, Class<T> objectClass) {
+	public static <T> List<T> mappedListToList(Map<?,List<T>> mappedList) {
+		List<T> result = new ArrayList<T>();
+
+		for (Object key : mappedList.keySet()) {
+			result.addAll((List<T>) mappedList.get(key));
+		}
+
+		return result;
+	}
+	public static <K, T> List<T> convertMapList(List<Map<K, T>> mapList, Class<T> objectClass) {
 
 		List<T> result = new ArrayList<T>();
 
@@ -108,7 +121,7 @@ public class MapUtil {
 			return null;
 		}
 
-	}
+	} 
 
 	public static boolean objectEquals(Object object, Object... objects) {
 

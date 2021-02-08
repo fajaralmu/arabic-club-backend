@@ -12,10 +12,10 @@ public class ShopProfileUpdateService extends BaseEntityUpdateService<Applicatio
  
 	
 	@Override
-	public WebResponse saveEntity(ApplicationProfile baseEntity, boolean newRecord, HttpServletRequest httoHttpServletRequest){
+	public ApplicationProfile saveEntity(ApplicationProfile baseEntity, boolean newRecord, HttpServletRequest httpServletRequest){
 		ApplicationProfile shopProfile = (ApplicationProfile) copyNewElement(baseEntity, newRecord);
 		 
-		validateEntityFields(shopProfile, newRecord);
+		validateEntityFields(shopProfile, newRecord, httpServletRequest);
 //		if (base64Image != null && !base64Image.equals("")) {
 //			try {
 //				String imageName = fileService.writeImage(baseEntity.getClass().getSimpleName(), base64Image);
@@ -34,7 +34,7 @@ public class ShopProfileUpdateService extends BaseEntityUpdateService<Applicatio
 //			}
 //		}
 		ApplicationProfile newShopProfile = entityRepository.save(shopProfile);
-		return WebResponse.builder().entity(newShopProfile).build();
+		return newShopProfile;
 	}
 	
 }

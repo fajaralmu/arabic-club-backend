@@ -4,35 +4,28 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.fajar.arabicclub.annotation.Dto;
-import com.fajar.arabicclub.annotation.FormField;
-import com.fajar.arabicclub.constants.FieldType;
+import com.fajar.arabicclub.dto.model.LessonCategoryModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-@Dto("Lesson Category")
+import lombok.NoArgsConstructor; 
 @Entity
 @Table (name="lesson_category")
 @Data
 @Builder	
 @AllArgsConstructor
 @NoArgsConstructor
-public class LessonCategory extends BaseEntity {/**
+public class LessonCategory extends BaseEntity<LessonCategoryModel> {/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1168912843978053906L; 
-	@FormField 
+	private static final long serialVersionUID = -1168912843978053906L;  
 	@Column(unique = true)
-	private String code;
-	@FormField 
+	private String code; 
 	@Column(unique = true)
-	private String name;
-	@FormField 
+	private String name; 
 	@Column(name = "icon_class")
-	private String iconClassName;
-	@FormField ( type= FieldType.FIELD_TYPE_TEXTAREA) 
+	private String iconClassName; 
 	@Column
 	private String description;
 }

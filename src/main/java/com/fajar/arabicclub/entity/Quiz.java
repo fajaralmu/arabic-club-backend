@@ -8,46 +8,52 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.fajar.arabicclub.annotation.Dto;
-import com.fajar.arabicclub.annotation.FormField;
-import com.fajar.arabicclub.constants.FieldType;
+import com.fajar.arabicclub.dto.model.QuizModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor; 
-@Dto(editable = false)
+import lombok.NoArgsConstructor;
+
 @Entity
-@Table (name="quiz")
+@Table(name = "quiz")
 @Data
-@Builder	
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Quiz extends BaseEntity {/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1168912843978053906L; 
-	  
-	@FormField
+public class Quiz extends BaseEntity<QuizModel> {
+	/**
+	* 
+	*/
+	private static final long serialVersionUID = -1168912843978053906L;
+
 	@Column(unique = true, nullable = false)
 	private String title;
-	@FormField
 	@Column
-	private String description; 
-	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
+	private String description;
 	@Column
 	private boolean publicQuiz;
-	@FormField(type = FieldType.FIELD_TYPE_NUMBER, lableName = "Duration (Second)")
 	@Column(nullable = false)
 	private Long duration;
-	
+
 	@Transient
 	private List<QuizQuestion> questions;
-	
-	public void addQuestion(QuizQuestion question) { 
+
+	public void addQuestion(QuizQuestion question) {
 		if (questions == null) {
 			questions = new ArrayList<QuizQuestion>();
 		}
 		questions.add(question);
+	}
+
+	@Override
+	public QuizModel toModel() {
+		QuizModel model = super.toModel();
+		if (null != questions) {
+			questions.forEach(q -> {
+				model.addQuestion(q.toModel());
+			});
+		}
+		return model;
 	}
 }

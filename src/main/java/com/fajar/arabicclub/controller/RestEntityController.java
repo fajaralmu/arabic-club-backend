@@ -19,7 +19,7 @@ import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.setting.EntityProperty;
 import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.service.entity.EntityManagementPageService;
-import com.fajar.arabicclub.service.entity.EntityService;
+import com.fajar.arabicclub.service.entity.MasterDataService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RestEntityController extends BaseController {
 
 	@Autowired
-	private EntityService entityService;
+	private MasterDataService entityService;
 	@Autowired
 	private EntityManagementPageService entityManagementPageService;
 
@@ -66,9 +66,9 @@ public class RestEntityController extends BaseController {
 	}
 
 	@PostMapping(value = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public WebResponse delete(@RequestBody WebRequest request, HttpServletRequest httpRequest) {
+	public WebResponse delete(@RequestBody WebRequest request, HttpServletRequest httpRequest) throws Exception {
 		log.info("delete entity {}", request);
-		return entityService.delete(request);
+		return entityService.delete(request, httpRequest);
 	}
 
 	@PostMapping(value = "/config", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

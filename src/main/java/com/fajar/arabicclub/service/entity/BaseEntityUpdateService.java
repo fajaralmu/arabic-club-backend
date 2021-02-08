@@ -2,7 +2,6 @@ package com.fajar.arabicclub.service.entity;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -12,16 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fajar.arabicclub.annotation.FormField;
-import com.fajar.arabicclub.annotation.StoreValueTo;
+import com.fajar.arabicclub.config.LogProxyFactory;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.BaseEntity;
+import com.fajar.arabicclub.entity.MultipleImageModel;
+import com.fajar.arabicclub.entity.SingleImageModel;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.entity.setting.EntityUpdateInterceptor;
 import com.fajar.arabicclub.repository.EntityRepository;
-import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.service.SessionValidationService;
 import com.fajar.arabicclub.service.resources.FileService;
-import com.fajar.arabicclub.util.CollectionUtil;
+import com.fajar.arabicclub.service.resources.ImageUploadService;
 import com.fajar.arabicclub.util.EntityUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,16 +35,33 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 	@Autowired
 	protected EntityRepository entityRepository;
 	@Autowired
-	private SessionValidationService sessionValidationService;
+	private SessionValidationService sessionValidationService; 
+	@Autowired
+	private ImageUploadService imageUploadService;
 	
 	@PostConstruct
 	public void init() {
 		LogProxyFactory.setLoggers(this);
 	}
 
-	public WebResponse saveEntity(T baseEntity, boolean newRecord, HttpServletRequest httoHttpServletRequest) throws Exception {
+	public T saveEntity(T baseEntity, boolean newRecord, HttpServletRequest httpServletRequest) throws Exception {
 		log.error("saveEntity Method not implemented");
-		return WebResponse.failed("method not implemented");
+		return null;
+	}
+	
+	public void postFilter(List<T> objects) {
+		
+	}
+
+	public WebResponse deleteEntity(Long id, Class _class, HttpServletRequest httpServletRequest) throws Exception {
+		 
+		try {
+			boolean deleted = entityRepository.deleteById(id, _class);
+			return new WebResponse();
+		}catch (Exception e) { 
+			throw e;
+		} finally { 
+		}
 	}
 
 	protected T copyNewElement(T source, boolean newRecord) {
@@ -82,8 +99,9 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 	 * @param object
 	 * @param newRecord
 	 */
-	protected void validateEntityFields(BaseEntity object, boolean newRecord) {
+	protected void validateEntityFields(BaseEntity object, boolean newRecord, HttpServletRequest httpServletRequest) {
 		log.info("validating entity: {} newRecord: {}", object.getClass(), newRecord);
+		object.validateNullValues();
 		try {
 
 			BaseEntity existingEntity = null;
@@ -115,36 +133,51 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 					case FIELD_TYPE_IMAGE:
 						
 						boolean isUpdateRecord =  newRecord == false;
-						
-						if (isUpdateRecord &&  fieldValue.equals(field.get(existingEntity))) {
-							Object existingImage = field.get(existingEntity);
-							log.info("existingImage : {}", existingImage);
-							if ( existingImage.equals(fieldValue)) {
-								field.set(object, existingImage);
-							}
-						} else {
-							String imageName = updateImage(field, object, formfield.iconImage());
-							field.set(object, imageName);
+						if (isUpdateRecord &&  fieldValue.equals(field.get(existingEntity))) { 
+							field.set(object, field.get(existingEntity));
+							break; 
+						} 
+						if (object instanceof SingleImageModel) {
+							imageUploadService.uploadImage((SingleImageModel) object, httpServletRequest);
 						}
-						break;
-					case FIELD_TYPE_FIXED_LIST:
-						
-						if (formfield.multipleSelect()) {
-							String storeToFieldName = field.getAnnotation(StoreValueTo.class).value(); 
-							
-							Field idField = CollectionUtil.getIDFieldOfUnderlyingListType(field);
-							Field storeToField = EntityUtil.getDeclaredField(object.getClass(), storeToFieldName);
-							
-							Object[] valueAsArray = ((Collection) fieldValue).toArray(); 
-							CharSequence[] actualFieldValue = new String[valueAsArray.length];
-							
-							for (int j = 0; j < valueAsArray.length; j++) {
-								actualFieldValue[j] = String.valueOf(idField.get(valueAsArray[j]));
+						if (object instanceof MultipleImageModel) {
+							log.info("{} is multiple image model", object.getClass());
+							if (newRecord) {
+								imageUploadService.writeNewImages((MultipleImageModel) object, httpServletRequest);
+							}else {
+								MultipleImageModel existing = (MultipleImageModel) existingEntity;
+								imageUploadService.updateImages((MultipleImageModel) object, existing , httpServletRequest);
 							}
-							
-							storeToField.set(object, String.join("~", actualFieldValue));
 						}
+//						if (isUpdateRecord &&  fieldValue.equals(field.get(existingEntity))) {
+//							Object existingImage = field.get(existingEntity);
+//							log.info("existingImage : {}", existingImage);
+//							if ( existingImage.equals(fieldValue)) {
+//								field.set(object, existingImage);
+//							}
+//						} else {
+//							String imageName = updateImage(field, object, formfield.iconImage());
+//							field.set(object, imageName);
+//						}
 						break;
+//					case FIELD_TYPE_FIXED_LIST:
+//						
+//						if (formfield.multipleSelect()) {
+//							String storeToFieldName = field.getAnnotation(StoreValueTo.class).value(); 
+//							
+//							Field idField = CollectionUtil.getIDFieldOfUnderlyingListType(field);
+//							Field storeToField = EntityUtil.getDeclaredField(object.getClass(), storeToFieldName);
+//							
+//							Object[] valueAsArray = ((Collection) fieldValue).toArray(); 
+//							CharSequence[] actualFieldValue = new String[valueAsArray.length];
+//							
+//							for (int j = 0; j < valueAsArray.length; j++) {
+//								actualFieldValue[j] = String.valueOf(idField.get(valueAsArray[j]));
+//							}
+//							
+//							storeToField.set(object, String.join("~", actualFieldValue));
+//						}
+//						break;
 					default:
 						break;
 					}
@@ -160,41 +193,7 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 		}
 	}
 
-	/**
-	 * update image field, writing to disc
-	 * 
-	 * @param field
-	 * @param object
-	 * @return
-	 */
-	private String updateImage(Field field, BaseEntity object, boolean isIcon) {
-		log.info("updating image {}", field.getName());
-		try {
-			Object base64Value = field.get(object);
-			return writeImage(object, base64Value, isIcon);
+	
 
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private String writeImage(BaseEntity object, Object base64Value, boolean isIcon) {
-		String fileName = null;
-		if (null != base64Value && base64Value.toString().trim().isEmpty() == false) {
-			try {
-				if(isIcon) {
-					fileName = fileService.writeIcon(object.getClass().getSimpleName(), base64Value.toString(), null);
-				}else {
-					fileName = fileService.writeImage(object.getClass().getSimpleName(), base64Value.toString());
-				}
-				
-			} catch (Exception e) {
-				log.error("Error writing image for {}", object.getClass().getSimpleName());
-				e.printStackTrace();
-			}
-		}
-		return fileName;
-	}
+	
 }

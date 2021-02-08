@@ -4,18 +4,18 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fajar.arabicclub.annotation.Dto;
-import com.fajar.arabicclub.entity.ApplicationProfile;
+import com.fajar.arabicclub.dto.model.ApplicationProfileModel;
+import com.fajar.arabicclub.dto.model.DocumentCategoryModel;
+import com.fajar.arabicclub.dto.model.DocumentsModel;
+import com.fajar.arabicclub.dto.model.ImageCategoryModel;
+import com.fajar.arabicclub.dto.model.ImagesModel;
+import com.fajar.arabicclub.dto.model.LessonCategoryModel;
+import com.fajar.arabicclub.dto.model.LessonModel;
+import com.fajar.arabicclub.dto.model.QuizModel;
+import com.fajar.arabicclub.dto.model.UserModel;
+import com.fajar.arabicclub.dto.model.VideoCategoryModel;
+import com.fajar.arabicclub.dto.model.VideosModel;
 import com.fajar.arabicclub.entity.BaseEntity;
-import com.fajar.arabicclub.entity.DocumentCategory;
-import com.fajar.arabicclub.entity.Documents;
-import com.fajar.arabicclub.entity.ImageCategory;
-import com.fajar.arabicclub.entity.Images;
-import com.fajar.arabicclub.entity.Lesson;
-import com.fajar.arabicclub.entity.LessonCategory;
-import com.fajar.arabicclub.entity.Quiz;
-import com.fajar.arabicclub.entity.User;
-import com.fajar.arabicclub.entity.VideoCategory;
-import com.fajar.arabicclub.entity.Videos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,21 +41,21 @@ public class WebRequest implements Serializable {
 	 */
 
 	private String entity;
-	private User user; 
-	private ApplicationProfile profile; 
-	private Lesson lesson;
-	private LessonCategory lessoncategory;
+	private UserModel user; 
+	private ApplicationProfileModel profile; 
+	private LessonModel lesson;
+	private LessonCategoryModel lessoncategory;
 	
-	private Videos videos;
-	private VideoCategory videocategory;
+	private VideosModel videos;
+	private VideoCategoryModel videocategory;
 	
-	private Images images;
-	private ImageCategory imagecategory;
+	private ImagesModel images;
+	private ImageCategoryModel imagecategory;
 	
-	private Documents documents;
-	private DocumentCategory documentcategory;
+	private DocumentsModel documents;
+	private DocumentCategoryModel documentcategory;
 	
-	private Quiz quiz;
+	private QuizModel quiz;
 	
 
 	/**

@@ -1,6 +1,5 @@
 package com.fajar.arabicclub.util;
 
-import java.awt.Menu;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -10,13 +9,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.data.domain.Page;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fajar.arabicclub.config.LogProxyFactory;
 import com.fajar.arabicclub.entity.setting.EntityProperty;
-import com.fajar.arabicclub.service.LogProxyFactory;
 
 import lombok.extern.slf4j.Slf4j;
 

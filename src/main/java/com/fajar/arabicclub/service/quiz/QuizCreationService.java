@@ -1,7 +1,5 @@
 package com.fajar.arabicclub.service.quiz;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,20 +11,15 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fajar.arabicclub.config.exception.DataNotFoundException;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Quiz;
-import com.fajar.arabicclub.entity.QuizChoice;
 import com.fajar.arabicclub.entity.QuizQuestion;
-import com.fajar.arabicclub.entity.SingleImageModel;
-import com.fajar.arabicclub.repository.EntityRepository;
+import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fajar.arabicclub.repository.QuizChoiceRepository;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
-import com.fajar.arabicclub.service.resources.FileService;
-import com.fajar.arabicclub.service.resources.ImageRemovalService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,11 +50,11 @@ public class QuizCreationService {
 	public WebResponse submit(WebRequest request, HttpServletRequest httpServletRequest) {
 		WebResponse response = new WebResponse();
 
-		Quiz quiz = request.getQuiz();
+		Quiz quiz = request.getQuiz().toEntity();
 		validateQuizAndQuestions(quiz);
 
 		Quiz savedQuiz = quizDataService.saveFullQuiz(quiz, httpServletRequest);
-		response.setQuiz(savedQuiz);
+		response.setQuiz(savedQuiz.toModel());
 		return response;
 	}
 
@@ -94,7 +87,7 @@ public class QuizCreationService {
 
 			WebResponse response = new WebResponse();
 			Quiz fullQuiz = quizDataService.getFullQuiz(id, httpServletRequest, false);
-			response.setQuiz(fullQuiz);
+			response.setQuiz(fullQuiz.toModel());
 			return response;
 		} catch (Exception e) {
 			e.printStackTrace();

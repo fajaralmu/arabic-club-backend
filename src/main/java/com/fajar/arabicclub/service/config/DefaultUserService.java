@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.fajar.arabicclub.constants.AuthorityType;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Authority;
-import com.fajar.arabicclub.entity.AuthorityType;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.repository.AuthorityRepository;
 import com.fajar.arabicclub.repository.EntityRepository;
@@ -105,7 +105,7 @@ public class DefaultUserService {
 		log.info("Update profile");
 		
 		final User loggedUser = sessionValidationService.getLoggedUser(httpServletRequest);
-		final User user = webRequest.getUser();
+		final User user = webRequest.getUser().toEntity();
 		 
 		updateUserData(loggedUser, user, httpServletRequest);
 		
@@ -127,7 +127,7 @@ public class DefaultUserService {
 		
 		if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
 			loggedUser.setProfileImage(user.getProfileImage());
-			imageUploadService.uploadImage(loggedUser);
+			imageUploadService.uploadImage(loggedUser, httpServletRequest);
 		}
 		entityRepository.save(loggedUser);
 	}

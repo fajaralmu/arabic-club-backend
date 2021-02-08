@@ -39,12 +39,11 @@ public class Filter implements Serializable {
 	@Builder.Default
 	private Integer year = 0;
 	@Builder.Default
-	private Integer month = 0;
-	@Builder.Default
-	private String module = "IN";
+	private Integer month = 0; 
 	@Builder.Default
 	private Map<String, Object> fieldsFilter = new HashMap<>();
 	
+	private Integer dayTo;
 	private Integer monthTo;
 	private Integer yearTo; 
 	

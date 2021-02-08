@@ -27,13 +27,16 @@ public class ImageUploadService {
 	@Autowired
 	private ImageRemovalService imageRemovalService;
 
+	public String uploadImage(SingleImageModel singleImageModel) {
+		return uploadImage(singleImageModel, null);
+	}
 	/**
 	 * upload single image
 	 * 
 	 * @param singleImageModel
 	 * @return
 	 */
-	public String uploadImage(SingleImageModel singleImageModel) {
+	public String uploadImage(SingleImageModel singleImageModel, HttpServletRequest httpServletRequest) {
 
 		String image = singleImageModel.getImage();
 		if (image != null && image.startsWith("data:image")) {
@@ -42,7 +45,7 @@ public class ImageUploadService {
 				removeOldImage(singleImageModel);
 			}
 			try {
-				String savedFileName = fileService.writeImage(singleImageModel.getClass().getSimpleName(), image);
+				String savedFileName = fileService.writeImage(singleImageModel.getClass().getSimpleName(), image, httpServletRequest);
 				singleImageModel.setImage(savedFileName);
 				return savedFileName;
 			} catch (IOException e) {

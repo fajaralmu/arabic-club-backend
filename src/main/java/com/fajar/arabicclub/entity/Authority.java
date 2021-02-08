@@ -5,6 +5,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import com.fajar.arabicclub.constants.AuthorityType;
+import com.fajar.arabicclub.dto.model.AuthorityModel;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class Authority extends BaseEntity {
+public class Authority extends BaseEntity<AuthorityModel> {
 	/**
 	 * 
 	 */

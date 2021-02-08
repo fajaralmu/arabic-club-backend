@@ -2,18 +2,19 @@ package com.fajar.arabicclub.entity.setting;
 
 import java.io.Serializable;
 
+import com.fajar.arabicclub.annotation.CustomEntity;
 import com.fajar.arabicclub.annotation.Dto;
+import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.entity.BaseEntity;
+import com.fajar.arabicclub.exception.ApplicationException;
 import com.fajar.arabicclub.service.entity.BaseEntityUpdateService;
-import com.fajar.arabicclub.util.EntityUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data
 @Builder
@@ -30,11 +31,11 @@ public class EntityManagementConfig implements Serializable {
 	private String fieldName;
 	private boolean disabled;
 	private String iconClassName;
+	@JsonIgnore
+	@Default
+	private Class<? extends BaseModel> modelClass = BaseModel.class;
 	
-	public EntityManagementConfig setIconClassName(String iconClassName) {
-		this.iconClassName = iconClassName;
-		return this;
-	}
+	
 
 	public EntityManagementConfig(String fieldName, Class<? extends BaseEntity> entityClass,
 			BaseEntityUpdateService service, EntityUpdateInterceptor updateInterceptor) {
@@ -47,16 +48,31 @@ public class EntityManagementConfig implements Serializable {
 //		this.updateInterceptor = updateInterceptor;
 		init();
 	}
+	
+	public EntityManagementConfig setIconClassName(String iconClassName) {
+		this.iconClassName = iconClassName;
+		return this;
+	}
 
 	private void init() {
-		Dto dtoAnnotation = EntityUtil.getClassAnnotation(entityClass, Dto.class);
-
+		CustomEntity customEntity = entityClass.getAnnotation(CustomEntity.class);
+		if (null == customEntity) {
+			throw new ApplicationException("NOT Custom Entity: "+ entityClass) ;
+		}
+		modelClass = customEntity.value();
+		
+		Dto dtoAnnotation = modelClass.getAnnotation(Dto.class);
+		if (null == dtoAnnotation) {
+			throw new ApplicationException("NOT Custom Entity: "+ modelClass) ;
+		}
 		disabled = dtoAnnotation.editable() == false;
 	}
 
 	public String getLabel() {
-		Dto dtoAnnotation = EntityUtil.getClassAnnotation(entityClass, Dto.class);
-
+		Dto dtoAnnotation = modelClass.getAnnotation(Dto.class);
+		if (null == dtoAnnotation) {
+			throw new ApplicationException("NOT Custom Entity: "+ modelClass) ;
+		}
 		String label = dtoAnnotation.value().equals("") ? entityClass.getSimpleName() : dtoAnnotation.value();
 		return label;
 	}

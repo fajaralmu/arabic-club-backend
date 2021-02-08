@@ -36,7 +36,7 @@ public class LessonUpdateService extends BaseEntityUpdateService<Lesson> {
 	 * @throws Exception
 	 */
 	@Override
-	public WebResponse saveEntity(Lesson baseEntity, boolean newRecord, HttpServletRequest httpServletRequest) throws Exception {
+	public Lesson saveEntity(Lesson baseEntity, boolean newRecord, HttpServletRequest httpServletRequest) throws Exception {
 
 		Lesson lesson = (Lesson) copyNewElement(baseEntity, newRecord);
 		Optional<Lesson> dbLesson = Optional.empty();
@@ -69,7 +69,7 @@ public class LessonUpdateService extends BaseEntityUpdateService<Lesson> {
 		Lesson newLesson = entityRepository.save(lesson);
 		 
 
-		return WebResponse.builder().entity(newLesson).build();
+		return newLesson;
 	}
 
 	

@@ -42,7 +42,7 @@ public class UserSessionService {
 			response.setUser(loggedUser);
 			response.setLoggedIn(true);
 		}
-		response.setApplicationProfile(defaultApplicationProfileService.getApplicationProfile());
+		response.setApplicationProfile(defaultApplicationProfileService.getApplicationProfile().toModel());
 		response.setRequestId(randomRequestId());
 		return response;
 	}

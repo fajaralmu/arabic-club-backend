@@ -7,9 +7,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fajar.arabicclub.annotation.Dto;
-import com.fajar.arabicclub.annotation.FormField;
-import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.constants.FormInputColumn;
+import com.fajar.arabicclub.dto.model.DocumentsModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,26 +22,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Documents extends BaseEntity {
+public class Documents extends BaseEntity<DocumentsModel> {
 
 	/**
 	* 
 	*/
 	private static final long serialVersionUID = 3494963248002164943L;
-	@Column(unique = true)
-	@FormField
+	@Column(unique = true) 
 	private String title;
 	
-	@Column
-	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
+	@Column 
 	private String description;
 	
 	@JoinColumn(name = "category_id", nullable = false)
-	@ManyToOne
-	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_DYNAMIC_LIST)
+	@ManyToOne 
 	private DocumentCategory category; 
-	@Column
-	@FormField
+	@Column 
 	private String fileName;
 
 }

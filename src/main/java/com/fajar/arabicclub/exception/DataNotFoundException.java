@@ -1,4 +1,4 @@
-package com.fajar.arabicclub.config.exception;
+package com.fajar.arabicclub.exception;
 
 public class DataNotFoundException extends RuntimeException{
 

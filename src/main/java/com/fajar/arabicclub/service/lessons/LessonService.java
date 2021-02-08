@@ -39,7 +39,7 @@ public class LessonService {
 			totalData = lessonRepository.findLessonCountByCategoryCodeAndFIlter(categoryCode,String.valueOf(filter)).intValue();
 		} catch (Exception e) { 
 		}
-		return WebResponse.builder().entity(category).totalData(totalData ).entities(CollectionUtil.convertList(lessons)).build();
+		return WebResponse.builder().entity(category.toModel()).totalData(totalData ).entities(CollectionUtil.convertList(lessons)).build();
 	}
 
 }

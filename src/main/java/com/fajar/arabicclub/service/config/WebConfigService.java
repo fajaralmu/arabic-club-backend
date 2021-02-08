@@ -18,10 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.fajar.arabicclub.config.LogProxyFactory;
 import com.fajar.arabicclub.entity.BaseEntity;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.repository.AppProfileRepository;
-import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.util.CollectionUtil;
 
 import lombok.Data;
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WebConfigService {
   
-	private String uploadedImageRealPath, uploadedImagePath, reportPath;
+	private String uploadedImageRealPath;//, uploadedImagePath, reportPath;
 	
 	@Autowired
 	private AppProfileRepository ProfileRepository;

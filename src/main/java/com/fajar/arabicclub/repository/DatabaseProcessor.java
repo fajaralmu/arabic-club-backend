@@ -15,6 +15,7 @@ import org.hibernate.criterion.Restrictions;
 
 import com.fajar.arabicclub.dto.Filter;
 import com.fajar.arabicclub.entity.BaseEntity;
+import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fajar.arabicclub.querybuilder.CriteriaBuilder;
 import com.fajar.arabicclub.querybuilder.QueryUtil;
 import com.fajar.arabicclub.util.CollectionUtil;
@@ -26,169 +27,70 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DatabaseProcessor {
  
-	private Transaction currentTransaction;
 	private Session hibernateSession;
 	boolean removeTransactionAfterPersistence = true;
 	private final SessionFactory sessionFactory;
 	private String id = StringUtil.generateRandomNumber(5);
-	
-	public DatabaseProcessor(SessionFactory sessionFactory, Session sess) {  
+
+	public DatabaseProcessor(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-		this.hibernateSession = sess;
-	}
-	
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public boolean isTransactionNotKept() {
-		return removeTransactionAfterPersistence;
+		this.hibernateSession = sessionFactory.openSession();
 	}
 
-	public void keepTransaction() {
-		this.removeTransactionAfterPersistence = false;
+	private void checkSession() {
+		if (null == hibernateSession || hibernateSession.isConnected() == false) {
+			hibernateSession = sessionFactory.openSession();
+		}
 	}
 
-	public void notKeepingTransaction() {
-		this.removeTransactionAfterPersistence = true;
-	}
-	
-	public static <T extends BaseEntity> void saveNewRecord(T entity, Session hibernateSession) {
-		
-		Long id = (Long) hibernateSession.save(entity);
-		entity.setId(id);
-	}
-	public long getRowCount(Class<? extends BaseEntity> _class, Filter filter) {
-		
+	public long getRowCount(Class<? extends BaseEntity> _class, Filter filter) { 
+		log.info("getRowCount {}", _class);
 		try {
-			CriteriaBuilder criteriaBuilder = new CriteriaBuilder(hibernateSession, _class, filter);
+			checkSession();
+			CriteriaBuilder criteriaBuilder = getCriteriaBuilder(_class, filter);
 			Criteria criteria = criteriaBuilder.createRowCountCriteria();
-			
+
 			return (long) criteria.uniqueResult();
 		} catch (Exception e) {
 			return 0;
+		} finally {
+			refresh();
 		}
 	}
 	
-	public <T> T getById(Class<T> _class, Serializable id){
-		T object = (T) hibernateSession.get(_class, id);
-		refresh();
-		return object;
+	private CriteriaBuilder getCriteriaBuilder(Class<? extends BaseEntity> _class, Filter filter) {
+		return new CriteriaBuilder(hibernateSession, _class, filter);
 	}
-	
-	public void close() {
-		
-		try {
-			if(null!=hibernateSession) {
-			//	hibernateSession.close();
-			}
-		}catch (Exception e) {
-			// TODO: handle exception
-		}
-	}
-	public <T> List<T> findByKeyAndValues(Class<T> entityClass, String key, Object... values) {
-		
-		if(values == null ) {
-			log.error("break findByKeyAndValues >> VALUES IS NULL");
-			return CollectionUtil.emptyList();
-		}
-		
-		log.info("findByKeyAndValues, class: {}, key: {}, values.length: {}", entityClass, key, values.length);
-		List<T> res = this.pesistOperation(new PersistenceOperation<List<T>>() {
 
-			@Override
-			public List<T> doPersist(Session hibernateSession) {
-				Criteria criteria = hibernateSession.createCriteria(entityClass);
-				Criterion[] predictates = new Criterion[values.length];
-				for (int i = 0; i < values.length; i++) {
-					predictates[i] = (Restrictions.naturalId().set(key, values[i]));
-				}
-
-				criteria.add(Restrictions.or(predictates));
-				List list = criteria.list();
-				 
-				log.info("RESULT findByKeyAndValues:{}", list == null ? "NULL" : list.size());
-				return list;
-			}
-
-		});
-
-		return res;
-	}
 	public <T extends BaseEntity> List<T> filterAndSortv2(Class<T> _class, Filter filter) {
+		log.info("filterAndSortv2 : {}", _class);
+		checkSession();
+		Transaction tx = hibernateSession.beginTransaction();
 		try {
-			CriteriaBuilder criteriaBuilder = new CriteriaBuilder(hibernateSession, _class, filter);
+			
+			CriteriaBuilder criteriaBuilder = getCriteriaBuilder(_class, filter);
 			Criteria criteria = criteriaBuilder.createCriteria();
 			List<T> resultList = criteria.list();
-			 
+
 			if (null == resultList) {
 				resultList = new ArrayList<>();
 			}
+			tx.commit();
 
 			log.info("resultList length: {}", resultList.size());
 			return resultList;
 		} catch (Exception e) {
 			log.error("Error filter and sort v2: {}", e);
 			e.printStackTrace();
+			if (null != tx) {
+				tx.rollback();
+			}
+		} finally {
+			refresh();
 		}
 		return CollectionUtil.emptyList();
 	}
-	
-	public <T extends BaseEntity> T saveObject(final T rawEntity) {
 
-		if (null == rawEntity) {
-			log.error("rawEntity IS NULL");
-			return null;
-		}
-		String mode = "new record";
-		if(rawEntity.getId() != null) {
-			mode = "update record";
-		}
-		
-		PersistenceOperation<T> persistenceOperation = new PersistenceOperation<T>() {
-
-			@Override
-			public T doPersist(Session hibernateSession) {
-				T result, entity;
-				
-				try {
-					entity = validateJoinColumns(rawEntity);
-				} catch (Exception e) {
-					entity = rawEntity;
-					e.printStackTrace();
-				}
-
-				if (entity.getId() == null) {
-					log.debug("Will save new entity ");
-					rawEntity.setCreatedDate(new Date());
-
-					Long newId = (Long) hibernateSession.save(entity);
-					result = entity;
-					result.setId(newId);
-
-					log.debug("success add new record of {} with new ID: {}", entity.getClass(), newId);
-				} else {
-					log.debug("Will update entity :{}", entity.getId());
-					entity.setModifiedDate(new Date());
-
-					result = (T) hibernateSession.merge(entity);
-
-					log.debug("success update record of {}  ", entity.getClass() ); 
-				}
-
-				//log.info("success save Object of {} >> savedObject: {}", entity.getClass(), result);
-				return result;
-			}
-		};
-
-		T result = this.pesistOperation(persistenceOperation);
-		if (null != result) {
-			log.info("SaveObjectSUCCESS {} Object: {}, id: {}", mode, result.getClass(), result.getId());
-		}
-
-		return result;
-	}
-	
 	public <T extends BaseEntity> T validateJoinColumns(T rawEntity) throws Exception {
 		List<Field> joinColumnFields = QueryUtil.getJoinColumnFields(rawEntity.getClass());
 
@@ -199,7 +101,6 @@ public class DatabaseProcessor {
 		}
 		for (Field field : joinColumnFields) {
 			BaseEntity fieldValue = (BaseEntity) field.get(entity);
-			// check from DB
 			log.info("check join column field: {}->value: {}", field.getName(), fieldValue);
 			if (null == fieldValue)
 				continue;
@@ -215,116 +116,132 @@ public class DatabaseProcessor {
 
 	}
 
-	 
-	public <T> T pesistOperation(PersistenceOperation<T> persistenceOperation) {
-
-		try {
-			if (null == persistenceOperation) {
-				throw new Exception("persistenceOperation must not be NULL");
-			}
-			if (null == currentTransaction) {
-				log.info("Hibernate begin new Transaction");
-				currentTransaction = hibernateSession.beginTransaction();
-			}
-
-			T result = persistenceOperation.doPersist(hibernateSession);
-
-			if (isTransactionNotKept()) {
-				hibernateSession.flush();
-				currentTransaction.commit();
-				
-				log.info("==**COMMITED Transaction**==");
-			}else {
-				log.info("Not committing transaction");
-			}
-
-			log.info("success persist operation commited: {}", removeTransactionAfterPersistence);
-			return result;
-
-		} catch (Exception e) {
-			log.error("Error persist operation: {}", e);
-
-			if (currentTransaction != null) {
-				log.info("Rolling back.... ");
-				currentTransaction.rollback();
-			}
-			notKeepingTransaction();
-
-			e.printStackTrace();
-		} finally {
-
-			if (isTransactionNotKept()) {
-				currentTransaction = null;
-			}
-			//this.refresh();
-		}
-		return null;
-	}
-	
-	public  void refresh() {
+	private void refresh() {
 		log.info("Refresh DB Processor with id: {}", id);
 		try {
-			/*
-			 * // if (hibernateSession != null) { // hibernateSession.flush(); //
-			 * hibernateSession.clear(); // internal cache clear //
-			 * sessionFactory.getCurrentSession().clear(); // // } // if(o != null) { //
-			 * hibernateSession.refresh(o); // }
-			 */		
-			
+			if (null == hibernateSession)
+				return;
+
 			hibernateSession.clear();
 			hibernateSession.flush();
 			hibernateSession.close();
-			hibernateSession = sessionFactory.openSession();
-		}catch (Exception e) {
-			// TODO: handle exception
+			hibernateSession = null;
+
+		} catch (Exception e) {
 			log.error("ERROR refresh session: {}", e.getMessage());
 		}
-		
-	}
-	
-	public <T extends BaseEntity> boolean deleteObjectById(Class<T> _class, Long id) {
-		log.info("delete {} by id: {}", _class.getSimpleName(), id );
-		
-		return this.pesistOperation(new PersistenceOperation<Boolean>() {
 
-				@Override
-				public Boolean doPersist(Session hibernateSession) {
-					try {
-						T existingObject = (T) hibernateSession.load(_class, id);
-						if (null == existingObject) {
-							log.info("existingObject of {} with id: {} does not exist!!", _class, id);
-							return false;
-						} 
-						hibernateSession.delete(existingObject);
-						log.info("Deleted Successfully");
-						return true;
-					} catch (Exception e) {
-						log.error("Error deleting object!");
-						e.printStackTrace();
-						//return false;
-						throw e;
-					}
-					 
-				}
-			});
-			
-			 
-		 
 	}
 
 	/**
-	 * inser new record or update
+	 * insert new record or update existing record
+	 * 
 	 * @param <T>
 	 * @param object
 	 * @param hibernateSession
 	 * @return
 	 */
 	public static <T extends BaseEntity> T save(T object, Session hibernateSession) {
-		if (object.getId()!=null) {
+		if (object.getId() != null) {
 			return (T) hibernateSession.merge(object);
 		}
 		Serializable savedId = hibernateSession.save(object);
 		object.setId(Long.valueOf(savedId.toString()));
 		return object;
 	}
+
+	public boolean deleteObjectById(Class<? extends BaseEntity> entityClass, Long id2) {
+		checkSession();
+		Transaction transaction = hibernateSession.beginTransaction();
+		try {
+			Object object = hibernateSession.get(entityClass, id2);
+			if (null == object) {
+				throw new DataNotFoundException("Record not found");
+			}
+			hibernateSession.delete(object);
+			transaction.commit();
+			return true;
+		} catch (Exception e) {
+			if (null != transaction) {
+				transaction.rollback();
+			}
+			throw e;
+		} finally {
+
+			refresh();
+		} 
+	}
+
+	public <T> List<T> findByKeyAndValues(Class<T> entityClass, String key, Object... values) {
+		checkSession();
+		if (values == null) {
+			log.error("break findByKeyAndValues >> VALUES IS NULL");
+			return CollectionUtil.emptyList();
+		}
+
+		log.info("findByKeyAndValues, class: {}, key: {}, values.length: {}", entityClass, key, values.length);
+
+		Criteria criteria = hibernateSession.createCriteria(entityClass);
+		Criterion[] predictates = new Criterion[values.length];
+		for (int i = 0; i < values.length; i++) {
+			predictates[i] = (Restrictions.naturalId().set(key, values[i]));
+		}
+
+		criteria.add(Restrictions.or(predictates));
+		List list = criteria.list();
+
+		refresh();
+		log.info("RESULT findByKeyAndValues:{}", list == null ? "NULL" : list.size());
+		return list;
+	}
+
+	public <T extends BaseEntity> T saveObject(final T rawEntity) {
+
+		if (null == rawEntity) {
+			log.error("rawEntity IS NULL");
+			return null;
+		}
+		String mode = rawEntity.getId() != null?  "update record" : "new record";
+		T result, entity;
+
+		try {
+			entity = validateJoinColumns(rawEntity);
+		} catch (Exception e) {
+			entity = rawEntity;
+			e.printStackTrace();
+		}
+		checkSession();
+		Transaction transaction = hibernateSession.beginTransaction();
+		try {
+			if (entity.getId() == null) {
+				log.debug("Will save new entity ");
+				rawEntity.setCreatedDate(new Date()); 
+				Long newId = (Long) hibernateSession.save(entity);
+				result = entity;
+				result.setId(newId);
+
+				log.debug("success add new record of {} with new ID: {}", entity.getClass(), newId);
+			} else {
+				log.debug("Will update entity :{}", entity.getId());
+				entity.setModifiedDate(new Date()); 
+				result = (T) hibernateSession.merge(entity); 
+				log.debug("success update record of {}  ", entity.getClass());
+			}
+
+			transaction.commit();
+			if (null != result) {
+				log.info("SaveObjectSUCCESS {} Object: {}, id: {}", mode, result.getClass(), result.getId());
+			}
+
+			return result;
+		} catch (Exception e) {
+			if (null != transaction) {
+				transaction.rollback();
+			}
+			return null;
+		} finally {
+			refresh();
+		}
+	}
+
 }
