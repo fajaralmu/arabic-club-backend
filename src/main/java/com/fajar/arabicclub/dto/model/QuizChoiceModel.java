@@ -1,16 +1,14 @@
 package com.fajar.arabicclub.dto.model;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.constants.AnswerCode;
+import com.fajar.arabicclub.entity.QuizChoice;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -20,7 +18,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
  
-@Dto
+@Dto(entityClass=QuizChoice.class)
 @Data
 @Builder
 @AllArgsConstructor

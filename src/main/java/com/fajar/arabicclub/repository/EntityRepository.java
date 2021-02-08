@@ -17,7 +17,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import com.fajar.arabicclub.annotation.CustomEntity;
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.entity.BaseEntity;
@@ -77,12 +76,12 @@ public class EntityRepository {
 			log.info("checking : {}", type);
 			try {
 				Class<? extends BaseEntity> entityClass = (Class<? extends BaseEntity>) type;
-				CustomEntity customEntity =  entityClass.getAnnotation(CustomEntity.class);
-				if (null == customEntity) {
-					log.info(" SKIP {}, cause = customEntity is null", type);
-					continue;
-				}
-				Class<? extends BaseModel> modelClass = customEntity.value();
+//				CustomEntity customEntity =  entityClass.getAnnotation(CustomEntity.class);
+//				if (null == customEntity) {
+//					log.info(" SKIP {}, cause = customEntity is null", type);
+//					continue;
+//				}
+				Class<? extends BaseModel> modelClass = BaseEntity.getTypeArgumentOfGenericSuperClass(entityClass);
 				if (null == modelClass.getAnnotation(Dto.class)) {
 					log.info(" SKIP {}, cause = {}'s Dto is null", type, modelClass);
 					continue;

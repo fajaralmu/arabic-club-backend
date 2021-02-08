@@ -6,16 +6,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fajar.arabicclub.annotation.Dto;
-import com.fajar.arabicclub.constants.FormInputColumn;
 import com.fajar.arabicclub.dto.model.DocumentsModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-@Dto(formInputColumn = FormInputColumn.ONE_COLUMN)//, updateService =  "documentUpdateService")
+ 
 @Entity
 @Table(name = "documents")
 @Data

@@ -8,13 +8,16 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fajar.arabicclub.constants.AnswerCode;
 import com.fajar.arabicclub.dto.model.QuizModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder.Default;
 
+ 
 @Entity
 @Table(name = "quiz")
 @Data
@@ -37,23 +40,31 @@ public class Quiz extends BaseEntity<QuizModel> {
 	private Long duration;
 
 	@Transient
-	private List<QuizQuestion> questions;
+	@Default
+	private List<QuizQuestion> questions = new ArrayList<>();;
 
 	public void addQuestion(QuizQuestion question) {
 		if (questions == null) {
-			questions = new ArrayList<QuizQuestion>();
+			questions = new ArrayList<>();
 		}
 		questions.add(question);
 	}
 
 	@Override
 	public QuizModel toModel() {
-		QuizModel model = super.toModel();
+		QuizModel model = copy(new QuizModel(), "questions");
 		if (null != questions) {
-			questions.forEach(q -> {
+			for (QuizQuestion q : questions) {
 				model.addQuestion(q.toModel());
-			});
+			} 
 		}
 		return model;
+	}
+	
+	public static void main(String[] args) {
+		Quiz q = Quiz.builder().description("QUIZ 123").build();
+		q.addQuestion(QuizQuestion.builder().correctChoice(AnswerCode.B).build());
+		
+		System.out.println(q.toModel());
 	}
 }

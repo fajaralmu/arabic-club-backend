@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.dto.model.ImageCategoryModel;
 
 import lombok.AllArgsConstructor;
@@ -12,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+ 
 @Entity
 @Table (name="image_category")
 @Data

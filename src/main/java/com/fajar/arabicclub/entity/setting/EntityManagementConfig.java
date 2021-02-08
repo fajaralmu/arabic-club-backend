@@ -2,7 +2,6 @@ package com.fajar.arabicclub.entity.setting;
 
 import java.io.Serializable;
 
-import com.fajar.arabicclub.annotation.CustomEntity;
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.entity.BaseEntity;
@@ -55,11 +54,11 @@ public class EntityManagementConfig implements Serializable {
 	}
 
 	private void init() {
-		CustomEntity customEntity = entityClass.getAnnotation(CustomEntity.class);
-		if (null == customEntity) {
-			throw new ApplicationException("NOT Custom Entity: "+ entityClass) ;
-		}
-		modelClass = customEntity.value();
+//		CustomEntity customEntity = entityClass.getAnnotation(CustomEntity.class);
+//		if (null == customEntity) {
+//			throw new ApplicationException("NOT Custom Entity: "+ entityClass) ;
+//		}
+		modelClass = BaseEntity.getTypeArgumentOfGenericSuperClass(entityClass);
 		
 		Dto dtoAnnotation = modelClass.getAnnotation(Dto.class);
 		if (null == dtoAnnotation) {

@@ -4,15 +4,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.dto.model.VideoCategoryModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-
+ 
 @Entity
 @Table(name = "video_category")
 @Data

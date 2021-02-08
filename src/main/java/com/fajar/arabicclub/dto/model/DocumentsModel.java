@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(formInputColumn = FormInputColumn.ONE_COLUMN)//, updateService =  "documentUpdateService")
+@Dto(entityClass=Documents.class)//, updateService =  "documentUpdateService")
  
 @Data
 @Builder

@@ -2,6 +2,7 @@ package com.fajar.arabicclub.dto.model;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,10 +55,16 @@ public abstract class BaseModel<E extends BaseEntity> implements Serializable{
 	
 	protected E getEntityNewInstance() throws Exception {
 		Dto dto = getClass().getAnnotation(Dto.class);
-		Objects.requireNonNull(dto);
+		 
 		Class<? extends BaseEntity> entityClass = dto.entityClass();
 		E instance = (E) entityClass.newInstance();
 		return instance;
+	}
+	public Class<E> getTypeArgument() {
+		Class<?> _class = getClass();
+		 java.lang.reflect.Type genericeSuperClass = _class.getGenericSuperclass();
+		 ParameterizedType parameterizedType = (ParameterizedType) genericeSuperClass;
+		 return  (Class<E>) parameterizedType.getActualTypeArguments()[0];
 	}
 	
 	List<Field> getObjectModelField() {

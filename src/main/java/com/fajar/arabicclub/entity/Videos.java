@@ -12,8 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
- @Entity
+ 
+@Entity
 @Table(name = "videos")
 @Data
 @Builder
@@ -25,17 +25,16 @@ public class Videos extends BaseEntity<VideosModel> {
 	* 
 	*/
 	private static final long serialVersionUID = 3494963248002164943L;
-	@Column(unique = true) 
+	@Column(unique = true)
 	private String title;
-	
-	@Column(nullable = false) 
+
+	@Column(nullable = false)
 	private String url;
-	@Column 
+	@Column
 	private String description;
-	
+
 	@JoinColumn(name = "category_id", nullable = false)
-	@ManyToOne 
-	private VideoCategory category; 
- 
+	@ManyToOne
+	private VideoCategory category;
 
 }

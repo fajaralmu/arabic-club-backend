@@ -3,6 +3,7 @@ package com.fajar.arabicclub.entity;
 import java.beans.Transient;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,8 +20,6 @@ import org.hibernate.annotations.Type;
 import org.springframework.beans.BeanUtils;
 
 import com.fajar.arabicclub.annotation.BaseField;
-import com.fajar.arabicclub.annotation.CustomEntity;
-import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.entity.setting.EntityUpdateInterceptor;
@@ -28,8 +27,7 @@ import com.fajar.arabicclub.util.EntityUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.extern.slf4j.Slf4j;
-
-@Dto
+ 
 @Slf4j
 @MappedSuperclass
 public class BaseEntity<M extends BaseModel> implements Serializable{
@@ -159,13 +157,35 @@ public class BaseEntity<M extends BaseModel> implements Serializable{
 	}
 	
 	protected M getEntityNewInstance() throws Exception {
-		CustomEntity customEntity = getClass().getAnnotation(CustomEntity.class);
-		Objects.requireNonNull(customEntity);
-		Class<? extends BaseModel> entityClass = customEntity.value();
+//		CustomEntity customEntity = getClass().getAnnotation(CustomEntity.class);
+		 
+		Class<? extends BaseModel> entityClass;
+//		 
+			entityClass = getTypeArgument();
+		 
+		Objects.requireNonNull(entityClass);
 		M instance = (M) entityClass.newInstance();
 		return instance;
 	}
 	
+	public static void main(String[] args) {
+		User u = User.builder().displayName("NAME").build();
+		System.out.println(u.toModel());
+	}
+	
+	public final Class<M> getTypeArgument() {
+		Class<?> _class = getClass();
+		 java.lang.reflect.Type genericeSuperClass = _class.getGenericSuperclass();
+		 ParameterizedType parameterizedType = (ParameterizedType) genericeSuperClass;
+		 return  (Class<M>) parameterizedType.getActualTypeArguments()[0];
+	}
+	
+	public static Class getTypeArgumentOfGenericSuperClass(Class _class) {
+		java.lang.reflect.Type genericeSuperClass = _class.getGenericSuperclass();
+		 ParameterizedType parameterizedType = (ParameterizedType) genericeSuperClass;
+		 return  (Class) parameterizedType.getActualTypeArguments()[0];
+	}
+	 
 	List<Field> getObjectModelField() {
 		List<Field> fields = EntityUtil.getDeclaredFields(getClass());
 		List<Field> filtered = new ArrayList<>();

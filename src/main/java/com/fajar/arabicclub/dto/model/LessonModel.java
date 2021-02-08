@@ -12,7 +12,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(formInputColumn = FormInputColumn.ONE_COLUMN, updateService =  "lessonUpdateService") 
+@Dto(entityClass=Lesson.class, updateService =  "lessonUpdateService") 
 @Data
 @Builder
 @AllArgsConstructor

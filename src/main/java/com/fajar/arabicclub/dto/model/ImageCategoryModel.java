@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@Dto("Image Category") 
+@Dto(value="Image Category", entityClass=ImageCategory.class) 
 @Data
 @Builder	
 @AllArgsConstructor

@@ -1,15 +1,8 @@
 package com.fajar.arabicclub.dto.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.constants.FieldType;
-import com.fajar.arabicclub.constants.FormInputColumn;
 import com.fajar.arabicclub.entity.Videos;
 
 import lombok.AllArgsConstructor;
@@ -17,7 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(formInputColumn = FormInputColumn.ONE_COLUMN) 
+@Dto(entityClass=Videos.class) 
 @Data
 @Builder
 @AllArgsConstructor

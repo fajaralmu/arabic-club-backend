@@ -22,7 +22,6 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
  
 @Entity
 @Table(name = "users")

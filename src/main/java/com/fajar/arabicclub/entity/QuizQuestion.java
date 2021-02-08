@@ -1,5 +1,6 @@
 package com.fajar.arabicclub.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fajar.arabicclub.constants.AnswerCode;
+import com.fajar.arabicclub.dto.model.QuizChoiceModel;
 import com.fajar.arabicclub.dto.model.QuizQuestionModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,6 +24,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+ 
 @Entity
 @Table(name = "quiz_question")
 @Data
@@ -61,6 +64,21 @@ public class QuizQuestion extends BaseEntity<QuizQuestionModel> implements Singl
 			return null;
 		}
 		return quiz.getId();
+	}
+	
+	@Override
+	public QuizQuestionModel toModel() {
+	  
+		QuizQuestionModel model = copy(new QuizQuestionModel(), "choices");
+		List<QuizChoiceModel> choicesModel = new ArrayList<QuizChoiceModel>();
+		
+		if (null != choices) {
+			choices.forEach(q -> {
+				choicesModel.add(q.toModel());
+			});
+		}
+		model.setChoices(choicesModel );
+		return model;
 	}
 
 }

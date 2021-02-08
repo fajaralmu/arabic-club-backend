@@ -4,14 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.dto.model.DocumentCategoryModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@Dto("Document Category")
+
+ 
 @Entity
 @Table (name="document_category")
 @Data
