@@ -38,6 +38,8 @@ public class Quiz extends BaseEntity<QuizModel> {
 	private boolean publicQuiz;
 	@Column(nullable = false)
 	private Long duration;
+	@Column 
+	private Boolean active;
 
 	@Transient
 	@Default

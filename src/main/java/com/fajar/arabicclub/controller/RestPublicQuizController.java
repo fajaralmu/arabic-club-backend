@@ -43,10 +43,10 @@ public class RestPublicQuizController extends BaseController {
 
 	 
 	@PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public WebResponse getQuizList(@RequestBody WebRequest webRequest, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+	public WebResponse getQuizList(@RequestBody WebRequest webRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpResponse) throws IOException {
 		
-		log.info("getQuizList");
-		WebResponse response = publicQuizService.getQuizList(webRequest);
+		log.info("get Quiz List");
+		WebResponse response = publicQuizService.getQuizList(webRequest, httpServletRequest);
 		return response;
 	}
 	@PostMapping(value = "/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -1,6 +1,7 @@
 package com.fajar.arabicclub.service.quiz;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -17,10 +18,12 @@ import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizQuestion;
+import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
+import com.fajar.arabicclub.service.SessionValidationService;
 import com.fajar.arabicclub.util.CollectionUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +40,8 @@ public class PublicQuizService {
 	private QuizQuestionRepository quizQuestionRepository;
 	@Autowired
 	private ProgressService progressService;
+	@Autowired
+	private SessionValidationService sessionValidationService;
 
 	/**
 	 * get quiz list, paginated
@@ -44,15 +49,17 @@ public class PublicQuizService {
 	 * @param webRequest
 	 * @return
 	 */
-	public WebResponse getQuizList(WebRequest webRequest) {
+	public WebResponse getQuizList(WebRequest webRequest, HttpServletRequest httpServletRequest) {
 
+		User user = sessionValidationService.getLoggedUser(httpServletRequest);
+//		boolean isAdmin = 
 		Filter filter = webRequest.getFilter();
 
 		log.info("get quiz list page:{}, limit: {}", filter.getPage(), filter.getLimit());
-		Page<Quiz> quizes = quizRepository.findAll(PageRequest.of(filter.getPage(), filter.getLimit()));
-		BigInteger quizCount = quizRepository.findCountAll();
+		Page<Quiz> quizes = quizRepository.findByActiveTrue(PageRequest.of(filter.getPage(), filter.getLimit()));
+		BigInteger quizCount = quizRepository.findCountActiveTrue();
 		List<Quiz> quizList = quizes.getContent();
-		List<QuizQuestion> questions = quizQuestionRepository.findByQuizIn(quizList);
+		List<QuizQuestion> questions = quizList.size() == 0? new ArrayList<>() : quizQuestionRepository.findByQuizIn(quizList);
 		
 		mapQuizAndQuestions(quizList, questions);
 

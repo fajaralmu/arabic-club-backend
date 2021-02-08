@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor; 
-@Dto(editable = false, entityClass=Quiz.class) 
+@Dto(creatable = false, entityClass=Quiz.class) 
 @Data
 @Builder	
 @AllArgsConstructor
@@ -34,6 +34,8 @@ public class QuizModel extends BaseModel<Quiz> {
 	private boolean publicQuiz;
 	@FormField(type = FieldType.FIELD_TYPE_NUMBER, labelName = "Duration (Second)") 
 	private Long duration;
+	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
+	private Boolean active;
 	
 	@Transient
 	private List<QuizQuestionModel> questions;
