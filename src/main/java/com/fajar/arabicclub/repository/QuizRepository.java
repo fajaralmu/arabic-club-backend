@@ -16,14 +16,16 @@ public interface QuizRepository extends JpaRepository<Quiz	, Long> {
 	public BigInteger findCountAll();
 	@Query("select count(q) from Quiz q where q.active is true")
 	public BigInteger findCountActiveTrue();
-	@Query("select  q from Quiz q where q.active is true")
+	@Query("select  q from Quiz q where q.active is true order by q.title")
 	public Page<Quiz> findByActiveTrue(PageRequest of);
 	
+	public Page<Quiz> findByOrderByTitle(PageRequest pageRequest);
 	
 	default Page<Quiz> findQuizList(boolean isAdmin, PageRequest pageRequest){
 		if (isAdmin) {
-			return findAll(pageRequest);
+			return findByOrderByTitle(pageRequest);
 		}
 		return findByActiveTrue(pageRequest);
 	}
+	
 }
