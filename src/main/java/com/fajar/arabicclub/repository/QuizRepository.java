@@ -19,6 +19,7 @@ public interface QuizRepository extends JpaRepository<Quiz	, Long> {
 	@Query("select  q from Quiz q where q.active is true order by q.title")
 	public Page<Quiz> findByActiveTrue(PageRequest of);
 	
+	@Query("select q from Quiz q order by q.title")
 	public Page<Quiz> findByOrderByTitle(PageRequest pageRequest);
 	
 	default Page<Quiz> findQuizList(boolean isAdmin, PageRequest pageRequest){
