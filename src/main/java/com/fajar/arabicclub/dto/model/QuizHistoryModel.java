@@ -6,6 +6,7 @@ import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.entity.QuizHistory;
+import com.fajar.arabicclub.util.DateUtil;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,14 @@ public class QuizHistoryModel extends BaseModel<QuizHistory>  {
 	private Date started;
 	@FormField(type=FieldType.FIELD_TYPE_DATETIME)
 	private Date ended;
+	@FormField(filterable = false, labelName = "Duarion(Second)")
+	@Setter(value = AccessLevel.NONE)
+	@Getter(value = AccessLevel.NONE)
+	private String quizDuration;
+	@FormField(filterable = false)
+	@Setter(value = AccessLevel.NONE)
+	@Getter(value = AccessLevel.NONE)
+	private String userDuration;
 	
 	@FormField(optionItemName = "title")
 	private QuizModel quiz; 
@@ -64,5 +73,14 @@ public class QuizHistoryModel extends BaseModel<QuizHistory>  {
 		return getModifiedDate();
 	}
 	 
+	public String getQuizDuration() {
+		if (null != quiz) return DateUtil.timerString(quiz.getDuration());
+		return quizDuration;
+	}
 
+	public String getUserDuration() {
+		if (null == started || null == ended) return "-";
+		long seconds = (started.getTime()-ended.getTime())/1000;
+		return DateUtil.timerString(seconds);
+	}
 }

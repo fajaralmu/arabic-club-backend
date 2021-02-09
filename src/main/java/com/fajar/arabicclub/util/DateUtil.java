@@ -42,11 +42,12 @@ public class DateUtil {
 
 	}
 
-	public static Date getDate(Filter filter) { 
-		return getDate(filter.getYear(), filter.getMonth() - 1, filter.getDay()); 
+	public static Date getDate(Filter filter) {
+		return getDate(filter.getYear(), filter.getMonth() - 1, filter.getDay());
 	}
-	public static Date getDateTo(Filter filter) { 
-		return getDate(filter.getYearTo(), filter.getMonthTo() - 1, filter.getDayTo()); 
+
+	public static Date getDateTo(Filter filter) {
+		return getDate(filter.getYearTo(), filter.getMonthTo() - 1, filter.getDayTo());
 	}
 
 	public static Calendar cal(Date date) {
@@ -313,15 +314,15 @@ public class DateUtil {
 	}
 
 	public static Date getPrevDateLastDay(Date date) {
-		
+
 		int month = getCalendarMonth(date);
 		int year = getCalendarYear(date);
 		int prevMonth, prevYear = year;
 		if (month - 1 < 0) {
 			prevMonth = 11;
-			prevYear = year-1;
+			prevYear = year - 1;
 		} else {
-			prevMonth = month -1;
+			prevMonth = month - 1;
 		}
 		int lastDay = getMonthsDay(prevMonth, prevYear);
 		return getDate(prevYear, prevMonth, lastDay);
@@ -332,4 +333,29 @@ public class DateUtil {
 		cal.add(Calendar.DAY_OF_MONTH, expiredDaysWithin);
 		return cal.getTime();
 	}
+
+	public static String twoDigits(long value) {
+		if (value >= 10) {
+			return String.valueOf(value);
+		}
+		return "0" + value;
+	}
+
+	public static String timerString(long totalSeconds) {
+		long hour = 0;
+		long minutes = 0;
+		long seconds = 0;
+		if (totalSeconds >= 3600) {
+			hour = totalSeconds / 3600;
+			totalSeconds = totalSeconds % 3600;
+		}
+		if (totalSeconds >= 60) {
+			minutes = totalSeconds / 60;
+			totalSeconds = totalSeconds % 60;
+		}
+		seconds = totalSeconds;
+
+		return twoDigits(hour) + ":" + twoDigits(minutes) + ":" + twoDigits(seconds);
+	}
+
 }
