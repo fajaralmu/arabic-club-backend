@@ -28,10 +28,16 @@ public class QuizHistoryModel extends BaseModel<QuizHistory>  {
 	@FormField(optionItemName = "displayName") 
 	private UserModel user; 
 	
+	@FormField(type=FieldType.FIELD_TYPE_DATE)
+	private Date started;
+	@FormField(type=FieldType.FIELD_TYPE_DATE)
+	private Date ended;
+	
 	@FormField(optionItemName = "title")
 	private QuizModel quiz; 
 	@FormField
-	private Double lastScore;
+	private Double score;
+	
 	
 	@FormField(type=FieldType.FIELD_TYPE_DATE)
 	@Getter(value=AccessLevel.NONE)

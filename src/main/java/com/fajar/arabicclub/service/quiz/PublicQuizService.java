@@ -20,6 +20,7 @@ import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizQuestion;
 import com.fajar.arabicclub.entity.User;
+import com.fajar.arabicclub.exception.ApplicationException;
 import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
@@ -43,6 +44,8 @@ public class PublicQuizService {
 	private ProgressService progressService;
 	@Autowired
 	private SessionValidationService sessionValidationService; 
+	@Autowired
+	private QuizHistoryService quizHistoryService;
 
 	/**
 	 * get quiz list, paginated
@@ -103,7 +106,12 @@ public class PublicQuizService {
 				throw new DataNotFoundException("Quiz not found");
 			}
 			WebResponse response = new WebResponse();
+			boolean allowed = quizHistoryService.isAllowed(quizRecord.get(), httpServletRequest);
+			if (!allowed) {
+				throw new ApplicationException("NOT ALLOWED");
+			}
 			Quiz fullQuiz = quizDataService.getFullQuiz(id, httpServletRequest, true);
+			quizHistoryService.updateHistoryStart(quizRecord.get(), httpServletRequest);
 			response.setQuiz(fullQuiz.toModel());
 			return response;
 		} catch (Exception e) {
@@ -126,7 +134,7 @@ public class PublicQuizService {
 			Quiz fullQuiz = quizDataService.getFullQuiz(submittedQuiz.getId(), httpServletRequest, false);
 			
 			QuizResult quizResult = calculateAnswers(submittedQuiz, fullQuiz, httpServletRequest);
-			 
+			quizHistoryService.updateHistoryEnd(quizResult, httpServletRequest);
 			response.setQuizResult(quizResult);
 			return response;
 		} catch (Exception e) {

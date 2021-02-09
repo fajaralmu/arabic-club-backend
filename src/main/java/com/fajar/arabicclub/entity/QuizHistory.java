@@ -1,11 +1,15 @@
 package com.fajar.arabicclub.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fajar.arabicclub.annotation.FormField;
+import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.dto.model.QuizHistoryModel;
 
 import lombok.AllArgsConstructor;
@@ -33,8 +37,18 @@ public class QuizHistory extends BaseEntity<QuizHistoryModel>  {
 	private Quiz quiz; 
  
 	@Column(name="last_score")
-	private Double lastScore;
+	private Double score;
+	@Column
+	private Date started;
+	@Column
+	private Date ended;
 	
+	public static QuizHistory create(Quiz q, User u) {
+		QuizHistory quizHistory =QuizHistory.builder().quiz(q).user(u).build();
+		quizHistory.setStarted(new Date());
+		quizHistory.setCreatedDate(new Date());
+		return quizHistory;
+	}
 	
 	 
 
