@@ -73,7 +73,7 @@ public class PublicQuizService {
 		return response;
 	}
 
-	private static void mapQuizAndQuestions(List<Quiz> quizList, List<QuizQuestion> questions) {
+	public static void mapQuizAndQuestions(List<Quiz> quizList, List<QuizQuestion> questions) {
 		 
 		for (final Quiz quiz : quizList) {
 			questions.forEach(new Consumer<QuizQuestion>() { 
