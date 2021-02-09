@@ -110,7 +110,7 @@ public class DefaultUserService {
 		updateUserData(loggedUser, user, httpServletRequest);
 		
 		WebResponse response = new WebResponse();
-		response.setUser(loggedUser);
+		response.setUser(loggedUser.toModel());
 		return response;
 	}
 

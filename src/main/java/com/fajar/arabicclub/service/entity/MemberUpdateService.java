@@ -19,6 +19,7 @@ import com.fajar.arabicclub.service.SessionValidationService;
 @Service
 public class MemberUpdateService extends BaseEntityUpdateService<User>{
 
+	static final String DEFAULT_PASSWORD = "secret";
 	@Autowired
 	private AuthorityRepository authorityRepository;
 	@Autowired
@@ -32,13 +33,25 @@ public class MemberUpdateService extends BaseEntityUpdateService<User>{
 		if (!loggedUser.isAdmin()) {
 			throw new ApplicationException("Not allowed");
 		}
-		validateEntityFields(object, newRecord, httpServletRequest);
-		String encodedPassword = passwordEncoder.encode(object.getPassword());
+		validateEntityFormFields(object, newRecord, httpServletRequest);
+		
+		/**
+		 * password
+		 */
+		boolean passwordNotSpecified = null == object.getPassword() || "".equals(object.getPassword().trim());
 		if (newRecord) {
+			if (passwordNotSpecified) {
+				object.setPassword(DEFAULT_PASSWORD);
+			}
+			String encodedPassword = passwordEncoder.encode(object.getPassword());
 			object.setPassword(encodedPassword);
 			object.setAuthorities(getMemberAuthorities(object.getMainRole()));
 		} else {
 			User existingObject = entityRepository.findById(User.class, object.getId());
+			if (passwordNotSpecified) {
+				object.setPassword(existingObject.getPassword());
+			}
+			String encodedPassword = passwordEncoder.encode(object.getPassword());
 			if (existingObject.getPassword().equals(object.getPassword())) {
 				//password not updated
 			} else {

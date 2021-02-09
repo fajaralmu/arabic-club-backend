@@ -103,6 +103,7 @@ public class EntityElement implements Serializable {
 			this.editable = formField.editable();
 			setOptionItemName(formField.optionItemName());
 			setFilterable(formField.filterable());
+			setRequiredProp(formField );
 			
 		}else {
 			this.fieldType = FieldType.FIELD_TYPE_TEXT;
@@ -203,7 +204,7 @@ public class EntityElement implements Serializable {
 		if (formField.type().equals(FieldType.FIELD_TYPE_CHECKBOX)) {
 			setRequired(false);
 		} else {
-			setRequired(true);
+			setRequired(formField.required());
 		}
 	}
 
@@ -231,7 +232,6 @@ public class EntityElement implements Serializable {
 			setType(determinedFieldType.value);
 			
 			setId(field.getName()); 
-			setRequiredProp(formField );
 			setMultiple(formField.multipleImage());
 			setClassName(field.getType().getCanonicalName()); 
 			

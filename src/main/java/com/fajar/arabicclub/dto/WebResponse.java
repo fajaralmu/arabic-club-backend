@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.dto.model.ApplicationProfileModel;
 import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.dto.model.QuizModel;
+import com.fajar.arabicclub.dto.model.UserModel;
 import com.fajar.arabicclub.entity.BaseEntity;
-import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.entity.setting.EntityProperty;
 import com.fajar.arabicclub.util.CollectionUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,7 +37,7 @@ public class WebResponse implements Serializable {
 	private static final long serialVersionUID = -8345271799535134609L;
 	@Builder.Default
 	private Date date = new Date();
-	private User user;
+	private UserModel user;
 	@Builder.Default
 	private String code = "00";
 	@Builder.Default

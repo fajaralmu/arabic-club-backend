@@ -39,7 +39,7 @@ public class UserSessionService {
 		User loggedUser = sessionValidationService.getLoggedUser(httpRequest);
 		WebResponse response = new WebResponse();
 		if (null != loggedUser) {
-			response.setUser(loggedUser);
+			response.setUser(loggedUser.toModel());
 			response.setLoggedIn(true);
 		}
 		response.setApplicationProfile(defaultApplicationProfileService.getApplicationProfile().toModel());

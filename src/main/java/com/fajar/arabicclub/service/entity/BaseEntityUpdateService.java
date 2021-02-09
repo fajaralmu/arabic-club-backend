@@ -94,12 +94,12 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 	}
 	
 	/**
-	 * validate object properties' value
+	 * validate object properties' value annotated with @FormField
 	 * 
 	 * @param object
 	 * @param newRecord
 	 */
-	protected void validateEntityFields(BaseEntity object, boolean newRecord, HttpServletRequest httpServletRequest) {
+	protected void validateEntityFormFields(BaseEntity object, boolean newRecord, HttpServletRequest httpServletRequest) {
 		log.info("validating entity: {} newRecord: {}", object.getClass(), newRecord);
 		object.validateNullValues();
 		try {

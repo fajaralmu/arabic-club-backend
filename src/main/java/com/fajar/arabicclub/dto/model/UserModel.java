@@ -10,6 +10,8 @@ import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.entity.Authority;
 import com.fajar.arabicclub.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,7 @@ import lombok.Setter;
 @Builder
 @Data
 @AllArgsConstructor
+@JsonInclude(value = Include.NON_NULL)
 @NoArgsConstructor
 public class UserModel extends BaseModel<User>{
 
@@ -35,8 +38,10 @@ public class UserModel extends BaseModel<User>{
 	private String username;
 	@FormField
 	private String displayName;
-	@FormField
-	private String password;
+	@FormField(labelName = "Password (nullable)", required = false)
+	@Setter(value = AccessLevel.NONE)
+	private String editPassword;
+	
 	@FormField(type = FieldType.FIELD_TYPE_IMAGE)
 	private String profileImage;
 	
@@ -47,8 +52,19 @@ public class UserModel extends BaseModel<User>{
 	@Setter(value=AccessLevel.NONE)
 	@Getter(value=AccessLevel.NONE)
 	private AuthorityType role;
+	
+	/**
+	 * not exposed
+	 */
+	@JsonIgnore
+	private String password;
 	@JsonIgnore
 	private AuthorityType mainRole;
+	
+	public void setEditPassword(String editPassword) {
+		this.editPassword = editPassword;
+		this.password = editPassword;
+	}
 	
 	public AuthorityType getRole() {
 		if (null != authorities && authorities.size() > 0) {
@@ -63,6 +79,7 @@ public class UserModel extends BaseModel<User>{
 	}
 
 	@Default
+	@JsonIgnore
 	private Set<AuthorityModel> authorities = new HashSet<>();
 
 	@JsonIgnore

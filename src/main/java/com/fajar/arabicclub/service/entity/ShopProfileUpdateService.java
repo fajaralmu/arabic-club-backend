@@ -15,7 +15,7 @@ public class ShopProfileUpdateService extends BaseEntityUpdateService<Applicatio
 	public ApplicationProfile saveEntity(ApplicationProfile baseEntity, boolean newRecord, HttpServletRequest httpServletRequest){
 		ApplicationProfile shopProfile = (ApplicationProfile) copyNewElement(baseEntity, newRecord);
 		 
-		validateEntityFields(shopProfile, newRecord, httpServletRequest);
+		validateEntityFormFields(shopProfile, newRecord, httpServletRequest);
 //		if (base64Image != null && !base64Image.equals("")) {
 //			try {
 //				String imageName = fileService.writeImage(baseEntity.getClass().getSimpleName(), base64Image);
