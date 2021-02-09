@@ -138,10 +138,10 @@ public class EntityRepository {
 	 * @param baseEntity
 	 * @return
 	 */
-	public <T extends BaseEntity, ID> T save(T baseEntity) {
+	public <T extends BaseEntity, ID> T save(T object) {
 		log.info("execute method save");
 
-		boolean joinEntityExist = validateJoinColumn(baseEntity);
+		boolean joinEntityExist = validateJoinColumn(object);
 
 		if (!joinEntityExist) {
 
@@ -149,22 +149,16 @@ public class EntityRepository {
 		}
 
 		try {
-			return savev2(baseEntity);
+			DatabaseProcessor databatseProcessor = customRepository.createDatabaseProcessor();
+			T result = databatseProcessor.saveObject(object); 
+			return result;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw ex;
 		} finally {
 			//databaseProcessorNotifier.refresh();
 		}
-	}
-
-	public <T extends BaseEntity> T savev2(T entity) {
-		DatabaseProcessor databatseProcessor = customRepository.createDatabaseProcessor();
-		T result = databatseProcessor.saveObject(entity); 
-		 
-		return result;
-
-	}
+	} 
 
 	public <T extends BaseEntity> boolean validateJoinColumn(T baseEntity) {
 

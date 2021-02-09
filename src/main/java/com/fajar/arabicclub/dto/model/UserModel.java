@@ -11,12 +11,14 @@ import com.fajar.arabicclub.entity.Authority;
 import com.fajar.arabicclub.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Dto(entityClass = User.class, updateService = "memberUpdateService")
 @Builder
@@ -38,8 +40,27 @@ public class UserModel extends BaseModel<User>{
 	@FormField(type = FieldType.FIELD_TYPE_IMAGE)
 	private String profileImage;
 	
-	@FormField(type=FieldType.FIELD_TYPE_PLAIN_LIST)
+	/**
+	 * for CRUD
+	 */
+	@FormField(type=FieldType.FIELD_TYPE_PLAIN_LIST) 
+	@Setter(value=AccessLevel.NONE)
+	@Getter(value=AccessLevel.NONE)
+	private AuthorityType role;
+	@JsonIgnore
 	private AuthorityType mainRole;
+	
+	public AuthorityType getRole() {
+		if (null != authorities && authorities.size() > 0) {
+			return ((Authority)authorities.toArray()[0]).getName();
+		}
+		return role;
+	}
+	
+	public void setRole(AuthorityType role) {
+		this.role = role;
+		this.mainRole = role;
+	}
 
 	@Default
 	private Set<AuthorityModel> authorities = new HashSet<>();

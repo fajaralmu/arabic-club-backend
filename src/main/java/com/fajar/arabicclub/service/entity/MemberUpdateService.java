@@ -44,11 +44,14 @@ public class MemberUpdateService extends BaseEntityUpdateService<User>{
 			} else {
 				object.setPassword(encodedPassword);
 			}
+			
+			/**
+			 * Roles check, currently not supporting for multiple roles
+			 */
 			Set<Authority> memberRoles = getMemberAuthorities(object.getMainRole());
 			if (existingObject.hasAuthority(object.getMainRole())) {
 				object.setAuthorities(existingObject.getAuthorities());
 			} else {
-				memberRoles.add(authorityRepository.findTop1ByName(object.getMainRole()));
 				object.setAuthorities(memberRoles);
 			}
 			 

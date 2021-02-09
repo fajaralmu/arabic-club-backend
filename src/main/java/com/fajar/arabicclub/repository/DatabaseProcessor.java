@@ -235,7 +235,9 @@ public class DatabaseProcessor {
 
 			return result;
 		} catch (Exception e) {
+			log.error("Error saving  {}", rawEntity.getClass() );
 			if (null != transaction) {
+				log.info("ROLLING BACK");
 				transaction.rollback();
 			}
 			return null;
