@@ -1,4 +1,4 @@
-package com.fajar.arabicclub.entity;
+package com.fajar.arabicclub.entity.setting;
 
 public interface MultipleImageModel {
 	

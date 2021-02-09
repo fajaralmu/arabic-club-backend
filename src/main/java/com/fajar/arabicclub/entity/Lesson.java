@@ -7,6 +7,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fajar.arabicclub.dto.model.LessonModel;
+import com.fajar.arabicclub.entity.setting.MultipleImageModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

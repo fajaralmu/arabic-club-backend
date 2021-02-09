@@ -59,7 +59,7 @@ public class PublicQuizService {
 		log.info("get quiz list page:{}, limit: {}", filter.getPage(), filter.getLimit());
 		log.info("is admin: {}", isAdmin);
 		PageRequest pageRequest = PageRequest.of(filter.getPage(), filter.getLimit());
-		Page<Quiz> quizes = isAdmin? quizRepository.findAll(pageRequest) : quizRepository.findByActiveTrue(pageRequest);
+		Page<Quiz> quizes = quizRepository.findQuizList(isAdmin ,pageRequest);
 		BigInteger quizCount =isAdmin? quizRepository.findCountAll(): quizRepository.findCountActiveTrue();
 		
 		List<Quiz> quizList = quizes.getContent();
@@ -99,7 +99,7 @@ public class PublicQuizService {
 		try {
 			log.info("take quiz with id: {}", id);
 			Optional<Quiz> quizRecord = quizRepository.findById(id);
-			if (quizRecord.isPresent() == false || quizRecord.get().getActive() != true) {
+			if (quizRecord.isPresent() == false || quizRecord.get().isActive() != true) {
 				throw new DataNotFoundException("Quiz not found");
 			}
 			WebResponse response = new WebResponse();

@@ -13,9 +13,9 @@ import com.fajar.arabicclub.dto.model.QuizModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Builder.Default;
 
 @Entity
 @Table(name = "quiz")
@@ -33,12 +33,14 @@ public class Quiz extends BaseEntity<QuizModel> {
 	private String title;
 	@Column
 	private String description;
-	@Column
+	@Column(name="public_quiz", nullable = false)
 	private boolean publicQuiz;
 	@Column(nullable = false)
 	private Long duration;
-	@Column
-	private Boolean active;
+	@Column(nullable = false)
+	private boolean active;
+	@Column(nullable = false)
+	private boolean repeatable;
 
 	@Transient
 	@Default

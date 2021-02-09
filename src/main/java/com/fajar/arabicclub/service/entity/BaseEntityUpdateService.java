@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,10 @@ import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.config.LogProxyFactory;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.BaseEntity;
-import com.fajar.arabicclub.entity.MultipleImageModel;
-import com.fajar.arabicclub.entity.SingleImageModel;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.entity.setting.EntityUpdateInterceptor;
+import com.fajar.arabicclub.entity.setting.MultipleImageModel;
+import com.fajar.arabicclub.entity.setting.SingleImageModel;
 import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.service.SessionValidationService;
 import com.fajar.arabicclub.service.resources.FileService;
@@ -45,8 +46,9 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 	}
 
 	public T saveEntity(T object, boolean newRecord, HttpServletRequest httpServletRequest) throws Exception {
-		log.error("saveEntity Method not implemented");
-		return null;
+		log.error("SaveEntity Method NOT IMPLEMENTED IN BASEENTITY UPDATE SERVICE");
+		
+		throw new NotImplementedException("SaveEntity Method NOT IMPLEMENTED IN BASEENTITY UPDATE SERVICE");
 	}
 	
 	public void postFilter(List<T> objects) {

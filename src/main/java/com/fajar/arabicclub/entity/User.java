@@ -18,6 +18,7 @@ import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.constants.AuthorityType;
 import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.dto.model.UserModel;
+import com.fajar.arabicclub.entity.setting.SingleImageModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;

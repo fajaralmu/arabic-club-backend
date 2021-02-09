@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fajar.arabicclub.entity.BaseEntity;
-import com.fajar.arabicclub.entity.MultipleImageModel;
-import com.fajar.arabicclub.entity.SingleImageModel;
+import com.fajar.arabicclub.entity.setting.MultipleImageModel;
+import com.fajar.arabicclub.entity.setting.SingleImageModel;
 import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.util.CollectionUtil;
 

@@ -37,8 +37,9 @@ public class QuizModel extends BaseModel<Quiz> {
 	@FormField(type = FieldType.FIELD_TYPE_NUMBER, labelName = "Duration (Second)") 
 	private Long duration;
 	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
-	private Boolean active;
-	
+	private boolean active;
+	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
+	private boolean repeatable;
 	/**
 	 * questionCount for presentation layer ONLY
 	 */

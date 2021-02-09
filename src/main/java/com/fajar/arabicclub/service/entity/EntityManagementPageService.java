@@ -97,6 +97,7 @@ public class EntityManagementPageService {
 		result.add(entityRepository.getConfig("documentcategory").setIconClassName("fas fa-tags")); 
 		result.add(entityRepository.getConfig("quiz").setIconClassName("fas fa-file-alt"));  
 		result.add(entityRepository.getConfig("user").setIconClassName("fas fa-users"));  
+		result.add(entityRepository.getConfig("quizhistory").setIconClassName("fas fa-history"));  
 		
 		return WebResponse.builder().generalList(result).build();
 	}

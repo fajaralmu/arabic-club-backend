@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import com.fajar.arabicclub.constants.AnswerCode;
 import com.fajar.arabicclub.dto.model.QuizChoiceModel;
 import com.fajar.arabicclub.dto.model.QuizQuestionModel;
+import com.fajar.arabicclub.entity.setting.SingleImageModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

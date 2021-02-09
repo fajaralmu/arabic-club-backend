@@ -1,4 +1,4 @@
-package com.fajar.arabicclub.entity;
+package com.fajar.arabicclub.entity.setting;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fajar.arabicclub.annotation.FormField;
+import com.fajar.arabicclub.entity.BaseEntity;
 import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.util.CollectionUtil;
 import com.fajar.arabicclub.util.EntityUtil;

@@ -91,6 +91,7 @@ public class MasterDataService {
 				}
 
 			} catch (Exception e) {
+				e.printStackTrace();
 				throw new ApplicationException(e.getMessage());
 			}
 

@@ -18,4 +18,12 @@ public interface QuizRepository extends JpaRepository<Quiz	, Long> {
 	public BigInteger findCountActiveTrue();
 	@Query("select  q from Quiz q where q.active is true")
 	public Page<Quiz> findByActiveTrue(PageRequest of);
+	
+	
+	default Page<Quiz> findQuizList(boolean isAdmin, PageRequest pageRequest){
+		if (isAdmin) {
+			return findAll(pageRequest);
+		}
+		return findByActiveTrue(pageRequest);
+	}
 }

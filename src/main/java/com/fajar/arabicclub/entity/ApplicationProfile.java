@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 
 import com.fajar.arabicclub.constants.FontAwesomeIcon;
 import com.fajar.arabicclub.dto.model.ApplicationProfileModel;
+import com.fajar.arabicclub.entity.setting.SingleImageModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
