@@ -24,7 +24,8 @@
 		<intercept-url pattern="/app/**" method="POST"   access="hasAnyRole('ROLE_ADMIN','ROLE_USER')" />
 		
 		<intercept-url pattern="/api/public/**" access="permitAll" /> 
-		<intercept-url pattern="/api/app/**" method="POST"  access="hasAnyRole('ROLE_ADMIN','ROLE_USER')" />
+		<intercept-url pattern="/api/app/**" method="POST"  access="hasAnyRole('ROLE_ADMIN' )" />
+		<intercept-url pattern="/api/member/**" method="POST"  access="hasAnyRole('ROLE_ADMIN','ROLE_USER')" />
 		
 		<form-login login-page="/login.html"
 			default-target-url="/app/dashboard"  username-parameter="username"

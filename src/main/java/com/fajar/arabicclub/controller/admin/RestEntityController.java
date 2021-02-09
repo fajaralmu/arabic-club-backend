@@ -1,4 +1,4 @@
-package com.fajar.arabicclub.controller;
+package com.fajar.arabicclub.controller.admin;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fajar.arabicclub.annotation.CustomRequestInfo;
+import com.fajar.arabicclub.controller.BaseController;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.setting.EntityProperty;
