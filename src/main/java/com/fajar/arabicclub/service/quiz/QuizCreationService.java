@@ -54,6 +54,7 @@ public class QuizCreationService {
 		validateQuizAndQuestions(quiz);
 
 		Quiz savedQuiz = quizDataService.saveFullQuiz(quiz, httpServletRequest);
+		savedQuiz.preventStackOverFlowError();
 		response.setQuiz(savedQuiz.toModel());
 		return response;
 	}

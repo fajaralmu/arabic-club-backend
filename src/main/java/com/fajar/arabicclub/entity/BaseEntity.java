@@ -172,7 +172,7 @@ public class BaseEntity<M extends BaseModel> implements Serializable{
 		User u = User.builder().displayName("NAME").build();
 		System.out.println(u.toModel());
 	}
-	
+	@JsonIgnore
 	public final Class<M> getTypeArgument() {
 		Class<?> _class = getClass();
 		 java.lang.reflect.Type genericeSuperClass = _class.getGenericSuperclass();
@@ -186,6 +186,7 @@ public class BaseEntity<M extends BaseModel> implements Serializable{
 		 return  (Class) parameterizedType.getActualTypeArguments()[0];
 	}
 	 
+	@JsonIgnore
 	List<Field> getObjectModelField() {
 		List<Field> fields = EntityUtil.getDeclaredFields(getClass());
 		List<Field> filtered = new ArrayList<>();
@@ -223,5 +224,9 @@ public class BaseEntity<M extends BaseModel> implements Serializable{
 		}
 		BeanUtils.copyProperties(this, e, ignoredProperties);
 		return e;
+	}
+	
+	public void preventStackOverFlowError() {
+		
 	}
 }

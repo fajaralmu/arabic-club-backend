@@ -81,4 +81,10 @@ public class QuizQuestion extends BaseEntity<QuizQuestionModel> implements Singl
 		return model;
 	}
 
+	public void preventStackOverFlowError() {
+		if (null == choices) return;
+		choices.forEach(c->c.setQuestion(null));
+		
+	}
+
 }

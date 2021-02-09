@@ -21,6 +21,7 @@ import com.fajar.arabicclub.entity.setting.EntityProperty;
 import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.service.entity.EntityManagementPageService;
 import com.fajar.arabicclub.service.entity.MasterDataService;
+import com.fajar.arabicclub.service.quiz.PublicQuizService;
 import com.fajar.arabicclub.service.quiz.QuizCreationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,8 @@ public class RestQuizManagementController extends BaseController {
 
 	@Autowired
 	private QuizCreationService quizService;
-	 
+	 @Autowired
+	 private PublicQuizService publicQuizService;
 
 	public RestQuizManagementController() {
 		log.info("------------------Rest Entity Controller-----------------");
@@ -44,6 +46,12 @@ public class RestQuizManagementController extends BaseController {
 		LogProxyFactory.setLoggers(this);
 	}
 
+	@PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	 
+	public WebResponse list(@RequestBody WebRequest request, HttpServletRequest httpRequest) {
+		log.info("list of quiz ");
+		return publicQuizService.getQuizList(request, httpRequest);
+	}
 	@PostMapping(value = "/submit", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@CustomRequestInfo(withRealtimeProgress = true)
 	public WebResponse add(@RequestBody WebRequest request, HttpServletRequest httpRequest) {

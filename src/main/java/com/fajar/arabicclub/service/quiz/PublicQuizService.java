@@ -3,6 +3,7 @@ package com.fajar.arabicclub.service.quiz;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +42,7 @@ public class PublicQuizService {
 	@Autowired
 	private ProgressService progressService;
 	@Autowired
-	private SessionValidationService sessionValidationService;
+	private SessionValidationService sessionValidationService; 
 
 	/**
 	 * get quiz list, paginated
@@ -52,12 +53,15 @@ public class PublicQuizService {
 	public WebResponse getQuizList(WebRequest webRequest, HttpServletRequest httpServletRequest) {
 
 		User user = sessionValidationService.getLoggedUser(httpServletRequest);
-//		boolean isAdmin = 
+		boolean isAdmin = user != null && user.isAdmin();
 		Filter filter = webRequest.getFilter();
 
 		log.info("get quiz list page:{}, limit: {}", filter.getPage(), filter.getLimit());
-		Page<Quiz> quizes = quizRepository.findByActiveTrue(PageRequest.of(filter.getPage(), filter.getLimit()));
-		BigInteger quizCount = quizRepository.findCountActiveTrue();
+		log.info("is admin: {}", isAdmin);
+		PageRequest pageRequest = PageRequest.of(filter.getPage(), filter.getLimit());
+		Page<Quiz> quizes = isAdmin? quizRepository.findAll(pageRequest) : quizRepository.findByActiveTrue(pageRequest);
+		BigInteger quizCount =isAdmin? quizRepository.findCountAll(): quizRepository.findCountActiveTrue();
+		
 		List<Quiz> quizList = quizes.getContent();
 		List<QuizQuestion> questions = quizList.size() == 0? new ArrayList<>() : quizQuestionRepository.findByQuizIn(quizList);
 		
@@ -94,6 +98,10 @@ public class PublicQuizService {
 	public WebResponse getQuiz(Long id, HttpServletRequest httpServletRequest) {
 		try {
 			log.info("take quiz with id: {}", id);
+			Optional<Quiz> quizRecord = quizRepository.findById(id);
+			if (quizRecord.isPresent() == false || quizRecord.get().getActive() != true) {
+				throw new DataNotFoundException("Quiz not found");
+			}
 			WebResponse response = new WebResponse();
 			Quiz fullQuiz = quizDataService.getFullQuiz(id, httpServletRequest, true);
 			response.setQuiz(fullQuiz.toModel());

@@ -14,6 +14,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fajar.arabicclub.annotation.FormField;
+import com.fajar.arabicclub.constants.AuthorityType;
+import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.dto.model.UserModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -63,7 +66,9 @@ public class User extends BaseEntity<UserModel> implements SingleImageModel {
 	@Transient
 	@JsonIgnore
 	private Date processingDate; // for transaction
-
+	@Transient
+	private AuthorityType mainRole;
+	
 	@Override
 	public void setImage(String image) {
 		this.profileImage = image;
@@ -74,6 +79,20 @@ public class User extends BaseEntity<UserModel> implements SingleImageModel {
 		return this.profileImage;
 	}
 
+	public boolean isAdmin() {
+		return hasAuthority(AuthorityType.ROLE_ADMIN) ;
+	}
+
+	public boolean hasAuthority(AuthorityType authorityType) {
+		if (null == authorities) return false;
+		for (Authority authority : authorities) {
+			if (authority!=null && authority.getName().equals(authorityType)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	 
 
 }

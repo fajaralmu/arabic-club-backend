@@ -17,7 +17,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Builder.Default;
 
- 
 @Entity
 @Table(name = "quiz")
 @Data
@@ -38,7 +37,7 @@ public class Quiz extends BaseEntity<QuizModel> {
 	private boolean publicQuiz;
 	@Column(nullable = false)
 	private Long duration;
-	@Column 
+	@Column
 	private Boolean active;
 
 	@Transient
@@ -58,15 +57,25 @@ public class Quiz extends BaseEntity<QuizModel> {
 		if (null != questions) {
 			for (QuizQuestion q : questions) {
 				model.addQuestion(q.toModel());
-			} 
+			}
 		}
 		return model;
 	}
-	
+
 	public static void main(String[] args) {
 		Quiz q = Quiz.builder().description("QUIZ 123").build();
 		q.addQuestion(QuizQuestion.builder().correctChoice(AnswerCode.B).build());
-		
+
 		System.out.println(q.toModel());
+	}
+
+	public void preventStackOverFlowError() {
+		if (null == questions)
+			return;
+		questions.forEach(q -> {
+			q.setQuiz(null);
+			q.preventStackOverFlowError();
+		});
+
 	}
 }

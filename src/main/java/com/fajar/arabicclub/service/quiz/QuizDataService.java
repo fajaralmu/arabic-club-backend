@@ -151,6 +151,7 @@ public class QuizDataService {
 
 			log.info("savedQuestions: {}", savedQuestions.size());
 			savedQuiz.setQuestions(savedQuestions);
+			
 			transaction.commit();
 			return savedQuiz;
 		} catch (Exception e) {
