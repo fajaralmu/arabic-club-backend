@@ -34,7 +34,7 @@ public class QuizHistoryModel extends BaseModel<QuizHistory>  {
 	private Date started;
 	@FormField(type=FieldType.FIELD_TYPE_DATETIME)
 	private Date ended;
-	@FormField(filterable = false, labelName = "Duarion(Second)")
+	@FormField(filterable = false)
 	@Setter(value = AccessLevel.NONE)
 	@Getter(value = AccessLevel.NONE)
 	private String quizDuration;
@@ -80,7 +80,7 @@ public class QuizHistoryModel extends BaseModel<QuizHistory>  {
 
 	public String getUserDuration() {
 		if (null == started || null == ended) return "-";
-		long seconds = (started.getTime()-ended.getTime())/1000;
+		long seconds = (ended.getTime()-started.getTime())/1000;
 		return DateUtil.timerString(seconds);
 	}
 }
