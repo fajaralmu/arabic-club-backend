@@ -173,7 +173,7 @@ public class PublicQuizService {
 			
 			if (submittedQuestion.getId().equals(actualQuestion.getId())) {
 				submittedQuestion.setCorrectChoice(actualQuestion.getAnswerCode());
-				if (submittedQuestion.getAnswerCode().equals(actualQuestion.getAnswerCode())) {
+				if (null != submittedQuestion.getAnswerCode() && submittedQuestion.getAnswerCode().equals(actualQuestion.getAnswerCode())) {
 					return 1;
 				}
 				break innerLoop;
