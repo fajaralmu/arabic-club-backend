@@ -40,6 +40,12 @@ public class QuizModel extends BaseModel<Quiz> {
 	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
 	private boolean repeatable;
 	
+	//questions
+	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
+	private boolean showAllQuestion;
+	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
+	private boolean questionsTimered;
+	
 	private boolean available;
 	private List<QuizQuestionModel> questions;
 	

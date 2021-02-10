@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.constants.AnswerCode;
+import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.dto.model.QuizModel;
 
 import lombok.AllArgsConstructor;
@@ -41,6 +43,12 @@ public class Quiz extends BaseEntity<QuizModel> {
 	private boolean active;
 	@Column(nullable = false)
 	private boolean repeatable;
+	
+	//questions
+	@Column(name="show_all_question")
+	private boolean showAllQuestion;
+	@Column(name="question_timered")
+	private boolean questionsTimered;
 	
 	@Transient
 	@Default
