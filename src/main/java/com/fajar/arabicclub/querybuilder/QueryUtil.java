@@ -90,7 +90,7 @@ public class QueryUtil {
 				
 			} catch ( Exception e) {
 				
-				log.warn(e.getClass() + " " + e.getMessage() + " " + field.getType());
+				log.error(e.getClass() + " " + e.getMessage() + " " + field.getType());
 				e.printStackTrace(); 
 				validColumn = false;
 			}
@@ -118,11 +118,25 @@ public class QueryUtil {
 		}
 	} 
 
+	/**
+	 *
+	 * @param entityField
+	 * @return
+	 */
 	private static String getOptionItemName(Field field) {
-		FormField formField 	= field.getAnnotation(FormField.class);
+		 
+		Field modelField = BaseEntity.getModelField(field);
+		if (null == modelField) {
+			System.out.println("modelField "+field.getName()+" IS NULL ");
+		}
+		FormField formField = modelField.getAnnotation(FormField.class);
 		String referenceFieldName = formField.optionItemName();
 		return referenceFieldName;
-	}public static String getTableName(Class<?> entityClass) {
+	}
+	
+	
+
+	public static String getTableName(Class<?> entityClass) {
 		log.info("getTableName From entity class: " + entityClass.getCanonicalName());
 		
 		Table table = getClassAnnotation(entityClass, Table.class);

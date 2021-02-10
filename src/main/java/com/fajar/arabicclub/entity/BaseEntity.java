@@ -229,4 +229,11 @@ public class BaseEntity<M extends BaseModel> implements Serializable{
 	public void preventStackOverFlowError() {
 		
 	}
+
+	public static Field getModelField(Field entityField) {
+		Class<?> entityClass = entityField.getDeclaringClass();
+		Class modelClass = BaseEntity.getTypeArgumentOfGenericSuperClass(entityClass);
+		Field modelField = EntityUtil.getDeclaredField(modelClass, entityField.getName());
+		return modelField;
+	}
 }
