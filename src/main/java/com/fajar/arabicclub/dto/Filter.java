@@ -31,8 +31,6 @@ public class Filter implements Serializable {
 	@Builder.Default
 	private boolean contains = true;
 	@Builder.Default
-	private boolean beginsWith = true;
-	@Builder.Default
 	private boolean exacts = false;
 	@Builder.Default
 	private Integer day = 0;
@@ -42,6 +40,7 @@ public class Filter implements Serializable {
 	private Integer month = 0; 
 	@Builder.Default
 	private Map<String, Object> fieldsFilter = new HashMap<>();
+	private Boolean availabilityCheck;
 	
 	private Integer dayTo;
 	private Integer monthTo;

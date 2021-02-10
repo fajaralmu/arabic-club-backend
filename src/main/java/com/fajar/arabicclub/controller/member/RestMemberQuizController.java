@@ -47,6 +47,7 @@ public class RestMemberQuizController extends BaseController{
 
 	 
 	@PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@CustomRequestInfo(withRealtimeProgress = true)
 	public WebResponse getQuizList(@RequestBody WebRequest webRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpResponse) throws IOException {
 		
 		log.info("get Quiz List");

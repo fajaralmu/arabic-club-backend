@@ -41,6 +41,10 @@ public class Quiz extends BaseEntity<QuizModel> {
 	private boolean active;
 	@Column(nullable = false)
 	private boolean repeatable;
+	
+	@Transient
+	@Default
+	private boolean available = true;
 
 	@Transient
 	@Default

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Transient;
-
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.constants.FieldType;
@@ -41,19 +39,21 @@ public class QuizModel extends BaseModel<Quiz> {
 	private boolean active;
 	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
 	private boolean repeatable;
+	
+	private boolean available;
+	private List<QuizQuestionModel> questions;
+	
 	/**
-	 * questionCount for presentation layer ONLY
+	 * below fields are for view layer
 	 */
 	@FormField(editable = false, filterable = false)
 	@Setter(value=AccessLevel.NONE)
 	@Getter(value=AccessLevel.NONE)
 	private int questionCount;
-	
 	private Date submittedDate;
 	private Date startedDate;
 	
-	@Transient
-	private List<QuizQuestionModel> questions;
+	
 	
 	public int getQuestionCount() {
 		if (null != questions) return questions.size();

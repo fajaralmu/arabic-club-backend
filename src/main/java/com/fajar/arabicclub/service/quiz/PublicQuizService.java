@@ -66,15 +66,32 @@ public class PublicQuizService {
 		Page<Quiz> quizes = quizRepository.findQuizList(isAdmin ,pageRequest);
 		BigInteger quizCount =isAdmin? quizRepository.findCountAll(): quizRepository.findCountActiveTrue();
 		
+		progressService.sendProgress(10, httpServletRequest);
+		
 		List<Quiz> quizList = quizes.getContent();
 		List<QuizQuestion> questions = quizList.size() == 0? new ArrayList<>() : quizQuestionRepository.findByQuizIn(quizList);
+		progressService.sendProgress(10, httpServletRequest);
 		
 		mapQuizAndQuestions(quizList, questions);
-
+		if (filter.getAvailabilityCheck() == true) {
+			mapAvailability(quizList, httpServletRequest);
+		}
 		WebResponse response = new WebResponse();
 		response.setEntities(CollectionUtil.convertList(quizList));
 		response.setTotalData(quizCount == null ? 0 : quizCount.intValue());
 		return response;
+	}
+
+	private void mapAvailability(List<Quiz> quizList, HttpServletRequest httpServletRequest) {
+		if (null == quizList || 0 == quizList.size()) {
+			return;
+		}
+		for (Quiz quiz : quizList) {
+			boolean allowed = quizHistoryService.isAllowed(quiz, httpServletRequest);
+			quiz.setAvailable(allowed);
+			progressService.sendProgress(1, quizList.size(), 80, httpServletRequest);
+		}
+		
 	}
 
 	public static void mapQuizAndQuestions(List<Quiz> quizList, List<QuizQuestion> questions) {
