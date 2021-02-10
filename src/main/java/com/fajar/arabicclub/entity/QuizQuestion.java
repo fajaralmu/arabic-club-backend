@@ -53,6 +53,8 @@ public class QuizQuestion extends BaseEntity<QuizQuestionModel> implements Singl
 
 	@Column
 	private String image;
+	@Column
+	private Long duration;
 
 	@Transient
 	private List<QuizChoice> choices;
