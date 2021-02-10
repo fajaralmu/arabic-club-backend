@@ -33,7 +33,8 @@ public class QuizModel extends BaseModel<Quiz> {
 	private String description; 
 	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX) 
 	private boolean publicQuiz;
-	@FormField(type = FieldType.FIELD_TYPE_NUMBER, labelName = "Duration (Second)") 
+	@FormField(type = FieldType.FIELD_TYPE_NUMBER, labelName = "Duration (Second)")
+	@Getter(value=AccessLevel.NONE)
 	private Long duration;
 	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
 	private boolean active;
@@ -71,6 +72,17 @@ public class QuizModel extends BaseModel<Quiz> {
 			questions = new ArrayList<QuizQuestionModel>();
 		}
 		questions.add(question);
+	}
+	
+	public Long getDuration() {
+		if (isQuestionsTimered() &&  getQuestionCount() > 0) {
+			Long durationTotal = 0L;
+			for (QuizQuestionModel q : questions) {
+				durationTotal+=q.getDuration();
+			}
+			return durationTotal;
+		}
+		return duration;
 	}
 	
 	@Override 

@@ -36,7 +36,7 @@ public class QuizQuestionModel extends BaseModel<QuizQuestion> {
  
 	private QuizModel quiz; 
 	private String image;
-	private Long duration;
+	private long duration;
 
 	@Transient
 	private List<QuizChoiceModel> choices;
