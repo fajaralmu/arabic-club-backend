@@ -77,7 +77,7 @@ public class WebResponse implements Serializable {
 	}
 
 	public <T extends BaseEntity> void setEntities(List<T > entities) {
-		this.entities = CollectionUtil.convertList(entities);
+		this.entities = CollectionUtil.convertList(BaseModel.toModels(entities));
 	}
 	
 	public static WebResponse failedResponse() {

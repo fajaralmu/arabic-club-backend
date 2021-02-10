@@ -2,6 +2,7 @@ package com.fajar.arabicclub.service.quiz;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -128,12 +129,19 @@ public class PublicQuizService {
 	 */
 	public WebResponse submitAnswers(WebRequest webRequest, HttpServletRequest httpServletRequest) {
 		try {
+			Date submittedDate = webRequest.getQuiz().getSubmittedDate();
+			Date startedDate = webRequest.getQuiz().getStartedDate();
 			final Quiz submittedQuiz = webRequest.getQuiz().toEntity();
 			log.info("submitAnswers with id: {}", submittedQuiz.getId());
 			WebResponse response = new WebResponse();
 			Quiz fullQuiz = quizDataService.getFullQuiz(submittedQuiz.getId(), httpServletRequest, false);
 			
 			QuizResult quizResult = calculateAnswers(submittedQuiz, fullQuiz, httpServletRequest);
+			quizResult.setStartedDate(startedDate);
+			quizResult.setSubmittedDate(submittedDate);
+			
+			log.info("started date: {}, submitted date: {}", startedDate, submittedDate);
+			
 			quizHistoryService.updateHistoryEnd(quizResult, httpServletRequest);
 			response.setQuizResult(quizResult);
 			return response;

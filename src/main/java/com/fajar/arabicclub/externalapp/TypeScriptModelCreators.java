@@ -12,18 +12,23 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import com.fajar.arabicclub.dto.model.QuizHistoryModel;
 import com.fajar.arabicclub.util.EntityUtil;
 public class TypeScriptModelCreators {
 	final static String inputDir = "D:\\Development\\Kafila Projects\\arabic-club-backend\\src\\"
 			+ "main\\java\\com\\fajar\\arabicclub\\entity\\";
 	final static String outputDir = "D:\\Development\\Kafila Projects\\models\\";
-	public static void main(String[] args) {
+	public static void main2(String[] args) {
 		List<String> names = getJavaFiles(inputDir);
 		List<Class> classes = getJavaClasses("com.fajar.arabicclub.entity", names);
 		for (Class class1 : classes) {
 			String content = printClass(class1);
 			writeFile(outputDir+class1.getSimpleName()+".ts", content);
 		}
+	}
+	public static void main(String[] args) {
+		String content = printClass(QuizHistoryModel.class);
+		writeFile(outputDir+QuizHistoryModel.class.getSimpleName()+".ts", content);
 	}
 	public static List<Class> getJavaClasses(String packageName, List<String> fileNames) {
 		

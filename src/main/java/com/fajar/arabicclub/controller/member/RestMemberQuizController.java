@@ -21,6 +21,7 @@ import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.service.quiz.PublicQuizService;
+import com.fajar.arabicclub.service.quiz.QuizHistoryService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +33,8 @@ public class RestMemberQuizController extends BaseController{
 	
 	@Autowired
 	private PublicQuizService publicQuizService;
+	@Autowired
+	private QuizHistoryService quizHistoryService;
 	 
 	@PostConstruct
 	public void init() {
@@ -63,6 +66,13 @@ public class RestMemberQuizController extends BaseController{
 		
 		log.info("submitAnswers");
 		WebResponse response = publicQuizService.submitAnswers(webRequest, httpRequest);
+		return response;
+	}
+	@PostMapping(value = "/history", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public WebResponse getHistory(@RequestBody WebRequest webRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpResponse) throws IOException {
+		
+		log.info("get Quiz List");
+		WebResponse response = quizHistoryService.getHistory(webRequest, httpServletRequest);
 		return response;
 	}
 

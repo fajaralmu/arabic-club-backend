@@ -80,6 +80,10 @@ public class QuizHistoryModel extends BaseModel<QuizHistory>  {
 
 	public String getUserDuration() {
 		if (null == started || null == ended) return "-";
+		if (started.after(ended)) {
+			//invalid
+			return "invalid";
+		}
 		long seconds = (ended.getTime()-started.getTime())/1000;
 		return DateUtil.timerString(seconds);
 	}

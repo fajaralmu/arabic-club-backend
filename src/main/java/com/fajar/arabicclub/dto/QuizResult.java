@@ -1,6 +1,7 @@
 package com.fajar.arabicclub.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.fajar.arabicclub.entity.Quiz;
 
@@ -21,6 +22,8 @@ public class QuizResult implements Serializable {
 	private static final long serialVersionUID = 7914795420031765969L;
 	
 	private Quiz submittedQuiz;
+	private Date startedDate;
+	private Date submittedDate;
 	private int correctAnswer;
 	private int wrongAnswer;
 	private int totalQuestion;

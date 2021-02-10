@@ -1,6 +1,7 @@
 package com.fajar.arabicclub.dto.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Transient;
@@ -47,6 +48,9 @@ public class QuizModel extends BaseModel<Quiz> {
 	@Setter(value=AccessLevel.NONE)
 	@Getter(value=AccessLevel.NONE)
 	private int questionCount;
+	
+	private Date submittedDate;
+	private Date startedDate;
 	
 	@Transient
 	private List<QuizQuestionModel> questions;
