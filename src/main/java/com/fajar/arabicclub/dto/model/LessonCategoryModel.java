@@ -1,8 +1,8 @@
 package com.fajar.arabicclub.dto.model;
 
-import javax.persistence.Column;
-
 import com.fajar.arabicclub.annotation.Dto;
+import com.fajar.arabicclub.annotation.FormField;
+import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.entity.LessonCategory;
 
 import lombok.AllArgsConstructor;
@@ -19,12 +19,12 @@ public class LessonCategoryModel extends BaseModel<LessonCategory> {
 	 * 
 	 */
 	private static final long serialVersionUID = 2119316402415666731L;
-	@Column(unique = true)
+	@FormField
 	private String code; 
-	@Column(unique = true)
+	@FormField
 	private String name; 
-	@Column(name = "icon_class")
+	@FormField
 	private String iconClassName; 
-	@Column
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
 	private String description;
 }
