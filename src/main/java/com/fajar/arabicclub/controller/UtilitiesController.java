@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fajar.arabicclub.config.security.JWTAuthFilter;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -47,6 +48,7 @@ public class UtilitiesController extends BaseController{
 
 		errorPage.addObject("errorCode", httpErrorCode);
 		errorPage.addObject("errorMessage", getAttribute(httpRequest, "javax.servlet.error.exception"));
+		JWTAuthFilter.setCorsHeaders(httpResponse);
 		printHttpRequestAttrs(httpRequest);
 		return errorPage;
 	}
@@ -67,6 +69,7 @@ public class UtilitiesController extends BaseController{
 		httpResponse.setStatus(404);
 
 		String jsonString = objectMapper.writeValueAsString(payload); 
+		JWTAuthFilter.setCorsHeaders(httpResponse);
 		httpResponse.getWriter().write(jsonString);
 		printHttpRequestAttrs(httpRequest);
 		
@@ -88,6 +91,7 @@ public class UtilitiesController extends BaseController{
 
 		String jsonString = objectMapper.writeValueAsString(payload); 
 		httpResponse.getWriter().write(jsonString);
+		JWTAuthFilter.setCorsHeaders(httpResponse);
 		printHttpRequestAttrs(httpRequest);
 		
 	}
