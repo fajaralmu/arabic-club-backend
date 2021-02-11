@@ -134,7 +134,7 @@ public class ImageUploadService {
 			String imageName = null;
 			if (isBase64Image(rawImage)) {
 				try {
-					imageName = fileService.writeImage(multipleImageModel.getClass().getSimpleName(), rawImage);
+					imageName = fileService.writeImage(multipleImageModel.getClass().getSimpleName(), rawImage, httpServletRequest);
 					log.info("saved base64 image {}", imageName);
 				} catch (IOException e) {
 					e.printStackTrace();

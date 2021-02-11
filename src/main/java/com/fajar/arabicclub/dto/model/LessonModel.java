@@ -37,7 +37,7 @@ public class LessonModel extends BaseModel<Lesson>{
 	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_FIXED_LIST)
 	private LessonCategoryModel category;
 	
-	@FormField(type = FieldType.FIELD_TYPE_DATE)
+	@FormField(type = FieldType.FIELD_TYPE_DATETIME)
 	private Date date;
  
 	private User user;
