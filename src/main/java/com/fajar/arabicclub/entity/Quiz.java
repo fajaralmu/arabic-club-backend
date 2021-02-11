@@ -92,4 +92,13 @@ public class Quiz extends BaseEntity<QuizModel> {
 		});
 
 	}
+
+	public void setChoices(int i, List<QuizChoice> choices) {
+		try {
+			questions.get(i).setChoices(choices);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+	}
 }

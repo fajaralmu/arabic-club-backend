@@ -60,14 +60,16 @@ public abstract class BaseModel<E extends BaseEntity> implements Serializable{
 		E instance = (E) entityClass.newInstance();
 		return instance;
 	}
+	
+	@JsonIgnore
 	public Class<E> getTypeArgument() {
 		Class<?> _class = getClass();
 		 java.lang.reflect.Type genericeSuperClass = _class.getGenericSuperclass();
 		 ParameterizedType parameterizedType = (ParameterizedType) genericeSuperClass;
 		 return  (Class<E>) parameterizedType.getActualTypeArguments()[0];
 	}
-	
-	List<Field> getObjectModelField() {
+	 
+	private List<Field> getObjectModelField() {
 		List<Field> fields = EntityUtil.getDeclaredFields(getClass());
 		List<Field> filtered = new ArrayList<>();
 		for (Field field : fields) {
