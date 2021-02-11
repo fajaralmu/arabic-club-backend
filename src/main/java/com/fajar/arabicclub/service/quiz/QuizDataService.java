@@ -132,6 +132,7 @@ public class QuizDataService {
 		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
 		try {
+			imageUploadService.uploadImage(quiz);
 			Quiz savedQuiz = DatabaseProcessor.save(quiz, session);
 			progressService.sendProgress(10, httpServletRequest);
 

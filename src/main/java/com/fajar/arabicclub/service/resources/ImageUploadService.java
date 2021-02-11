@@ -51,6 +51,7 @@ public class ImageUploadService {
 			} catch (IOException e) {
 				e.printStackTrace();
 				singleImageModel.setImage(null);
+				return null;
 			}
 
 		}

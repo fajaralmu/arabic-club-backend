@@ -55,13 +55,19 @@ public class YoutubeVideoPreviewService {
 			return null;
 		}
 		String endpoint = buildEndpoint(apiUrl, apiKey, id);
-		ResponseEntity<GoogleResponse> response = restTemplate.getForEntity(endpoint, GoogleResponse.class);
-		List<ResponseItem> items = response.getBody().getItems();
-		if (null == items || items.size() == 0) {
-			log.info("items empty");
+		try {
+			ResponseEntity<GoogleResponse> response = restTemplate.getForEntity(endpoint, GoogleResponse.class);
+			List<ResponseItem> items = response.getBody().getItems();
+			if (null == items || items.size() == 0) {
+				log.info("items empty");
+				return null;
+			}
+		
+		return items.get(0).getSnippet();
+		} catch (Exception e) {
+			// TODO: handle exception
 			return null;
 		}
-		return items.get(0).getSnippet();
 	}
 
 	public List<VideosModel> getSnippets(List<Videos> videos, HttpServletRequest httpServletRequest) {
