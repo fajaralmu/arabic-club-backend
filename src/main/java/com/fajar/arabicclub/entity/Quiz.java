@@ -31,7 +31,7 @@ public class Quiz extends BaseEntity<QuizModel> {
 	*/
 	private static final long serialVersionUID = -1168912843978053906L;
 
-	@Column(unique = true, nullable = false)
+	@Column(nullable = false)
 	private String title;
 	@Column
 	private String description;

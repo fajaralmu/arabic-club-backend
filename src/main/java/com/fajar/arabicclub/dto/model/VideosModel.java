@@ -29,7 +29,7 @@ public class VideosModel extends BaseModel<Videos> {
 	 
 	@FormField(required = true)
 	private String url; 
-	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, required = false)
 	private String description;
 	 
 	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_FIXED_LIST)

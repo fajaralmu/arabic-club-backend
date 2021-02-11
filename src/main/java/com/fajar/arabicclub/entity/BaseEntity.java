@@ -169,8 +169,7 @@ public class BaseEntity<M extends BaseModel> implements Serializable{
 	}
 	
 	public static void main(String[] args) {
-		User u = User.builder().displayName("NAME").build();
-		System.out.println(u.toModel());
+		System.out.println(BaseEntity.getTypeArgumentOfGenericSuperClass(Lesson.class));
 	}
 	@JsonIgnore
 	public final Class<M> getTypeArgument() {
@@ -181,9 +180,13 @@ public class BaseEntity<M extends BaseModel> implements Serializable{
 	}
 	
 	public static Class getTypeArgumentOfGenericSuperClass(Class _class) {
-		java.lang.reflect.Type genericeSuperClass = _class.getGenericSuperclass();
-		 ParameterizedType parameterizedType = (ParameterizedType) genericeSuperClass;
-		 return  (Class) parameterizedType.getActualTypeArguments()[0];
+		if (BaseEntity.class.equals(_class.getSuperclass())){
+			java.lang.reflect.Type genericeSuperClass = _class.getGenericSuperclass();
+			 ParameterizedType parameterizedType = (ParameterizedType) genericeSuperClass;
+			 return  (Class) parameterizedType.getActualTypeArguments()[0];
+		} 
+		return null;
+		
 	}
 	 
 	@JsonIgnore
@@ -231,8 +234,10 @@ public class BaseEntity<M extends BaseModel> implements Serializable{
 	}
 
 	public static Field getModelField(Field entityField) {
+		log.info("get model field for: {}", entityField.getName());
 		Class<?> entityClass = entityField.getDeclaringClass();
 		Class modelClass = BaseEntity.getTypeArgumentOfGenericSuperClass(entityClass);
+		if (null == modelClass) return null;
 		Field modelField = EntityUtil.getDeclaredField(modelClass, entityField.getName());
 		return modelField;
 	}

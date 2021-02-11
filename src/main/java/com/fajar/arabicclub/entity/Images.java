@@ -26,7 +26,7 @@ public class Images extends BaseEntity<ImagesModel> implements MultipleImageMode
 	* 
 	*/
 	private static final long serialVersionUID = 3494963248002164943L;
-	@Column(unique = true) 
+	@Column( ) 
 	private String title;
 	
 	@Column 

@@ -25,7 +25,7 @@ public class Documents extends BaseEntity<DocumentsModel> {
 	* 
 	*/
 	private static final long serialVersionUID = 3494963248002164943L;
-	@Column(unique = true) 
+	@Column( ) 
 	private String title;
 	
 	@Column 

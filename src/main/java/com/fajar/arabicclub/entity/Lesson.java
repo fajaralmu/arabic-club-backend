@@ -1,5 +1,7 @@
 package com.fajar.arabicclub.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -26,12 +28,14 @@ public class Lesson extends BaseEntity<LessonModel> implements MultipleImageMode
 	* 
 	*/
 	private static final long serialVersionUID = 3494963248002164943L;
-	@Column(unique = true) 
+	@Column( ) 
 	private String title;
 	@Column(length = 20000) 
 	private String content;
 	@Column 
 	private String description;
+	@Column
+	private Date date;
 	
 	@Column(name = "banner_images" ) 
 	private String bannerImages; // type:BLOB

@@ -1,9 +1,10 @@
 package com.fajar.arabicclub.dto.model;
 
+import java.util.Date;
+
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.constants.FieldType;
-import com.fajar.arabicclub.constants.FormInputColumn;
 import com.fajar.arabicclub.entity.Lesson;
 import com.fajar.arabicclub.entity.User;
 
@@ -35,6 +36,9 @@ public class LessonModel extends BaseModel<Lesson>{
 	 
 	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_FIXED_LIST)
 	private LessonCategoryModel category;
+	
+	@FormField(type = FieldType.FIELD_TYPE_DATE)
+	private Date date;
  
 	private User user;
 

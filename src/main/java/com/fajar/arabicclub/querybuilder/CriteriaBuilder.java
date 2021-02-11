@@ -366,8 +366,9 @@ public class CriteriaBuilder {
 		Field field = EntityUtil.getDeclaredField(_class, extractedFieldName);
 		
 		if (field.getAnnotation(Transient.class)!=null) return null;
+		String columnName = QueryUtil.getColumnName(field);
 		//TODO: change to Like if using mysql
-		Criterion sqlRestriction = Restrictions.sqlRestriction(tableName+"."+extractedFieldName + "::varchar(255) ILIKE '%" + value + "%'");
+		Criterion sqlRestriction = Restrictions.sqlRestriction(tableName+"."+columnName + "::varchar(255) ILIKE '%" + value + "%'");
 
 		return sqlRestriction;
 	}
