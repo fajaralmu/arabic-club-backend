@@ -9,6 +9,7 @@ import com.fajar.arabicclub.dto.model.ApplicationProfileModel;
 import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.dto.model.QuizModel;
 import com.fajar.arabicclub.dto.model.UserModel;
+import com.fajar.arabicclub.dto.model.VideosModel;
 import com.fajar.arabicclub.entity.BaseEntity;
 import com.fajar.arabicclub.entity.setting.EntityProperty;
 import com.fajar.arabicclub.util.CollectionUtil;
@@ -104,6 +105,10 @@ public class WebResponse implements Serializable {
 
 	public static WebResponse invalidSession() {
 		return new WebResponse("02", "Invalid Session");
+	}
+
+	public void setItems(List<VideosModel> models) {
+		this.entities = models;
 	}
 
 	

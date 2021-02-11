@@ -3,7 +3,9 @@ package com.fajar.arabicclub.dto.model;
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.constants.FieldType;
+import com.fajar.arabicclub.dto.youtuberesponse.Snippet;
 import com.fajar.arabicclub.entity.Videos;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,8 +32,11 @@ public class VideosModel extends BaseModel<Videos> {
 	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
 	private String description;
 	 
-	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_DYNAMIC_LIST)
+	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_FIXED_LIST)
 	private VideoCategoryModel category; 
+	
+	
+	private Snippet videoSnippet;
  
 
 }

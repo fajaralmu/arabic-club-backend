@@ -1,4 +1,4 @@
-package com.fajar.arabicclub.service.lessons;
+package com.fajar.arabicclub.service.publicmenus;
 
 import java.util.List;
 

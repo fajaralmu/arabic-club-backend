@@ -19,10 +19,10 @@ import com.fajar.arabicclub.annotation.Authenticated;
 import com.fajar.arabicclub.annotation.CustomRequestInfo;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
-import com.fajar.arabicclub.gallery.GalleryService;
 import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.service.config.DefaultCategoriesService;
-import com.fajar.arabicclub.service.lessons.LessonService;
+import com.fajar.arabicclub.service.publicmenus.GalleryService;
+import com.fajar.arabicclub.service.publicmenus.LessonService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,6 +74,13 @@ public class RestPublicController extends BaseController {
 	public WebResponse getPictures(@RequestBody WebRequest webRequest, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
 		 
 		WebResponse response = galleryService.getPictures(webRequest);
+		return response;
+	}
+	@PostMapping(value = "/gallery/videos", consumes=MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@CustomRequestInfo(withRealtimeProgress = true)
+	public WebResponse getVideos(@RequestBody WebRequest webRequest, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+		
+		WebResponse response = galleryService.getVideos(webRequest, httpRequest);
 		return response;
 	}
 	

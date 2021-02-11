@@ -12,26 +12,42 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
-import com.fajar.arabicclub.dto.model.QuizHistoryModel;
+import com.fajar.arabicclub.dto.youtuberesponse.Snippet;
+import com.fajar.arabicclub.dto.youtuberesponse.ThumbnailItem;
+import com.fajar.arabicclub.dto.youtuberesponse.Thumbnails;
 import com.fajar.arabicclub.util.EntityUtil;
+
 public class TypeScriptModelCreators {
 	final static String inputDir = "D:\\Development\\Kafila Projects\\arabic-club-backend\\src\\"
 			+ "main\\java\\com\\fajar\\arabicclub\\entity\\";
 	final static String outputDir = "D:\\Development\\Kafila Projects\\models\\";
+
 	public static void main2(String[] args) {
 		List<String> names = getJavaFiles(inputDir);
 		List<Class> classes = getJavaClasses("com.fajar.arabicclub.entity", names);
 		for (Class class1 : classes) {
 			String content = printClass(class1);
-			writeFile(outputDir+class1.getSimpleName()+".ts", content);
+			writeFile(outputDir + class1.getSimpleName() + ".ts", content);
 		}
 	}
+
 	public static void main(String[] args) {
-		String content = printClass(QuizHistoryModel.class);
-		writeFile(outputDir+QuizHistoryModel.class.getSimpleName()+".ts", content);
+		printAndWriteClasses(Snippet.class, Thumbnails.class, ThumbnailItem.class);
 	}
+
+	public static void printAndWriteClasses(Class... classes) {
+		for (Class class1 : classes) {
+			printAndWrite(class1);
+		}
+	}
+
+	public static void printAndWrite(Class _class) {
+		String content = printClass(_class);
+		writeFile(outputDir + _class.getSimpleName() + ".ts", content);
+	}
+
 	public static List<Class> getJavaClasses(String packageName, List<String> fileNames) {
-		
+
 		List<Class> classes = new ArrayList<>();
 		for (String name : fileNames) {
 			Class _class;
@@ -43,7 +59,7 @@ public class TypeScriptModelCreators {
 				e.printStackTrace();
 			}
 		}
-		return classes ;
+		return classes;
 	}
 
 	public static void writeFile(String fileName, String content) {
@@ -54,8 +70,9 @@ public class TypeScriptModelCreators {
 			e.printStackTrace();
 		}
 	}
+
 	public static List<String> getJavaFiles(String inputDir) {
-		File file = new File(inputDir );
+		File file = new File(inputDir);
 		File[] listFiles = file.listFiles();
 
 		List<String> fileNames = new ArrayList<String>();
@@ -67,31 +84,31 @@ public class TypeScriptModelCreators {
 //			System.out.println(file2.getName());
 			fileNames.add(fileName.replace(".java", ""));
 		}
-		
+
 		return fileNames;
 	}
 
 	private static String printClass(Class<?> clazz) {
-		System.out.println("============= "+clazz.getCanonicalName()+" ============\n");
-		
+		System.out.println("============= " + clazz.getCanonicalName() + " ============\n");
+
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("\n");
 		Class<?> superClass = clazz.getSuperclass();
-		String superClassDeclaration =  "";
+		String superClassDeclaration = "";
 		List<Field> fields = EntityUtil.getDeclaredFields(clazz, false, false);
-		Map<String,Object> importedClassNames = new HashMap<String, Object>();
-		
+		Map<String, Object> importedClassNames = new HashMap<String, Object>();
+
 		if (null != superClass && superClass.getCanonicalName().startsWith("com.fajar")) {
-			superClassDeclaration = " extends "+superClass.getSimpleName();
+			superClassDeclaration = " extends " + superClass.getSimpleName();
 			importedClassNames.put(superClass.getSimpleName(), true);
 		}
-		stringBuilder.append("export default class "+clazz.getSimpleName() +superClassDeclaration+"{\n");
+		stringBuilder.append("export default class " + clazz.getSimpleName() + superClassDeclaration + "{\n");
 		for (Field field : fields) {
 			boolean isStatic = Modifier.isStatic(field.getModifiers());
 			if (isStatic) {
 				continue;
 			}
-			if( field.getType().isAnnotation()) {
+			if (field.getType().isAnnotation()) {
 				continue;
 			}
 			String fieldType = "any";
@@ -102,40 +119,39 @@ public class TypeScriptModelCreators {
 			}
 			if (isNumeric) {
 				fieldType = "number";
-			}else if (field.getType().isEnum()) {
+			} else if (field.getType().isEnum()) {
 				fieldType = "string";
 			} else if (field.getType().equals(String.class)) {
 				fieldType = "string";
 			} else if (field.getType().getCanonicalName().startsWith("com.fajar")) {
 				fieldType = field.getType().getSimpleName();
 				importedClassNames.put(fieldType, true);
-			} else if(field.getType().isArray()) {
+			} else if (field.getType().isArray()) {
 				fieldType = "any[]";
-			} else if(EntityUtil.hasInterface(field.getType(), Collection.class)) {
+			} else if (EntityUtil.hasInterface(field.getType(), Collection.class)) {
 				fieldType = "any[]";
 //				Type[] genericTypes = CollectionUtil.getGenericTypes(field);
 //				Type genericType = genericTypes[0];
 //				fieldType = "Set<"
-			} else if(EntityUtil.hasInterface(field.getType(), Map.class) || field.getType().equals(Map.class)) {
+			} else if (EntityUtil.hasInterface(field.getType(), Map.class) || field.getType().equals(Map.class)) {
 				fieldType = "{}";
 			} else if (field.getType().equals(Object.class) || field.getType().equals(Class.class)) {
-				
-			} 
-			else {
+
+			} else {
 				fieldType = field.getType().getSimpleName();
 			}
-			stringBuilder.append("\t"+field.getName()+"?:"+fieldType +";\n");
+			stringBuilder.append("\t" + field.getName() + "?:" + fieldType + ";\n");
 		}
-		
+
 		stringBuilder.append("\n}\n");
-		
+
 		StringBuilder importSb = new StringBuilder();
 		for (String string : importedClassNames.keySet()) {
-			importSb.append("import "+string+ " from './"+string+"';\n");
+			importSb.append("import " + string + " from './" + string + "';\n");
 		}
 		System.out.println(importSb.toString());
 		System.out.println(stringBuilder.toString());
-		return importSb.toString()+stringBuilder.toString();
-		
+		return importSb.toString() + stringBuilder.toString();
+
 	}
 }

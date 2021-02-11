@@ -33,7 +33,7 @@ public class LessonModel extends BaseModel<Lesson>{
 	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = false, multipleImage = true, defaultValue = "Default.BMP")
 	private String bannerImages; // type:BLOB
 	 
-	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_DYNAMIC_LIST)
+	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_FIXED_LIST)
 	private LessonCategoryModel category;
  
 	private User user;

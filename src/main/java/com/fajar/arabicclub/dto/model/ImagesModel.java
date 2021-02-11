@@ -27,7 +27,7 @@ public class ImagesModel extends  BaseModel<Images> {
 	private String title; 
 	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
 	private String description; 
-	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_DYNAMIC_LIST)
+	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_FIXED_LIST)
 	private ImageCategoryModel category;  
 	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = true, multipleImage = true, defaultValue = "Default.BMP")
 	private String images; // type:BLOB
