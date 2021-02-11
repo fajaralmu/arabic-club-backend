@@ -21,7 +21,7 @@ import lombok.Setter;
 @Builder	
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuizModel extends BaseModel<Quiz> { 
+public class QuizModel extends BaseModel<Quiz>   { 
 	  
 	/**
 	 * 
@@ -31,6 +31,8 @@ public class QuizModel extends BaseModel<Quiz> {
 	private String title;
 	@FormField 
 	private String description; 
+	@FormField(type = FieldType.FIELD_TYPE_IMAGE)
+	private String image;
 	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX) 
 	private boolean publicQuiz;
 	@FormField(type = FieldType.FIELD_TYPE_NUMBER, labelName = "Duration (Second)")
@@ -40,6 +42,7 @@ public class QuizModel extends BaseModel<Quiz> {
 	private boolean active;
 	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
 	private boolean repeatable;
+	
 	
 	//questions
 	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)

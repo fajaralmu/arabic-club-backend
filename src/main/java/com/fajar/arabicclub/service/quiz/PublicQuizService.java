@@ -108,8 +108,9 @@ public class PublicQuizService {
 			questions.forEach(new Consumer<QuizQuestion>() {
 				@Override
 				public void accept(QuizQuestion question) {
-					if (question.getQuizId().equals(quiz.getId())) {
+					if (question.getQuizId() != null && question.getQuizId().equals(quiz.getId())) {
 						question.setAnswerCode(null);
+						question.setQuiz(null);
 						quiz.addQuestion(question);
 					}
 				}

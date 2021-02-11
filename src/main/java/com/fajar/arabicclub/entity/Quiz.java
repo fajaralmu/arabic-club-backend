@@ -12,6 +12,7 @@ import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.constants.AnswerCode;
 import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.dto.model.QuizModel;
+import com.fajar.arabicclub.entity.setting.SingleImageModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Quiz extends BaseEntity<QuizModel> {
+public class Quiz extends BaseEntity<QuizModel> implements SingleImageModel {
 	/**
 	* 
 	*/
@@ -43,6 +44,8 @@ public class Quiz extends BaseEntity<QuizModel> {
 	private boolean active;
 	@Column(nullable = false)
 	private boolean repeatable;
+	@Column 
+	private String image;
 	
 	//questions
 	@Column(name="show_all_question")
