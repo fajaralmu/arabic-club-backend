@@ -42,6 +42,8 @@ public class QuizHistory extends BaseEntity<QuizHistoryModel>  {
 	private Date started;
 	@Column
 	private Date ended;
+	@Column(columnDefinition = "TEXT", name="answer_data")
+	private String answerData;
 	
 	public static QuizHistory create(Quiz q, User u) {
 		QuizHistory quizHistory =QuizHistory.builder().quiz(q).user(u).build();

@@ -14,7 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.fajar.arabicclub.config.security.JWTUtils;
 import com.fajar.arabicclub.constants.AnswerCode;
+import com.fajar.arabicclub.constants.ResponseType;
 import com.fajar.arabicclub.dto.Filter;
 import com.fajar.arabicclub.dto.QuizResult;
 import com.fajar.arabicclub.dto.WebRequest;
@@ -53,9 +55,7 @@ public class PublicQuizService {
 	private QuizHistoryService quizHistoryService;
 	@Autowired
 	private MasterDataService masterDataService;
-	@Autowired
-	private RealtimeService2 realtimeService2;
-
+	
 	/**
 	 * get quiz list, paginated
 	 * 
@@ -70,17 +70,18 @@ public class PublicQuizService {
 		filter.validateFieldsFilter();
 		log.info("get quiz list page:{}, limit: {}", filter.getPage(), filter.getLimit());
 		log.info("is admin: {}", isAdmin);
-		
+
 		if (!isAdmin) {
 			filter.putFilter("active", "true");
 		}
-		
+
 		FilterResult filterResult = masterDataService.filterEntities(filter, Quiz.class);
 		progressService.sendProgress(10, httpServletRequest);
 
-		List<Quiz> quizList =  (filterResult.getList());
+		List<Quiz> quizList = (filterResult.getList());
 		int quizCount = filterResult.getCount();
-		List<QuizQuestion> questions = quizList.size() == 0 ? new ArrayList<>() : quizQuestionRepository.findByQuizIn(quizList);
+		List<QuizQuestion> questions = quizList.size() == 0 ? new ArrayList<>()
+				: quizQuestionRepository.findByQuizIn(quizList);
 		progressService.sendProgress(10, httpServletRequest);
 
 		mapQuizAndQuestions(quizList, questions);
@@ -200,11 +201,11 @@ public class PublicQuizService {
 				int correctAnswerC = isCorrectAnswer(actualQuestion, submittedQuiz.getQuestions().get(i));
 				correctAnswer += correctAnswerC;
 				submittedQuiz.getQuestions().get(i).setChoices(actualQuestion.getChoices());
-				
-			} catch (Exception e) { 
+
+			} catch (Exception e) {
 			}
 			progressService.sendProgress(1, totalQuestion, 80, httpServletRequest);
-			
+
 		}
 		wrongAnswer = totalQuestion - correctAnswer;
 
@@ -233,12 +234,6 @@ public class PublicQuizService {
 		return 0;
 	}
 
-	public WebResponse updateHistory(WebRequest request) {
-		String requestId = request.getRequestId();
-		
-		WebResponse response = WebResponse.builder().type("QUIZ_NOTIF").build();
-		realtimeService2.sendUpdate(response , requestId);
-		return null;
-	}
+	
 
 }

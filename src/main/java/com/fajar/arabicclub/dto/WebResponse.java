@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fajar.arabicclub.constants.ResponseType;
 import com.fajar.arabicclub.dto.model.ApplicationProfileModel;
 import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.dto.model.QuizModel;
@@ -43,7 +44,7 @@ public class WebResponse implements Serializable {
 	private String code = "00";
 	@Builder.Default
 	private String message = "success";
-	private String type;
+	private ResponseType type;
 	@Builder.Default
 	@Setter(value = AccessLevel.NONE)
 	private List<? extends BaseModel> entities = new ArrayList<>();

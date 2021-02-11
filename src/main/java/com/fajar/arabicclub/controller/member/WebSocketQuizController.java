@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.service.quiz.PublicQuizService;
+import com.fajar.arabicclub.service.quiz.QuizHistoryService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSocketQuizController {
 	
 	@Autowired
-	private PublicQuizService publicQuizService;
+	private QuizHistoryService quizHistoryService;
 
  
 
@@ -34,13 +35,26 @@ public class WebSocketQuizController {
 
 	/////////////////////////////////////// WEbsocket
 	/////////////////////////////////////// //////////////////////////////////////////
-
+	@MessageMapping("/quiz/start")
+	public void startQuizNotif(Message<WebRequest> message) throws IOException {
+		WebRequest request = message.getPayload();
+		log.info("start: {}", request.getRequestId());
+		try {
+			quizHistoryService.updateStartHistory(request);
+		} catch (Exception e) {
+			log.error("ERROR startQuizNotif:{}", e);
+		}
+		
+	}
 	@MessageMapping("/quiz/answer")
-	public void updateQuizHistory(Message<WebRequest> message) throws IOException {
+	public void updateQuizNotif(Message<WebRequest> message) throws IOException {
 		WebRequest request = message.getPayload();
 		log.info("updateQuizHistory: {}", request.getRequestId());
-		System.out.println("UPDATE QUIZ HISTORY");
-		publicQuizService.updateHistory(request);
+		try {
+			quizHistoryService.updateHistory(request);
+		} catch (Exception e) {
+			log.error("ERROR updateQuizNotif:{}", e);
+		}
 	}
 	
 	 

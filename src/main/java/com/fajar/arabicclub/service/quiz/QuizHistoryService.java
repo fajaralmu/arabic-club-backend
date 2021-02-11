@@ -1,6 +1,7 @@
 package com.fajar.arabicclub.service.quiz;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -8,20 +9,24 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.fajar.arabicclub.config.security.JWTUtils;
+import com.fajar.arabicclub.constants.ResponseType;
 import com.fajar.arabicclub.dto.Filter;
 import com.fajar.arabicclub.dto.QuizResult;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
-import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizHistory;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.exception.ApplicationException;
 import com.fajar.arabicclub.repository.QuizHistoryRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
+import com.fajar.arabicclub.repository.UserRepository;
+import com.fajar.arabicclub.service.RealtimeService2;
 import com.fajar.arabicclub.service.SessionValidationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +41,13 @@ public class QuizHistoryService {
 	private QuizRepository quizRepository;
 	@Autowired
 	private SessionValidationService sessionValidationService;
+	@Autowired
+	private JWTUtils jwtUtils;
+	@Autowired
+	private RealtimeService2 realtimeService2;
+	@Autowired
+	private UserRepository userRepository;
+
 	
 	public boolean isAllowed(Quiz quiz,HttpServletRequest httpServletRequest) {
 		Optional<Quiz> quizOpt = quizRepository.findById(quiz.getId());
@@ -95,6 +107,8 @@ public class QuizHistoryService {
 			history = records.get(0);
 		}
 		history.setStarted(new Date());
+		history.setEnded(null);
+		history.setModifiedDate(new Date());
 		return quizHistoryRepository.save(history);
 	}
 
@@ -119,5 +133,49 @@ public class QuizHistoryService {
 		response.setTotalData(totalData==null?0:totalData.intValue());
 		response.setItems((histories));
 		return response ;
+	}
+	
+	public void updateStartHistory(WebRequest request) {
+		String username = jwtUtils.getUserNameFromJwtToken(request.getToken());
+		User user = userRepository.findTop1ByUsername(username);
+		if (null == user) return;
+		Quiz quiz = quizRepository.getOne(request.getQuiz().getId());
+		if (null == quiz) return;
+		Page<QuizHistory> latestHistory = quizHistoryRepository.findLatestByUserAndQuiz(user, quiz, PageRequest.of(0, 1));
+		if (latestHistory.getContent()==null || latestHistory.getContent().size() == 0) {
+			return;
+		}
+		
+		QuizHistory history = latestHistory.getContent().get(0);
+		history.setStarted(request.getQuiz().getStartedDate());
+		history.setEnded(null);
+		QuizHistory saved = quizHistoryRepository.save(history);
+		log.info("start quiz at: {}", saved.getStarted());
+	}
+	
+	public void updateHistory(WebRequest request) {
+		String requestId = request.getRequestId();
+		String username = jwtUtils.getUserNameFromJwtToken(request.getToken());
+		User user = userRepository.findTop1ByUsername(username);
+		if (null == user) return;
+		Quiz quiz = quizRepository.getOne(request.getQuiz().getId());
+		if (null == quiz) return;
+		Page<QuizHistory> latestHistory = quizHistoryRepository.findLatestByUserAndQuiz(user, quiz, PageRequest.of(0, 1));
+		if (latestHistory.getContent()==null || latestHistory.getContent().size() == 0) {
+			return;
+		}
+		
+		QuizHistory history = latestHistory.getContent().get(0);
+		String[] answers = request.getQuiz().getAnswers();
+		if (null != answers) {
+			history.setAnswerData(String.join(",", answers));
+		}
+		if (null == history.getStarted()) {
+			history.setStarted(request.getQuiz().getStartedDate());
+		}
+		history.setModifiedDate(new Date());
+		QuizHistory saved = quizHistoryRepository.save(history);
+		WebResponse response = WebResponse.builder().type(ResponseType.QUIZ_ANSWER_UPDATE).build();
+		realtimeService2.sendUpdate(response, requestId); 
 	}
 }

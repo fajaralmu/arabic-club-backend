@@ -67,7 +67,7 @@ public class RestQuizManagementController extends BaseController {
 	}
 	@PostMapping(value = "/deletequiz/{id}" , produces = MediaType.APPLICATION_JSON_VALUE)
 	@CustomRequestInfo(withRealtimeProgress = true)
-	public WebResponse deletequiz(@PathVariable(name="id") Long id,HttpServletRequest httpRequest) {
+	public WebResponse deletequiz(@PathVariable(name="id") Long id,HttpServletRequest httpRequest) throws Exception {
 		log.info("Delete id {}", id);
 		return quizService.deleteQuiz(id, httpRequest);
 	}

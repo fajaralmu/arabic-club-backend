@@ -191,6 +191,12 @@ public class QuizDataService {
 		log.info("deletedCount: {}", deletedCount);
 
 	}
+	
+	public void deleteQuestions(List<QuizQuestion> questions, Session session) {
+		for (QuizQuestion quizQuestion : questions) {
+			deleteQuestionAndChoices(quizQuestion, session);
+		}
+	}
 
 	public void deleteQuestionAndChoices(QuizQuestion quizQuestion, Session session) {
 

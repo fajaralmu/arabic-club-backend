@@ -20,6 +20,7 @@ import com.fajar.arabicclub.repository.QuizChoiceRepository;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
+import com.fajar.arabicclub.service.entity.QuizUpdateService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +40,8 @@ public class QuizCreationService {
 	private QuizChoiceRepository quizChoiceRepository;
 	@Autowired
 	private QuizDataService quizDataService;
+	@Autowired
+	private QuizUpdateService quizUpdateService;
 
 	/**
 	 * create or update quiz
@@ -105,40 +108,12 @@ public class QuizCreationService {
 	 * @param id
 	 * @param httpServletRequest
 	 * @return
+	 * @throws Exception 
 	 */
-	public WebResponse deleteQuiz(Long id, HttpServletRequest httpServletRequest) {
-		Session session = sessionFactory.openSession();
-		Transaction transaction = session.beginTransaction();
-		try {
-			Optional<Quiz> existingQuiz = quizRepository.findById(id);
-			if (existingQuiz.isPresent() == false) {
-				throw new RuntimeException("Existing record not found!");
-			}
-			deleteQuestions(existingQuiz.get(), session, httpServletRequest);
-			session.delete(existingQuiz.get());
-			progressService.sendProgress(10, httpServletRequest);
-			WebResponse response = new WebResponse();
-			transaction.commit();
-			return response;
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			throw e;
-		} finally {
-			session.close();
-		}
+	public WebResponse deleteQuiz(Long id, HttpServletRequest httpServletRequest) throws Exception {
+		 return quizUpdateService.deleteEntity(id, Quiz.class, httpServletRequest);
 	}
 
-	private void deleteQuestions(Quiz existingQuiz, Session session, HttpServletRequest httpServletRequest) {
-
-		List<QuizQuestion> questions = quizQuestionRepository.findByQuiz(existingQuiz);
-		progressService.sendProgress(10, httpServletRequest);
-		log.info("question count: {}", questions.size());
-		for (QuizQuestion quizQuestion : questions) {
-			quizDataService.deleteQuestionAndChoices(quizQuestion, session);
-			progressService.sendProgress(1, questions.size(), 80, httpServletRequest);
-		}
-	}
+	 
 
 }

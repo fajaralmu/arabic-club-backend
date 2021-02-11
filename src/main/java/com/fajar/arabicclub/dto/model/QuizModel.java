@@ -3,11 +3,16 @@ package com.fajar.arabicclub.dto.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.annotation.FormField;
+import com.fajar.arabicclub.constants.AnswerCode;
 import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.entity.Quiz;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,6 +26,7 @@ import lombok.Setter;
 @Builder	
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(value =Include.NON_NULL)
 public class QuizModel extends BaseModel<Quiz>   { 
 	  
 	/**
@@ -61,7 +67,22 @@ public class QuizModel extends BaseModel<Quiz>   {
 	@Getter(value=AccessLevel.NONE)
 	private int questionCount;
 	private Date submittedDate;
-	private Date startedDate;
+	private Date startedDate; 
+	private Map<Long, AnswerCode> mappedAnswer;
+	 
+	
+	public String[] getAnswers() {
+		if (null == mappedAnswer) {
+			return null;
+		}
+		String[] answers = new String[mappedAnswer.keySet().size()];
+		int i = 0;
+		for (Long questionId : mappedAnswer.keySet()) {
+			answers[i] = questionId+":"+mappedAnswer.get(questionId);
+			i++;
+		}
+		return answers;
+	}
 	
 	
 	
