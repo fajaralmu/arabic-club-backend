@@ -117,7 +117,7 @@ public class QuizHistoryService {
 		
 		WebResponse response = new WebResponse();
 		response.setTotalData(totalData==null?0:totalData.intValue());
-		response.setEntities((histories));
+		response.setItems((histories));
 		return response ;
 	}
 }

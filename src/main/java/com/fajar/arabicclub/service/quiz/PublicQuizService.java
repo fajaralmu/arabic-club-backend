@@ -28,6 +28,8 @@ import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
 import com.fajar.arabicclub.service.SessionValidationService;
+import com.fajar.arabicclub.service.entity.MasterDataService;
+import com.fajar.arabicclub.service.entity.MasterDataService.FilterResult;
 import com.fajar.arabicclub.util.CollectionUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +50,8 @@ public class PublicQuizService {
 	private SessionValidationService sessionValidationService;
 	@Autowired
 	private QuizHistoryService quizHistoryService;
+	@Autowired
+	private MasterDataService masterDataService;
 
 	/**
 	 * get quiz list, paginated
@@ -60,18 +64,20 @@ public class PublicQuizService {
 		User user = sessionValidationService.getLoggedUser(httpServletRequest);
 		boolean isAdmin = user != null && user.isAdmin();
 		Filter filter = webRequest.getFilter();
-
+		filter.validateFieldsFilter();
 		log.info("get quiz list page:{}, limit: {}", filter.getPage(), filter.getLimit());
 		log.info("is admin: {}", isAdmin);
-		PageRequest pageRequest = PageRequest.of(filter.getPage(), filter.getLimit());
-		Page<Quiz> quizes = quizRepository.findQuizList(isAdmin, pageRequest);
-		BigInteger quizCount = isAdmin ? quizRepository.findCountAll() : quizRepository.findCountActiveTrue();
-
+		
+		if (!isAdmin) {
+			filter.putFilter("active", "true");
+		}
+		
+		FilterResult filterResult = masterDataService.filterEntities(filter, Quiz.class);
 		progressService.sendProgress(10, httpServletRequest);
 
-		List<Quiz> quizList = quizes.getContent();
-		List<QuizQuestion> questions = quizList.size() == 0 ? new ArrayList<>()
-				: quizQuestionRepository.findByQuizIn(quizList);
+		List<Quiz> quizList =  (filterResult.getList());
+		int quizCount = filterResult.getCount();
+		List<QuizQuestion> questions = quizList.size() == 0 ? new ArrayList<>() : quizQuestionRepository.findByQuizIn(quizList);
 		progressService.sendProgress(10, httpServletRequest);
 
 		mapQuizAndQuestions(quizList, questions);
@@ -79,8 +85,8 @@ public class PublicQuizService {
 			mapAvailability(quizList, httpServletRequest);
 		}
 		WebResponse response = new WebResponse();
-		response.setEntities(CollectionUtil.convertList(quizList));
-		response.setTotalData(quizCount == null ? 0 : quizCount.intValue());
+		response.setItems(CollectionUtil.convertList(quizList));
+		response.setTotalData(quizCount);
 		return response;
 	}
 

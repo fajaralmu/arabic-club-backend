@@ -48,5 +48,15 @@ public class Filter implements Serializable {
 	
 	@JsonIgnore
 	private int maxValue;
+	
+	public void validateFieldsFilter() {
+		if (null == fieldsFilter) {
+			setFieldsFilter(new HashMap<>());
+		}
+	}
+	public void putFilter(String key, Object value) {
+		validateFieldsFilter();
+		fieldsFilter.put(key, value);
+	}
 
 }

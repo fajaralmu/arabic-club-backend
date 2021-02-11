@@ -45,7 +45,7 @@ public class GalleryService {
 		} catch (Exception e) { 
 		}
 		WebResponse response = new WebResponse();
-		response.setEntities(CollectionUtil.convertList(images.getContent()));
+		response.setItems(CollectionUtil.convertList(images.getContent()));
 		response.setTotalData(totalData);
 		response.setFilter(webRequest.getFilter());
 		return response ;
@@ -64,7 +64,7 @@ public class GalleryService {
 		progressService.sendProgress(20, httpServletRequest);
 		List<VideosModel> models = youtubeVideoPreviewService.getSnippets(videos.getContent(), httpServletRequest);
 		WebResponse response = new WebResponse();
-		response.setItems(models);
+		response.setItemsModel(models);
 		response.setTotalData(totalData);
 		response.setFilter(webRequest.getFilter());
 		return response ;

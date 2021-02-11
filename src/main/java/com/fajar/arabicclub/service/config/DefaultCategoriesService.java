@@ -98,7 +98,7 @@ public class DefaultCategoriesService {
 		default:
 			throw new RuntimeException("Invalid Code :"+code); 
 		}
-		response.setEntities(categories);
+		response.setItems(categories);
 		return response;
 	}
 }

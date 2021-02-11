@@ -77,7 +77,7 @@ public class WebResponse implements Serializable {
 		this.date = new Date();
 	}
 
-	public <T extends BaseEntity> void setEntities(List<T > entities) {
+	public <T extends BaseEntity> void setItems(List<T > entities) {
 		this.entities = CollectionUtil.convertList(BaseModel.toModels(entities));
 	}
 	
@@ -107,7 +107,7 @@ public class WebResponse implements Serializable {
 		return new WebResponse("02", "Invalid Session");
 	}
 
-	public void setItems(List<VideosModel> models) {
+	public void setItemsModel(List<VideosModel> models) {
 		this.entities = models;
 	}
 
