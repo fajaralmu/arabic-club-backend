@@ -71,5 +71,6 @@ public class WebRequest implements Serializable {
 	private boolean regularTransaction;
 	
 	private String imageData; 
+	private String requestId;
 
 }

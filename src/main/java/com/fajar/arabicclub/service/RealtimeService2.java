@@ -38,14 +38,10 @@ public class RealtimeService2 {
 	}
 
 
-	public void sendMessageChatToClient(WebResponse response, String requestId) {
-		webSocket.convertAndSend("/wsResp/messages/"+requestId, response); 
+	public void sendUpdate(WebResponse response, String requestId) {
+		webSocket.convertAndSend("/wsResp/"+requestId+"/update", response); 
 	}
-	 
- 
-	public void sendChatMessageToAdmin(WebResponse response) {
-		webSocket.convertAndSend("/wsResp/adminmessages", response); 
-	}
+	  
 	
 	
 

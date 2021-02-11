@@ -43,6 +43,7 @@ public class WebResponse implements Serializable {
 	private String code = "00";
 	@Builder.Default
 	private String message = "success";
+	private String type;
 	@Builder.Default
 	@Setter(value = AccessLevel.NONE)
 	private List<? extends BaseModel> entities = new ArrayList<>();

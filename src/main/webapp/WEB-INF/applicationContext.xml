@@ -62,9 +62,9 @@
 		<property name="driverClassName"
 			value="org.postgresql.Driver" />
 		<property name="url"
-			value="jdbc:postgresql://ec2-54-157-12-250.compute-1.amazonaws.com:5432/d1eu0qub2adiiv" />
-		<property name="username" value="veqlrgwoojdelw" />
-		<property name="password" value="d8b34a7856fb4ed5e56d082db5a62dd3b527dd848e95ce1e6a3652001a04f7fe" />
+			value="jdbc:postgresql://ec2-18-204-101-137.compute-1.amazonaws.com:5432/d95v9noaukbskn" />
+		<property name="username" value="tzwewrfgfvnmym" />
+		<property name="password" value="2de6a0667dedcf76c44fb3bc4dca645f24191baced618d002159f8f73046a505" />
 	</bean>  --> 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">

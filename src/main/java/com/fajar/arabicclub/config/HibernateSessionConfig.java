@@ -68,21 +68,18 @@ public class HibernateSessionConfig {
 
 	}
 
-	private Properties additionalProperties() {
+	private Properties additionalProperties() throws Exception {
 
 		String dialect = entityManagerFactoryBean.getProperties().get("hibernate.dialect").toString();
 		String ddlAuto = entityManagerFactoryBean.getProperties().get("hibernate.hbm2ddl.auto").toString();
 		String use_jdbc_metadata_defaults = entityManagerFactoryBean.getProperties().get("hibernate.temp.use_jdbc_metadata_defaults").toString();
-		Class<? extends Driver> driverClass = com.mysql.jdbc.Driver.class;
-		try {
+		Class<? extends Driver> driverClass;// = com.mysql.jdbc.Driver.class;
+		 
 			String connectionUrl =(driverManagerDataSource.getConnection().getMetaData().getURL());
 			log.info("CONNECTION URL: {}", connectionUrl);
 			driverClass = DriverManager.getDriver(connectionUrl).getClass();
 			log.info("DRIVER CLASSNAME: {}", driverClass);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		 
 		
 //		printProps(entityManagerFactoryBean.getProperties(), "entityManagerFactoryBean");
 //		printProps(driverManagerDataSource.getConnectionProperties(), "driverManagerDataSource");

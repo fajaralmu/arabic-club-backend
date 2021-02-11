@@ -179,6 +179,10 @@ public class CriteriaTester {
 		return returnClasses;
 	}
 
+	/**
+	 * mysql
+	 * @return
+	 */
 	private static Properties additionalProperties() {
 
 		String dialect = "org.hibernate.dialect.MySQLDialect";
@@ -190,7 +194,7 @@ public class CriteriaTester {
 		properties.setProperty("hibernate.connection.username", "root");
 		properties.setProperty("hibernate.connection.password", "");
 
-		properties.setProperty("hibernate.connection.driver_class", com.mysql.jdbc.Driver.class.getCanonicalName());
+//		properties.setProperty("hibernate.connection.driver_class", com.mysql.jdbc.Driver.class.getCanonicalName());
 		properties.setProperty("hibernate.current_session_context_class", "thread");
 		properties.setProperty("hibernate.show_sql", "true");
 		properties.setProperty("hibernate.connection.pool_size", "1");

@@ -27,6 +27,7 @@ import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
+import com.fajar.arabicclub.service.RealtimeService2;
 import com.fajar.arabicclub.service.SessionValidationService;
 import com.fajar.arabicclub.service.entity.MasterDataService;
 import com.fajar.arabicclub.service.entity.MasterDataService.FilterResult;
@@ -52,6 +53,8 @@ public class PublicQuizService {
 	private QuizHistoryService quizHistoryService;
 	@Autowired
 	private MasterDataService masterDataService;
+	@Autowired
+	private RealtimeService2 realtimeService2;
 
 	/**
 	 * get quiz list, paginated
@@ -228,6 +231,14 @@ public class PublicQuizService {
 
 		}
 		return 0;
+	}
+
+	public WebResponse updateHistory(WebRequest request) {
+		String requestId = request.getRequestId();
+		
+		WebResponse response = WebResponse.builder().type("QUIZ_NOTIF").build();
+		realtimeService2.sendUpdate(response , requestId);
+		return null;
 	}
 
 }
