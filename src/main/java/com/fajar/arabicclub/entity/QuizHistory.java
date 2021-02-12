@@ -85,7 +85,7 @@ public class QuizHistory extends BaseEntity<QuizHistoryModel>  {
 	}
 
 	public boolean continueLatestQuiz() {
-		if (null == started || null == quiz) return false;
+		if (score != null || null == started || null == quiz) return false;
 		if (ended != null && ended.before(started)) {
 			return false;
 		}
@@ -107,6 +107,10 @@ public class QuizHistory extends BaseEntity<QuizHistoryModel>  {
 		return true;
 	}
 	
+	/**
+	 * remaining seconds
+	 * @return
+	 */
 	public int getRemainingDuration() {
 		if (null == started || null == quiz) return 0;
 		if (ended != null && ended.before(started)) {

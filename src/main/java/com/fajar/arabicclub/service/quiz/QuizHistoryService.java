@@ -59,7 +59,7 @@ public class QuizHistoryService {
 			log.info("user not found");
 			return false;
 		}
-		boolean recordExist = isHistoryExist(quiz, user);
+		boolean recordExist = isAllowedToTakeQuiz(quiz, user);
 		if (!quiz.isRepeatable() && recordExist) {
 			log.info("isRepeatable=FALSE & recordExist");
 			return false;
@@ -107,13 +107,19 @@ public class QuizHistoryService {
 		}
 //		history.setStarted(new Date());
 //		history.setEnded(null);
+		history.setScore(null);
 		history.setModifiedDate(new Date());
 		return quizHistoryRepository.save(history);
 	}
 
-	public boolean isHistoryExist(Quiz quiz, User user) {
-		List<QuizHistory> records = quizHistoryRepository.findByQuizAndUser(quiz, user);
-		return records!=null && records.size() > 0;
+	public boolean isAllowedToTakeQuiz(Quiz quiz, User user) {
+		Page<QuizHistory> records = quizHistoryRepository.findLatestByUserAndQuiz(user, quiz, PageRequest.of(0,1));
+		if( records == null || null == records.getContent() || records.getContent().size() == 0) {
+			return true;
+		}
+		QuizHistory history = records.getContent().get(0);
+		return history.getRemainingDuration() > 2; 
+		
 	}
 
 
@@ -139,7 +145,9 @@ public class QuizHistoryService {
 		QuizHistory history = getLatestHistory(request.getQuiz().getId(), request.getToken());
 		history.setStarted(request.getQuiz().getStartedDate());
 		history.setEnded(null);
+		history.setScore(null);
 		QuizHistory saved = quizHistoryRepository.save(history);
+		
 		log.info("start quiz at: {}", saved.getStarted());
 	}
 	public QuizHistory getLatestHistory(Long quizId, String token) {
@@ -170,6 +178,7 @@ public class QuizHistoryService {
 			history.setStarted(request.getQuiz().getStartedDate());
 		}
 		history.setModifiedDate(new Date());
+		history.setScore(null);
 		QuizHistory saved = quizHistoryRepository.save(history);
 		WebResponse response = WebResponse.builder().type(ResponseType.QUIZ_ANSWER_UPDATE).build();
 		realtimeService2.sendUpdate(response, requestId); 
