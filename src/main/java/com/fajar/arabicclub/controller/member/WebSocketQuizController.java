@@ -39,8 +39,9 @@ public class WebSocketQuizController {
 	@MessageMapping("/quiz/start")
 	public void startQuizNotif(Message<WebRequest> message) throws IOException {
 		WebRequest request = message.getPayload();
-		log.info("start: {}", request.getRequestId());
+		 
 		try {
+			log.info("start: {}", request.getQuizHistory().getRequestId());
 			quizHistoryService.updateStartHistory(request.getQuizHistory());
 		} catch (Exception e) {
 			log.error("ERROR startQuizNotif:{}", e);
@@ -50,8 +51,9 @@ public class WebSocketQuizController {
 	@MessageMapping("/quiz/answer")
 	public void updateQuizNotif(Message<WebRequest> message) throws IOException {
 		WebRequest request = message.getPayload();
-		log.info("updateQuizHistory: {}", request.getRequestId());
+		
 		try {
+			log.info("updateQuizHistory: {}", request.getQuizHistory().getRequestId());
 			quizHistoryService.updateRunningHistory(request.getQuizHistory());
 		} catch (Exception e) {
 			log.error("ERROR updateQuizNotif:{}", e);
