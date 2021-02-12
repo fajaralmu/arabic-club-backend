@@ -96,33 +96,7 @@ public class PublicQuizService {
 		return response;
 	}
 
-	private void mapAvailability(List<Quiz> quizList, HttpServletRequest httpServletRequest) {
-		if (null == quizList || 0 == quizList.size()) {
-			return;
-		}
-		for (Quiz quiz : quizList) {
-			boolean allowed = quizHistoryService.isAllowed(quiz, httpServletRequest);
-			quiz.setAvailable(allowed);
-			progressService.sendProgress(1, quizList.size(), 80, httpServletRequest);
-		}
-
-	}
-
-	public static void mapQuizAndQuestions(List<Quiz> quizList, List<QuizQuestion> questions) {
-
-		for (final Quiz quiz : quizList) {
-			questions.forEach(new Consumer<QuizQuestion>() {
-				@Override
-				public void accept(QuizQuestion question) {
-					if (question.getQuizId() != null && question.getQuizId().equals(quiz.getId())) {
-						question.setAnswerCode(null);
-						question.setQuiz(null);
-						quiz.addQuestion(question);
-					}
-				}
-			});
-		}
-	}
+	
 
 	/**
 	 * get full quiz for challenge
@@ -149,7 +123,9 @@ public class PublicQuizService {
 			response.setQuiz(fullQuiz.toModel());
 			if (null != history) {
 				QuizHistoryModel historyModel = QuizHistoryModel.builder().started(history.getStarted())
-						.remainingDuration(history.getRemainingDuration()).build();
+						.remainingDuration(history.getRemainingDuration())
+						.maxQuestionNumber(history.getMaxQuestionNumber())
+						.build();
 				response.setQuizHistory(historyModel);
 				response.setMessage("Success getting quiz synchronized with latest history");
 			} else {
@@ -249,6 +225,33 @@ public class PublicQuizService {
 		return result;
 	}
 
+	private void mapAvailability(List<Quiz> quizList, HttpServletRequest httpServletRequest) {
+		if (null == quizList || 0 == quizList.size()) {
+			return;
+		}
+		for (Quiz quiz : quizList) {
+			boolean allowed = quizHistoryService.isAllowed(quiz, httpServletRequest);
+			quiz.setAvailable(allowed);
+			progressService.sendProgress(1, quizList.size(), 80, httpServletRequest);
+		}
+
+	}
+
+	public static void mapQuizAndQuestions(List<Quiz> quizList, List<QuizQuestion> questions) {
+
+		for (final Quiz quiz : quizList) {
+			questions.forEach(new Consumer<QuizQuestion>() {
+				@Override
+				public void accept(QuizQuestion question) {
+					if (question.getQuizId() != null && question.getQuizId().equals(quiz.getId())) {
+						question.setAnswerCode(null);
+						question.setQuiz(null);
+						quiz.addQuestion(question);
+					}
+				}
+			});
+		}
+	}
 	private static int isCorrectAnswer(QuizQuestion actualQuestion, QuizQuestion submittedQuestion) {
 
 		if (submittedQuestion.getId().equals(actualQuestion.getId())) {

@@ -68,7 +68,7 @@ public class QuizModel extends BaseModel<Quiz>   {
 	private int questionCount;
 	private Date submittedDate;
 	private Date startedDate; 
-	private Map<Long, AnswerCode> mappedAnswer;
+	private Map<Integer, AnswerCode> mappedAnswer;
 	 
 	
 	public String[] getAnswers() {
@@ -77,8 +77,8 @@ public class QuizModel extends BaseModel<Quiz>   {
 		}
 		String[] answers = new String[mappedAnswer.keySet().size()];
 		int i = 0;
-		for (Long questionId : mappedAnswer.keySet()) {
-			answers[i] = questionId+":"+mappedAnswer.get(questionId);
+		for (Integer questionNumber : mappedAnswer.keySet()) {
+			answers[i] = questionNumber+":"+mappedAnswer.get(questionNumber);
 			i++;
 		}
 		return answers;

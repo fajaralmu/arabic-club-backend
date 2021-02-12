@@ -52,8 +52,8 @@ public class QuizHistory extends BaseEntity<QuizHistoryModel>  {
 	private String answerData;
 	
 	@JsonIgnore
-	public Map<Long, AnswerCode> mappedAnswer() {
-		Map<Long, AnswerCode> map = new HashMap<>();;
+	public Map<Integer, AnswerCode> mappedAnswer() {
+		Map<Integer, AnswerCode> map = new HashMap<>();;
 		if (null == answerData) {
 			return map;
 		}
@@ -61,14 +61,27 @@ public class QuizHistory extends BaseEntity<QuizHistoryModel>  {
 		for (String string : splitted) {
 			try {
 				String[] raw = string.split(":");
-				Long questionId = Long.valueOf(raw[0]);
+				Integer questionNumber = Integer.valueOf(raw[0]);
 				AnswerCode code = AnswerCode.valueOf(raw[1]);
-				map.put(questionId, code);
+				map.put(questionNumber, code);
 			} catch (Exception e) {
 				 
 			}
 		}
 		return map;
+	}
+	
+	public Integer getMaxQuestionNumber() {
+		 Map<Integer, AnswerCode> mappedAnswer = mappedAnswer();
+		if (quiz == null || null == mappedAnswer) return 1; 
+		int max = 1;
+		for(Integer number : mappedAnswer.keySet()) {
+			if (number > max) {
+				max = number;
+			}
+		}
+		return max;
+		
 	}
 	
 	public static void main(String[] args) {

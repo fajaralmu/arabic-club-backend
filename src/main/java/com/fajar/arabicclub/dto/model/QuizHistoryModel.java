@@ -1,9 +1,11 @@
 package com.fajar.arabicclub.dto.model;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.annotation.FormField;
+import com.fajar.arabicclub.constants.AnswerCode;
 import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.entity.QuizHistory;
 import com.fajar.arabicclub.util.DateUtil;
@@ -60,7 +62,10 @@ public class QuizHistoryModel extends BaseModel<QuizHistory>  {
 	@FormField(type=FieldType.FIELD_TYPE_DATETIME)
 	@Getter(value=AccessLevel.NONE)
 	private Date updated;
+	
+	
 	private int remainingDuration;
+	private Integer maxQuestionNumber;
 	
 	/**
 	 * required when updating answer via websocket
@@ -94,4 +99,6 @@ public class QuizHistoryModel extends BaseModel<QuizHistory>  {
 		long seconds = (ended.getTime()-started.getTime())/1000;
 		return DateUtil.timerString(seconds);
 	}
+	
+	
 }
