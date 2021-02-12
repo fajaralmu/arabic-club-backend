@@ -61,6 +61,8 @@ public class QuizHistoryModel extends BaseModel<QuizHistory>  {
 	@Getter(value=AccessLevel.NONE)
 	private Date updated;
 	
+	private int remainingDuration;
+	
 	public boolean isQuizRepeatable() {
 		if (null != quiz) return quiz.isRepeatable();
 		return quizRepeatable;

@@ -8,6 +8,7 @@ import java.util.List;
 import com.fajar.arabicclub.constants.ResponseType;
 import com.fajar.arabicclub.dto.model.ApplicationProfileModel;
 import com.fajar.arabicclub.dto.model.BaseModel;
+import com.fajar.arabicclub.dto.model.QuizHistoryModel;
 import com.fajar.arabicclub.dto.model.QuizModel;
 import com.fajar.arabicclub.dto.model.UserModel;
 import com.fajar.arabicclub.dto.model.VideosModel;
@@ -54,6 +55,7 @@ public class WebResponse implements Serializable {
 	private BaseModel entity;
 	private QuizModel quiz;
 	private QuizResult quizResult;
+	private QuizHistoryModel quizHistory;
 	private Filter filter;
 	private Integer totalData;  
 	private EntityProperty entityProperty;

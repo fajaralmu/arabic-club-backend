@@ -1,7 +1,6 @@
 package com.fajar.arabicclub.service.quiz;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -106,8 +105,8 @@ public class QuizHistoryService {
 
 			history = records.get(0);
 		}
-		history.setStarted(new Date());
-		history.setEnded(null);
+//		history.setStarted(new Date());
+//		history.setEnded(null);
 		history.setModifiedDate(new Date());
 		return quizHistoryRepository.save(history);
 	}
@@ -136,36 +135,33 @@ public class QuizHistoryService {
 	}
 	
 	public void updateStartHistory(WebRequest request) {
-		String username = jwtUtils.getUserNameFromJwtToken(request.getToken());
-		User user = userRepository.findTop1ByUsername(username);
-		if (null == user) return;
-		Quiz quiz = quizRepository.getOne(request.getQuiz().getId());
-		if (null == quiz) return;
-		Page<QuizHistory> latestHistory = quizHistoryRepository.findLatestByUserAndQuiz(user, quiz, PageRequest.of(0, 1));
-		if (latestHistory.getContent()==null || latestHistory.getContent().size() == 0) {
-			return;
-		}
 		
-		QuizHistory history = latestHistory.getContent().get(0);
+		QuizHistory history = getLatestHistory(request.getQuiz().getId(), request.getToken());
 		history.setStarted(request.getQuiz().getStartedDate());
 		history.setEnded(null);
 		QuizHistory saved = quizHistoryRepository.save(history);
 		log.info("start quiz at: {}", saved.getStarted());
 	}
+	public QuizHistory getLatestHistory(Long quizId, String token) {
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		User user = userRepository.findTop1ByUsername(username);
+		if (null == user) return null;
+		Quiz quiz = quizRepository.getOne(quizId);
+		if (null == quiz) return null;
+		
+		return getLatestHistory(quiz, user);
+	}
+	public QuizHistory getLatestHistory(Quiz quiz, User user) {
+		Page<QuizHistory> latestHistory = quizHistoryRepository.findLatestByUserAndQuiz(user, quiz, PageRequest.of(0, 1));
+		if (latestHistory.getContent()==null || latestHistory.getContent().size() == 0) {
+			return null;
+		}
+		return latestHistory.getContent().get(0);
+	}
 	
 	public void updateHistory(WebRequest request) {
 		String requestId = request.getRequestId();
-		String username = jwtUtils.getUserNameFromJwtToken(request.getToken());
-		User user = userRepository.findTop1ByUsername(username);
-		if (null == user) return;
-		Quiz quiz = quizRepository.getOne(request.getQuiz().getId());
-		if (null == quiz) return;
-		Page<QuizHistory> latestHistory = quizHistoryRepository.findLatestByUserAndQuiz(user, quiz, PageRequest.of(0, 1));
-		if (latestHistory.getContent()==null || latestHistory.getContent().size() == 0) {
-			return;
-		}
-		
-		QuizHistory history = latestHistory.getContent().get(0);
+		QuizHistory history = getLatestHistory(request.getQuiz().getId(), request.getToken());
 		String[] answers = request.getQuiz().getAnswers();
 		if (null != answers) {
 			history.setAnswerData(String.join(",", answers));

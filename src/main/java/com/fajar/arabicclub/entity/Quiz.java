@@ -2,6 +2,7 @@ package com.fajar.arabicclub.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -103,5 +104,18 @@ public class Quiz extends BaseEntity<QuizModel> implements SingleImageModel {
 			// TODO: handle exception
 		}
 		
+	}
+	
+	public boolean mapAnswers(QuizHistory quizHistory) {
+		if (questions == null) return false;
+		Map<Long, AnswerCode> mappedAnswer = quizHistory.mappedAnswer();
+		for (Long quiestionId : mappedAnswer.keySet()) {
+			for (QuizQuestion quizQuestion : questions) {
+				if (quizQuestion.getId().equals(quiestionId)) {
+					quizQuestion.setAnswerCode(mappedAnswer.get(quiestionId));
+				}
+			}
+		}
+		return true;
 	}
 }

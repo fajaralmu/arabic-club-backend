@@ -21,7 +21,9 @@ import com.fajar.arabicclub.dto.Filter;
 import com.fajar.arabicclub.dto.QuizResult;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
+import com.fajar.arabicclub.dto.model.QuizHistoryModel;
 import com.fajar.arabicclub.entity.Quiz;
+import com.fajar.arabicclub.entity.QuizHistory;
 import com.fajar.arabicclub.entity.QuizQuestion;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.exception.ApplicationException;
@@ -55,7 +57,7 @@ public class PublicQuizService {
 	private QuizHistoryService quizHistoryService;
 	@Autowired
 	private MasterDataService masterDataService;
-	
+
 	/**
 	 * get quiz list, paginated
 	 * 
@@ -142,13 +144,41 @@ public class PublicQuizService {
 				throw new ApplicationException("NOT ALLOWED");
 			}
 			Quiz fullQuiz = quizDataService.getFullQuiz(id, httpServletRequest, true);
+			QuizHistory history = syncLatestHistory(fullQuiz, httpServletRequest);
 			quizHistoryService.updateHistoryStart(quizRecord.get(), httpServletRequest);
 			response.setQuiz(fullQuiz.toModel());
+			if (null != history) {
+				QuizHistoryModel historyModel = QuizHistoryModel.builder().started(history.getStarted())
+						.remainingDuration(history.getRemainingDuration()).build();
+				response.setQuizHistory(historyModel);
+				response.setMessage("Success getting quiz synchronized with latest history");
+			} else {
+				response.setMessage("Success getting quiz");
+			}
+
 			return response;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DataNotFoundException(e.getMessage());
 		}
+	}
+
+	private QuizHistory syncLatestHistory(Quiz fullQuiz, HttpServletRequest httpServletRequest) {
+		QuizHistory history = quizHistoryService.getLatestHistory(fullQuiz,
+				sessionValidationService.getLoggedUser(httpServletRequest));
+		if (null == history) {
+			log.info("Latest history not found");
+			return null;
+		}
+		boolean continueLatestQuiz = history.continueLatestQuiz();
+		if (!continueLatestQuiz) {
+			log.info("continueLatestQuiz not allowed");
+			return null;
+		}
+		fullQuiz.mapAnswers(history);
+		log.info("Sync with latest history success");
+		return history;
+
 	}
 
 	/**
@@ -233,7 +263,5 @@ public class PublicQuizService {
 		}
 		return 0;
 	}
-
-	
 
 }
