@@ -60,8 +60,13 @@ public class QuizHistoryModel extends BaseModel<QuizHistory>  {
 	@FormField(type=FieldType.FIELD_TYPE_DATETIME)
 	@Getter(value=AccessLevel.NONE)
 	private Date updated;
-	
 	private int remainingDuration;
+	
+	/**
+	 * required when updating answer via websocket
+	 */
+	private String token, requestId;
+	
 	
 	public boolean isQuizRepeatable() {
 		if (null != quiz) return quiz.isRepeatable();

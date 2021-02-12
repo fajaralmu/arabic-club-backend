@@ -14,6 +14,7 @@ import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.service.quiz.PublicQuizService;
 import com.fajar.arabicclub.service.quiz.QuizHistoryService;
+import com.fajar.arabicclub.service.quiz.QuizHistoryUpdater;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSocketQuizController {
 	
 	@Autowired
-	private QuizHistoryService quizHistoryService;
+	private QuizHistoryUpdater quizHistoryService;
 
  
 
@@ -40,7 +41,7 @@ public class WebSocketQuizController {
 		WebRequest request = message.getPayload();
 		log.info("start: {}", request.getRequestId());
 		try {
-			quizHistoryService.updateStartHistory(request);
+			quizHistoryService.updateStartHistory(request.getQuizHistory());
 		} catch (Exception e) {
 			log.error("ERROR startQuizNotif:{}", e);
 		}
@@ -51,7 +52,7 @@ public class WebSocketQuizController {
 		WebRequest request = message.getPayload();
 		log.info("updateQuizHistory: {}", request.getRequestId());
 		try {
-			quizHistoryService.updateHistory(request);
+			quizHistoryService.updateRunningHistory(request.getQuizHistory());
 		} catch (Exception e) {
 			log.error("ERROR updateQuizNotif:{}", e);
 		}

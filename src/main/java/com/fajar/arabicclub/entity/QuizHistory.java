@@ -95,7 +95,6 @@ public class QuizHistory extends BaseEntity<QuizHistoryModel>  {
 		long maximumTime = startedTime + duration*1000;
 		long remainingMilisecond =  maximumTime- now;
 		
-		
 		log.info ("maximumTime: {} = {}", maximumTime, new Date(maximumTime));
 		log.info("now: {}, = {}", now, new Date(now));
 		log.info("remainingMilisecond: {}", remainingMilisecond);

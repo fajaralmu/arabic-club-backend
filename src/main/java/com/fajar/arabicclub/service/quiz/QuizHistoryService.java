@@ -140,16 +140,7 @@ public class QuizHistoryService {
 		return response ;
 	}
 	
-	public void updateStartHistory(WebRequest request) {
-		
-		QuizHistory history = getLatestHistory(request.getQuiz().getId(), request.getToken());
-		history.setStarted(request.getQuiz().getStartedDate());
-		history.setEnded(null);
-		history.setScore(null);
-		QuizHistory saved = quizHistoryRepository.save(history);
-		
-		log.info("start quiz at: {}", saved.getStarted());
-	}
+	
 	public QuizHistory getLatestHistory(Long quizId, String token) {
 		String username = jwtUtils.getUserNameFromJwtToken(token);
 		User user = userRepository.findTop1ByUsername(username);
@@ -167,20 +158,5 @@ public class QuizHistoryService {
 		return latestHistory.getContent().get(0);
 	}
 	
-	public void updateHistory(WebRequest request) {
-		String requestId = request.getRequestId();
-		QuizHistory history = getLatestHistory(request.getQuiz().getId(), request.getToken());
-		String[] answers = request.getQuiz().getAnswers();
-		if (null != answers) {
-			history.setAnswerData(String.join(",", answers));
-		}
-		if (null == history.getStarted()) {
-			history.setStarted(request.getQuiz().getStartedDate());
-		}
-		history.setModifiedDate(new Date());
-		history.setScore(null);
-		QuizHistory saved = quizHistoryRepository.save(history);
-		WebResponse response = WebResponse.builder().type(ResponseType.QUIZ_ANSWER_UPDATE).build();
-		realtimeService2.sendUpdate(response, requestId); 
-	}
+	
 }

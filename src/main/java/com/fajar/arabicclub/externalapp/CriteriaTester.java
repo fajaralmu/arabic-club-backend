@@ -13,14 +13,17 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.entity.BaseEntity;
+import com.fajar.arabicclub.entity.Quiz;
+import com.fajar.arabicclub.entity.QuizQuestion;
 import com.fajar.arabicclub.util.EntityUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CriteriaTester {
-	final static String inputDir = "D:\\Development\\Eclipse\\universal-good-shop-v2\\src\\"
+	final static String inputDir = "D:\\Development\\Kafila Projects\\arabic-club-backend\\src\\"
 			+ "main\\java\\com\\fajar\\arabicclub\\entity\\";
 	final static String outputDir = "D:\\Development\\entities_json\\";
 	// test
@@ -28,21 +31,7 @@ public class CriteriaTester {
 
 	static ObjectMapper mapper = new ObjectMapper();
 	static List<Class<?>> managedEntities = new ArrayList<>();
-
-	public static void main2(String[] args) throws Exception {
-
-		setSession();
-
-		// String filterJSON =
-		// "{\"entity\":\"product\",\"filter\":{\"exacts\":false,\"limit\":10,\"page\":0,\"fieldsFilter\":{\"withStock\":false,\"withSupplier\":false,\"withCategories\":false,\"category,id[EXACTS]\":\"4\",\"name\":\"\"},\"orderBy\":null,\"orderType\":null}}";
-		String filterJSON = "{\"entity\":\"product\",\"filter\":{\"limit\":5,\"page\":9,\"orderBy\":null,\"orderType\":null,\"fieldsFilter\":{}}}";
-		WebRequest request = mapper.readValue(filterJSON, WebRequest.class);
-//		CriteriaBuilder cb = new CriteriaBuilder(testSession, Product.class, request.getFilter());
-//		Criteria criteria = cb.createRowCountCriteria();
-//
-//		criteria.list();
-
-	}
+ 
 
 	public static List<Class> getIndependentEntities(List<Class<?>> managedEntities) {
 		List<Class> independentEntities = new ArrayList<>();
@@ -89,9 +78,26 @@ public class CriteriaTester {
 		return false;
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void mainRE_UPDATE_NUMBER(String[] args) throws Exception {
 		setSession();
-		  
+		Transaction tx = testSession.beginTransaction();
+		 Criteria quiz_criteria = testSession.createCriteria(Quiz.class);
+		
+		 List quizes = quiz_criteria.list();
+		 for (Object object : quizes) {
+			 System.out.println("-----------");
+			 Criteria question_criteria = testSession.createCriteria(QuizQuestion.class);
+			 question_criteria.add(Restrictions.eq("quiz", object));
+			 List<QuizQuestion> questions = question_criteria.list();
+			 System.out.println("questions : "+questions.size());
+			 for (int i = 0; i < questions.size(); i++) {
+				 questions.get(i).setNumber(i+1);
+				 testSession.merge(questions.get(i));
+			}
+			System.out.println(object);
+		}
+		 
+		 tx.commit();
 		System.exit(0);
 	}
 
@@ -156,7 +162,7 @@ public class CriteriaTester {
 	static void setSession() {
 
 		org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
-		configuration.setProperties(additionalPropertiesPostgres());
+		configuration.setProperties(additionalPropertiesPostgresOffline());
 
 		managedEntities = getManagedEntities();
 		for (Class class1 : managedEntities) {
@@ -179,30 +185,7 @@ public class CriteriaTester {
 		return returnClasses;
 	}
 
-	/**
-	 * mysql
-	 * @return
-	 */
-	private static Properties additionalProperties() {
-
-		String dialect = "org.hibernate.dialect.MySQLDialect";
-		String ddlAuto = "update";
-
-		Properties properties = new Properties();
-		properties.setProperty("hibernate.dialect", dialect);
-		properties.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/goodshopv2");
-		properties.setProperty("hibernate.connection.username", "root");
-		properties.setProperty("hibernate.connection.password", "");
-
-//		properties.setProperty("hibernate.connection.driver_class", com.mysql.jdbc.Driver.class.getCanonicalName());
-		properties.setProperty("hibernate.current_session_context_class", "thread");
-		properties.setProperty("hibernate.show_sql", "true");
-		properties.setProperty("hibernate.connection.pool_size", "1");
-		properties.setProperty("hbm2ddl.auto", ddlAuto);
-
-		return properties;
-	}
-
+	 
 	private static Properties additionalPropertiesPostgresOffline() {
 
 		String dialect = "org.hibernate.dialect.PostgreSQLDialect";
@@ -210,7 +193,7 @@ public class CriteriaTester {
 
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect", dialect);
-		properties.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/universal_commerce");
+		properties.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/arabic-club");
 		properties.setProperty("hibernate.connection.username", "postgres");
 		properties.setProperty("hibernate.connection.password", "root");
 

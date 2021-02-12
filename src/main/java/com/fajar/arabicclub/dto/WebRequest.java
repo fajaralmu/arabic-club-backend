@@ -11,6 +11,7 @@ import com.fajar.arabicclub.dto.model.ImageCategoryModel;
 import com.fajar.arabicclub.dto.model.ImagesModel;
 import com.fajar.arabicclub.dto.model.LessonCategoryModel;
 import com.fajar.arabicclub.dto.model.LessonModel;
+import com.fajar.arabicclub.dto.model.QuizHistoryModel;
 import com.fajar.arabicclub.dto.model.QuizModel;
 import com.fajar.arabicclub.dto.model.UserModel;
 import com.fajar.arabicclub.dto.model.VideoCategoryModel;
@@ -56,6 +57,7 @@ public class WebRequest implements Serializable {
 	private DocumentCategoryModel documentcategory;
 	
 	private QuizModel quiz;
+	private QuizHistoryModel quizHistory;
 	
 
 	/**

@@ -45,6 +45,8 @@ public class QuizQuestion extends BaseEntity<QuizQuestionModel> implements Singl
 
 	@Column(nullable = false)
 	private String statement;
+	@Column
+	private Integer number;
 
 	@JoinColumn(name = "quiz_id", nullable = false)
 	@ManyToOne

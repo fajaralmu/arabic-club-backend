@@ -135,8 +135,9 @@ public class StringUtil {
 	}
 	
 	public static void main(String[] args) {
-		byte[] b = new byte[] {1,0,0,0,0,0,0,0,0};
-		System.out.println(toBase64(b));
+		for (int i =240; i>0;i--) {
+			System.out.println(timerString(i));
+		}
 	}
 
 
@@ -152,4 +153,24 @@ public class StringUtil {
 		}
 		return "0"+number;
 	}
+	
+ 
+
+public static String timerString (int inputSeconds ) {
+    int hour = 0;
+    int minutes = 0;
+    int seconds = 0;
+    int totalSeconds = inputSeconds;
+    if (totalSeconds >= 3600) {
+        hour = totalSeconds/ 3600;
+        totalSeconds = totalSeconds % 3600;
+    }
+    if (totalSeconds >= 60) {
+        minutes = totalSeconds/60;
+        totalSeconds = totalSeconds%60;
+    }
+    seconds = totalSeconds;
+
+    return inputSeconds+"|"+twoDigits(hour)+":"+twoDigits( (minutes ))+":"+twoDigits(seconds);
+}
 }

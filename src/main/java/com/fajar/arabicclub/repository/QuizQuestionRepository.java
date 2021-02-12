@@ -10,6 +10,7 @@ import com.fajar.arabicclub.entity.QuizQuestion;
 
 public interface QuizQuestionRepository extends JpaRepository<QuizQuestion	, Long> {
 
+	@Query("select q from QuizQuestion q where q.quiz = ?1 order by q.number asc")
 	List<QuizQuestion> findByQuiz(Quiz quiz);
 
 	@Query("select q from QuizQuestion q where q.quiz in ?1")

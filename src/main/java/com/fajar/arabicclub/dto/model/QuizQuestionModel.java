@@ -33,7 +33,7 @@ public class QuizQuestionModel extends BaseModel<QuizQuestion> {
 	private AnswerCode answerCode;
  
 	private String statement;
- 
+	private Integer number;
 	private QuizModel quiz; 
 	private String image;
 	private long duration;

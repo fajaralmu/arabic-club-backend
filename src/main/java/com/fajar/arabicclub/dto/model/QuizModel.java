@@ -119,4 +119,12 @@ public class QuizModel extends BaseModel<Quiz>   {
 		}
 		return e;
 	}
+
+
+
+	public String getAnswersData() {
+		String[] answers = getAnswers();
+		if (null == answers) return null;
+		return String.join(",", answers);
+	}
 }

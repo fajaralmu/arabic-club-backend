@@ -135,15 +135,18 @@ public class QuizDataService {
 			imageUploadService.uploadImage(quiz);
 			Quiz savedQuiz = DatabaseProcessor.save(quiz, session);
 			progressService.sendProgress(10, httpServletRequest);
-
 			
+			int number = 1;
 			for (QuizQuestion quizQuestion : submittedQuestions ) {
+				quizQuestion.setNumber(number);
 				quizQuestion.setQuiz(quiz);
 				QuizQuestion savedQuestion = saveQuestionAndItsChoices(quizQuestion, session);
 				if (null != savedQuestion) {
 					savedQuestions.add(savedQuestion);
+					number++;
 				}
 				progressService.sendProgress(1, quiz.getQuestions().size(), 90, httpServletRequest);
+				
 			}
 
 			if (!isNewRecord) {
