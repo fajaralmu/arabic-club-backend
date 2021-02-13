@@ -20,12 +20,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter; 
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j; 
 @Dto(creatable = false, entityClass=Quiz.class, updateService = "quizUpdateService") 
 @Data
 @Builder	
 @AllArgsConstructor
 @NoArgsConstructor
+@Slf4j
 @JsonInclude(value =Include.NON_NULL)
 public class QuizModel extends BaseModel<Quiz>   { 
 	  
@@ -79,6 +81,7 @@ public class QuizModel extends BaseModel<Quiz>   {
 		int i = 0;
 		for (Integer questionNumber : mappedAnswer.keySet()) {
 			answers[i] = questionNumber+":"+mappedAnswer.get(questionNumber);
+			log.info("answers[i]: {}",answers[i] );
 			i++;
 		}
 		return answers;

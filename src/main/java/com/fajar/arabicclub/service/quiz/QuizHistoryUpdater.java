@@ -42,7 +42,10 @@ public class QuizHistoryUpdater {
 		QuizHistory history = quizHistoryService.getLatestHistory(request.getQuiz().getId(), request.getToken());
 		String answerData = request.getQuiz().getAnswersData();
 		if (null != answerData) {
+			log.info("answerData is : {}", answerData);
 			history.setAnswerData(answerData);
+		} else {
+			log.info("answerData is null");
 		}
 		if (null == history.getStarted()) {
 			history.setStarted(request.getQuiz().getStartedDate());

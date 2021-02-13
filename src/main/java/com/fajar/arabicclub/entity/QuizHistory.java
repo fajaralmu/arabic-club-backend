@@ -62,10 +62,11 @@ public class QuizHistory extends BaseEntity<QuizHistoryModel>  {
 			try {
 				String[] raw = string.split(":");
 				Integer questionNumber = Integer.valueOf(raw[0]);
-				AnswerCode code = AnswerCode.valueOf(raw[1]);
+				String rawAnswerCode = raw[1];
+				AnswerCode code = AnswerCode.parse( rawAnswerCode);
 				map.put(questionNumber, code);
 			} catch (Exception e) {
-				 
+				log.error("Error mapping answer code: {}", e.getMessage());
 			}
 		}
 		return map;

@@ -1,6 +1,5 @@
 package com.fajar.arabicclub.service.quiz;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,13 +9,9 @@ import java.util.function.Consumer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.fajar.arabicclub.config.security.JWTUtils;
 import com.fajar.arabicclub.constants.AnswerCode;
-import com.fajar.arabicclub.constants.ResponseType;
 import com.fajar.arabicclub.dto.Filter;
 import com.fajar.arabicclub.dto.QuizResult;
 import com.fajar.arabicclub.dto.WebRequest;
@@ -31,7 +26,6 @@ import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
-import com.fajar.arabicclub.service.RealtimeService2;
 import com.fajar.arabicclub.service.SessionValidationService;
 import com.fajar.arabicclub.service.entity.MasterDataService;
 import com.fajar.arabicclub.service.entity.MasterDataService.FilterResult;
@@ -118,7 +112,7 @@ public class PublicQuizService {
 				throw new ApplicationException("NOT ALLOWED");
 			}
 			Quiz fullQuiz = quizDataService.getFullQuiz(id, httpServletRequest, true);
-			QuizHistory history = syncLatestHistory(fullQuiz, httpServletRequest);
+			QuizHistory history = synchronizeLatestHistory(fullQuiz, httpServletRequest);
 			quizHistoryService.updateHistoryStart(quizRecord.get(), httpServletRequest);
 			response.setQuiz(fullQuiz.toModel());
 			if (null != history) {
@@ -139,7 +133,7 @@ public class PublicQuizService {
 		}
 	}
 
-	private QuizHistory syncLatestHistory(Quiz fullQuiz, HttpServletRequest httpServletRequest) {
+	private QuizHistory synchronizeLatestHistory(Quiz fullQuiz, HttpServletRequest httpServletRequest) {
 		QuizHistory history = quizHistoryService.getLatestHistory(fullQuiz,
 				sessionValidationService.getLoggedUser(httpServletRequest));
 		if (null == history) {
