@@ -1,9 +1,7 @@
 package com.fajar.arabicclub.config.security;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +13,7 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fajar.arabicclub.dto.WebResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -61,9 +59,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 		
 		log.info("Authentication Failed");
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
-		Map<String, Object> data = new HashMap<>();
-		data.put("timestamp", Calendar.getInstance().getTime());
-		data.put("exception", exception.getMessage());
+		WebResponse data = WebResponse.builder().date(new Date())
+				.message(exception.getMessage()).build();
 
 		response.getOutputStream().println(objectMapper.writeValueAsString(data));
 		
