@@ -32,53 +32,9 @@ public class CriteriaTester {
 	static ObjectMapper mapper = new ObjectMapper();
 	static List<Class<?>> managedEntities = new ArrayList<>();
  
+ 
 
-	public static List<Class> getIndependentEntities(List<Class<?>> managedEntities) {
-		List<Class> independentEntities = new ArrayList<>();
-		for (Class entityCLass : managedEntities) {
-//			System.out.println("-"+entityCLass);
-			List<Field> fields = EntityUtil.getDeclaredFields(entityCLass);
-			int dependentCount = 0;
-			for (Field field : fields) {
-				dependentCount = dependentCount + (printDependentFields(field, managedEntities) ? 1 : 0);
-			}
-			if (dependentCount == 0) {
-				independentEntities.add(entityCLass);
-			}
-		}
-
-		return independentEntities;
-	}
-
-	public static List<Class<?>> getDependentEntities(List<Class<?>> managedEntities) {
-
-		List<Class<?>> independentEntities = new ArrayList<>();
-		for (Class entityCLass : managedEntities) {
-//			System.out.println("-"+entityCLass);
-			List<Field> fields = EntityUtil.getDeclaredFields(entityCLass);
-			int dependentCount = 0;
-			for (Field field : fields) {
-				dependentCount = dependentCount + (printDependentFields(field, managedEntities) ? 1 : 0);
-			}
-			if (dependentCount > 0) {
-				independentEntities.add(entityCLass);
-			}
-		}
-
-		return independentEntities;
-	}
-
-	private static boolean printDependentFields(Field field, List<Class<?>> managedEntities) {
-
-		for (Class<?> class3 : managedEntities) {
-			if (field.getType().equals(class3)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static void mainRE_UPDATE_NUMBER(String[] args) throws Exception {
+	public static void main (String[] args) throws Exception {
 		setSession();
 		Transaction tx = testSession.beginTransaction();
 		 Criteria quiz_criteria = testSession.createCriteria(Quiz.class);
@@ -100,17 +56,7 @@ public class CriteriaTester {
 		 tx.commit();
 		System.exit(0);
 	}
-
-	static void insertRecords() throws Exception {
-		List<Class<?>> entities = getDependentEntities(getDependentEntities(managedEntities));
-		Transaction tx = testSession.beginTransaction();
-
-		for (Class clazz : entities) {
-			insertRecord(clazz);
-		}
-		tx.commit();
-	}
-
+  
 	private static <T extends BaseEntity> List<T> getObjectListFromFiles(Class<T> clazz) throws Exception {
 		List<T> result = new ArrayList<>();
 		String dirPath = outputDir + "//" + clazz.getSimpleName();
@@ -127,37 +73,7 @@ public class CriteriaTester {
 			result.add(entity);
 		}
 		return result;
-	}
-
-	private static void insertRecord(Class clazz) throws Exception {
-
-		System.out.println(clazz);
-		List<BaseEntity> list = getObjectListFromFiles(clazz);
-		int c = 0;
-		for (BaseEntity entity : list) {
-			try {
-				testSession.save(entity);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			// if (c > 50) return;
-			c++;
-			System.out.println(clazz + " " + c + "/" + list.size());
-		}
-	}
-
-	public static void printRecords(Class<?> _class) throws Exception {
-		System.out.println("================= " + _class.getSimpleName() + " ===============");
-		Criteria criteria = testSession.createCriteria(_class);
-		List list = criteria.list();
-		for (int i = 0; i < list.size(); i++) {
-			String JSON = (mapper.writeValueAsString(list.get(i)));
-			System.out.println(_class.getSimpleName() + " - " + i);
-			FileUtils.writeStringToFile(
-					new File(outputDir + _class.getSimpleName() + "\\" + _class.getSimpleName() + "_" + i + ".json"),
-					JSON);
-		}
-	}
+	} 
 
 	static void setSession() {
 
@@ -214,10 +130,10 @@ public class CriteriaTester {
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect", dialect);
 		properties.setProperty("hibernate.connection.url",
-				"jdbc:postgresql://ec2-54-157-12-250.compute-1.amazonaws.com:5432/d1eu0qub2adiiv");
-		properties.setProperty("hibernate.connection.username", "veqlrgwoojdelw");
+				"jdbc:postgresql://ec2-18-204-101-137.compute-1.amazonaws.com:5432/d95v9noaukbskn");
+		properties.setProperty("hibernate.connection.username", "tzwewrfgfvnmym");
 		properties.setProperty("hibernate.connection.password",
-				"d8b34a7856fb4ed5e56d082db5a62dd3b527dd848e95ce1e6a3652001a04f7fe");
+				"2de6a0667dedcf76c44fb3bc4dca645f24191baced618d002159f8f73046a505");
 
 		properties.setProperty("hibernate.connection.driver_class", org.postgresql.Driver.class.getCanonicalName());
 		properties.setProperty("hibernate.current_session_context_class", "thread");
