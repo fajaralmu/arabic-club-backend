@@ -18,6 +18,10 @@
  		<beans:property name="objectMapper" ref="objectMapper"></beans:property>
  		<beans:property name="jwtUtils" ref="jwtUtils"></beans:property>
  	</beans:bean>
+ 	<beans:bean id="loginFailureHandler" class="com.fajar.arabicclub.config.security.CustomAuthenticationFailureHandler">
+ 		<beans:property name="objectMapper" ref="objectMapper"></beans:property>
+ 		<beans:property name="jwtUtils" ref="jwtUtils"></beans:property>
+ 	</beans:bean>
 	<http auto-config="true" >
 	 	<custom-filter before="PRE_AUTH_FILTER" ref="jwtAuthFilter"/>
 		<intercept-url pattern="/public/**" access="permitAll" /> 
@@ -30,10 +34,11 @@
 		<form-login login-page="/login.html"
 			default-target-url="/app/dashboard"  username-parameter="username"
 			password-parameter="password" always-use-default-target="true"
-			authentication-failure-url="/login.html?error=true"
+			authentication-failure-handler-ref="loginFailureHandler" 
 			authentication-success-forward-url="/loginsuccess" 
 			authentication-success-handler-ref="loginSuccessHandler"
 			/>
+			<!-- authentication-failure-url="/login.html?error=true" -->
 		<logout logout-url="/logout" delete-cookies="JSESSIONID"
 			invalidate-session="true" logout-success-url="/login.html?logout=true" />
 			

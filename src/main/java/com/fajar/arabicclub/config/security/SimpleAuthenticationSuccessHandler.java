@@ -51,12 +51,11 @@ public class SimpleAuthenticationSuccessHandler implements AuthenticationSuccess
 			throws IOException {
 
 		LoginController.extractRequestHeader(request);
-		
-		String targetUrl = determineTargetUrl(authentication);
 		if (isJsonResponse(request)) {
 			sendJsonResponse(response, authentication);
 			return;
 		}
+		String targetUrl = determineTargetUrl(authentication);
 		if ( response.isCommitted()) {
 			log.debug("Response has already been committed. Unable to redirect to " + targetUrl);
 			return;
@@ -83,7 +82,7 @@ public class SimpleAuthenticationSuccessHandler implements AuthenticationSuccess
 		}
 	}
 
-	private boolean isJsonResponse(HttpServletRequest httpServletRequest) {
+	public static boolean isJsonResponse(HttpServletRequest httpServletRequest) {
 		boolean isJsonResponse = httpServletRequest.getParameter("transport_type")!=null
 				&&
 				httpServletRequest.getParameter("transport_type").equals("rest");
