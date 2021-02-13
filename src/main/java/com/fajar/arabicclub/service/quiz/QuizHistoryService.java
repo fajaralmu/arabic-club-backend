@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.fajar.arabicclub.config.security.JWTUtils;
-import com.fajar.arabicclub.constants.ResponseType;
 import com.fajar.arabicclub.dto.Filter;
 import com.fajar.arabicclub.dto.QuizResult;
 import com.fajar.arabicclub.dto.WebRequest;
@@ -40,10 +39,7 @@ public class QuizHistoryService {
 	private QuizRepository quizRepository;
 	@Autowired
 	private SessionValidationService sessionValidationService;
-	@Autowired
-	private JWTUtils jwtUtils;
-	@Autowired
-	private RealtimeService2 realtimeService2;
+	
 	@Autowired
 	private UserRepository userRepository;
 
@@ -59,10 +55,13 @@ public class QuizHistoryService {
 			log.info("user not found");
 			return false;
 		}
-		boolean recordExist = isAllowedToTakeQuiz(quiz, user);
-		if (!quiz.isRepeatable() && recordExist) {
-			log.info("isRepeatable=FALSE & recordExist");
-			return false;
+		
+		if (quiz.isRepeatable() == false) {
+			boolean allowed = isAllowedToTakeQuiz(quiz, user);
+			if (!allowed) {
+				log.info("isRepeatable={} & Allowed: {}",quiz.isRepeatable(),allowed);
+				return false;
+			}
 		}
 		return true;
 	}
@@ -118,7 +117,10 @@ public class QuizHistoryService {
 			return true;
 		}
 		QuizHistory history = records.getContent().get(0);
-		return history.getRemainingDuration() > 2; 
+		boolean continueLatestQuiz = history.continueLatestQuiz();
+		log.info("continueLatestQuiz: {}", continueLatestQuiz);
+		log.info("score: {}", history.getScore());
+		return continueLatestQuiz;
 		
 	}
 
@@ -142,7 +144,7 @@ public class QuizHistoryService {
 	
 	
 	public QuizHistory getLatestHistory(Long quizId, String token) {
-		String username = jwtUtils.getUserNameFromJwtToken(token);
+		String username = sessionValidationService.getUserNameFromJwtToken(token);
 		User user = userRepository.findTop1ByUsername(username);
 		if (null == user) return null;
 		Quiz quiz = quizRepository.getOne(quizId);

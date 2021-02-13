@@ -2,9 +2,11 @@ package com.fajar.arabicclub.service;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import com.fajar.arabicclub.config.security.JWTUtils;
 import com.fajar.arabicclub.config.security.UserDetailDomain;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.util.SessionUtil;
@@ -14,7 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class SessionValidationService {
-
+	@Autowired
+	private JWTUtils jwtUtils; 
 	public boolean validatePrinciple(Object principal) {
 //		log.info("principal=====> {}", principal);
 		 
@@ -44,6 +47,9 @@ public class SessionValidationService {
 			return ((UsernamePasswordAuthenticationToken)request.getUserPrincipal()).getPrincipal();
 		}
 		return null;
+	}
+	public String getUserNameFromJwtToken(String token) { 
+		return jwtUtils.getUserNameFromJwtToken(token);
 	}
 
 }
