@@ -119,7 +119,9 @@ public class PublicQuizService {
 				QuizHistoryModel historyModel = QuizHistoryModel.builder().started(history.getStarted())
 						.remainingDuration(history.getRemainingDuration())
 						.maxQuestionNumber(history.getMaxQuestionNumber())
+						.updated(history.getUpdated())
 						.build();
+				historyModel.setId(history.getId());
 				response.setQuizHistory(historyModel);
 				response.setMessage("Success getting quiz synchronized with latest history");
 			} else {

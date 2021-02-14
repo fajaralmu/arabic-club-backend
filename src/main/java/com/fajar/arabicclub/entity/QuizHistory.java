@@ -48,6 +48,8 @@ public class QuizHistory extends BaseEntity<QuizHistoryModel>  {
 	private Date started;
 	@Column
 	private Date ended;
+	@Column
+	private Date updated; //choice updated
 	@Column(columnDefinition = "TEXT", name="answer_data")
 	private String answerData;
 	

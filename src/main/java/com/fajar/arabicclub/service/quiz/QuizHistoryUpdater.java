@@ -37,10 +37,10 @@ public class QuizHistoryUpdater {
 		log.info("start quiz at: {}", saved.getStarted());
 	}
 	
-	public void updateRunningHistory(QuizHistoryModel request) {
-		String requestId = request.getRequestId();
-		QuizHistory history = quizHistoryService.getLatestHistory(request.getQuiz().getId(), request.getToken());
-		String answerData = request.getQuiz().getAnswersData();
+	public void updateRunningHistory(QuizHistoryModel historyModel) {
+		String requestId = historyModel.getRequestId();
+		QuizHistory history = quizHistoryService.getLatestHistory(historyModel.getQuiz().getId(), historyModel.getToken());
+		String answerData = historyModel.getQuiz().getAnswersData();
 		if (null != answerData) {
 			log.info("answerData is : {}", answerData);
 			history.setAnswerData(answerData);
@@ -48,16 +48,20 @@ public class QuizHistoryUpdater {
 			log.info("answerData is null");
 		}
 		if (null == history.getStarted()) {
-			history.setStarted(request.getQuiz().getStartedDate());
+			history.setStarted(historyModel.getQuiz().getStartedDate());
+		} 
+		if (null != historyModel.getUpdated()) {
+			history.setUpdated(historyModel.getUpdated());
+		} else {
+			history.setUpdated(new Date());
 		}
-		history.setModifiedDate(new Date());
 		history.setScore(null);
 		quizHistoryRepository.save(history);
-		
+		log.info("last quiestion updated at: {}",history.getUpdated() );
 		/**
 		 * notify
 		 */
-		WebResponse response = WebResponse.builder().type(ResponseType.QUIZ_ANSWER_UPDATE).build();
+		WebResponse response = WebResponse.builder().date(history.getUpdated()).type(ResponseType.QUIZ_ANSWER_UPDATE).build();
 		realtimeService2.sendUpdate(response, requestId); 
 	}
 }
