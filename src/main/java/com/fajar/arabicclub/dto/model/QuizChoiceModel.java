@@ -30,17 +30,10 @@ public class QuizChoiceModel extends BaseModel<com.fajar.arabicclub.entity.QuizC
 	* 
 	*/
 	private static final long serialVersionUID = 3494963248002164943L;
-	@Column(nullable = false,name="answer_code") 
-	@Enumerated(EnumType.STRING)
-	private AnswerCode answerCode;
-	
-	@Column(nullable = false)
-	private String statement;
-	@Column
-	private String image;
-	
-	@JoinColumn(name = "question_id", nullable = false)
-	@ManyToOne
+	 
+	private AnswerCode answerCode; 
+	private String statement; 
+	private String image; 
 	@JsonIgnore
 	private QuizQuestionModel question; 
   

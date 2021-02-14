@@ -25,8 +25,8 @@ public class DocumentCategoryModel extends BaseModel<DocumentCategory> {
 	private String code;
 	@FormField  
 	private String name;
-	@FormField  
+	@FormField (required = false) 
 	private String iconClassName;
-	@FormField ( type= FieldType.FIELD_TYPE_TEXTAREA)  
+	@FormField ( type= FieldType.FIELD_TYPE_TEXTAREA, required = false)  
 	private String description;
 }
