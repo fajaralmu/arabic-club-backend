@@ -83,7 +83,7 @@ public class UtilitiesController extends BaseController{
 			log.error("======= !! HANDLING exception: {}", exception);
 			if (exception != null && exception instanceof NestedServletException) {
 				NestedServletException nestedServletException = (NestedServletException) exception;
-				return nestedServletException.getCause().getMessage();
+				return nestedServletException.getRootCause().getMessage();
 			}
 			
 			return String.valueOf(exception);
