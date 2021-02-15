@@ -3,7 +3,7 @@ package com.fajar.arabicclub.exception;
 public class DataNotFoundException extends RuntimeException{
 
 	public DataNotFoundException(String message) {
-		super(ApplicationException.PREFFIX+message);
+		super( message);
 	}
 
 	/**

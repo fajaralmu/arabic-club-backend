@@ -11,10 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.NestedServletException;
 
 import com.fajar.arabicclub.config.security.JWTAuthFilter;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.exception.ApplicationException;
+import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -77,16 +79,19 @@ public class UtilitiesController extends BaseController{
 	}
 	private String getErrorMessage(HttpServletRequest httpRequest) {
 		try {
-			Object message = getAttribute(httpRequest, "javax.servlet.error.exception");
-			if (message.toString().contains(ApplicationException.PREFFIX)) {
-				message = message.toString().split(ApplicationException.PREFFIX)[1];
+			Object exception = getAttribute(httpRequest, "javax.servlet.error.exception");
+			log.error("======= !! HANDLING exception: {}", exception);
+			if (exception != null && exception instanceof NestedServletException) {
+				NestedServletException nestedServletException = (NestedServletException) exception;
+				return nestedServletException.getCause().getMessage();
 			}
-			return String.valueOf(message);
+			
+			return String.valueOf(exception);
 		} catch (Exception e) {
 			return "Error occured";
 		}
 	}
-
+	 
 
 	@RequestMapping(value = "/error-general", produces = MediaType.APPLICATION_JSON_VALUE, method = {RequestMethod.POST, RequestMethod.GET}) 
 	public void errorGeneral(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {

@@ -9,11 +9,11 @@ public class ApplicationException extends RuntimeException{
 	private static final long serialVersionUID = -7610558300205998680L;
 
 	public ApplicationException(String message) {
-		super(PREFFIX+message);
+		super(message);
 	}
 
 	public ApplicationException(Exception ex) {
-		super(PREFFIX+ex.getMessage());
+		super(ex.getMessage());
 	}
   
 }
