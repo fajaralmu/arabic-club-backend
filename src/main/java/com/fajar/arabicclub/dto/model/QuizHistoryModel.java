@@ -32,6 +32,8 @@ public class QuizHistoryModel extends BaseModel<QuizHistory> {
 	private static final long serialVersionUID = 4503414813358642804L;
 	@FormField(optionItemName = "displayName")
 	private UserModel user;
+	@FormField(optionItemName = "title")
+	private QuizModel quiz;
 
 	@FormField(type = FieldType.FIELD_TYPE_DATETIME)
 	private Date started;
@@ -46,8 +48,7 @@ public class QuizHistoryModel extends BaseModel<QuizHistory> {
 	@Getter(value = AccessLevel.NONE)
 	private String userDuration;
 
-	@FormField(optionItemName = "title")
-	private QuizModel quiz;
+	
 	@FormField(filterable = false, type = FieldType.FIELD_TYPE_CHECKBOX)
 	@Setter(value = AccessLevel.NONE)
 	@Getter(value = AccessLevel.NONE)
@@ -61,6 +62,8 @@ public class QuizHistoryModel extends BaseModel<QuizHistory> {
 	private Date created;
 	@FormField(type = FieldType.FIELD_TYPE_DATETIME) 
 	private Date updated;
+	@FormField(type = FieldType.FIELD_TYPE_DATETIME) 
+	private Date modifiedDate;
 
 	private int remainingDuration;
 	private Integer maxQuestionNumber;

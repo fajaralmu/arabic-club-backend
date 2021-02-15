@@ -37,7 +37,7 @@ public class QuizModel extends BaseModel<Quiz>   {
 	private static final long serialVersionUID = -1954539379442647444L;
 	@FormField 
 	private String title;
-	@FormField 
+	@FormField ( required = false)
 	private String description; 
 	@FormField(type = FieldType.FIELD_TYPE_IMAGE)
 	private String image;

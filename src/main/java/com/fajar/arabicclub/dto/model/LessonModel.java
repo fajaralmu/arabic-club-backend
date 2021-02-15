@@ -28,7 +28,7 @@ public class LessonModel extends BaseModel<Lesson>{
 	private String title; 
 	@FormField(type = FieldType.FIELD_TYPE_TEXTEDITOR)
 	private String content; 
-	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, required = false)
 	private String description;
 	 
 	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = false, multipleImage = true, defaultValue = "Default.BMP")

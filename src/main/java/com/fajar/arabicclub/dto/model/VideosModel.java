@@ -27,7 +27,7 @@ public class VideosModel extends BaseModel<Videos> {
 	@FormField
 	private String title;
 	 
-	@FormField(required = true)
+	@FormField 
 	private String url; 
 	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, required = false)
 	private String description;
