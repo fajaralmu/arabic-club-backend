@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fajar.arabicclub.config.security.JWTAuthFilter;
 import com.fajar.arabicclub.dto.WebResponse;
+import com.fajar.arabicclub.exception.ApplicationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,7 @@ public class UtilitiesController extends BaseController{
 		}
 
 		errorPage.addObject("errorCode", httpErrorCode);
-		errorPage.addObject("errorMessage", getAttribute(httpRequest, "javax.servlet.error.exception"));
+		errorPage.addObject("errorMessage", getErrorMessage(httpRequest ));
 		JWTAuthFilter.setCorsHeaders(httpResponse);
 		printHttpRequestAttrs(httpRequest);
 		return errorPage;
@@ -63,8 +64,8 @@ public class UtilitiesController extends BaseController{
 			return;
 		}
 
-		Object message = getAttribute(httpRequest, "javax.servlet.error.exception");
-		WebResponse payload = WebResponse.failed(String.valueOf(message));
+		
+		WebResponse payload = WebResponse.failed(getErrorMessage(httpRequest));
 		payload.setCode("404");
 		httpResponse.setStatus(404);
 
@@ -74,6 +75,19 @@ public class UtilitiesController extends BaseController{
 		printHttpRequestAttrs(httpRequest);
 		
 	}
+	private String getErrorMessage(HttpServletRequest httpRequest) {
+		try {
+			Object message = getAttribute(httpRequest, "javax.servlet.error.exception");
+			if (message.toString().contains(ApplicationException.PREFFIX)) {
+				message = message.toString().split(ApplicationException.PREFFIX)[1];
+			}
+			return String.valueOf(message);
+		} catch (Exception e) {
+			return "Error occured";
+		}
+	}
+
+
 	@RequestMapping(value = "/error-general", produces = MediaType.APPLICATION_JSON_VALUE, method = {RequestMethod.POST, RequestMethod.GET}) 
 	public void errorGeneral(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
 		 
@@ -84,7 +98,7 @@ public class UtilitiesController extends BaseController{
 			return;
 		}
 
-		Object message = getAttribute(httpRequest, "javax.servlet.error.exception");
+		Object message = getErrorMessage(httpRequest );
 		WebResponse payload = WebResponse.failed(String.valueOf(message));
 		payload.setCode("400");
 		httpResponse.setStatus(400);
