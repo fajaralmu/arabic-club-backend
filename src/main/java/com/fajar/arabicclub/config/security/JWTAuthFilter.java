@@ -64,7 +64,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 					SecurityContextHolder.getContext().setAuthentication(authentication);
 					String refreshToken = jwtUtils.generateJwtToken(authentication);
 					response.setHeader("access-token", refreshToken);
-					response.setHeader("Access-Control-Expose-Headers", "access-token");
+					response.setHeader("Access-Control-Expose-Headers", "access-token, content-disposition");
 				} else {
 					log.info("Failed validating JWT");
 //					log.info("jwt is null");
@@ -89,7 +89,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
 		response.setHeader("Access-Control-Max-Age", "3600");
 		response.setHeader("Access-Control-Allow-Headers",
-				"Content-Type, Accept, X-Requested-With, Authorization, requestid, access-token");
+				"Content-Type, Accept, X-Requested-With, Authorization, requestid, access-token, content-disposition");
 //		response.setStatus(HttpStatus.OK.value());
 
 	}

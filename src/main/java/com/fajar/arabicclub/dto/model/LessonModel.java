@@ -39,8 +39,8 @@ public class LessonModel extends BaseModel<Lesson>{
 	
 	@FormField(type = FieldType.FIELD_TYPE_DATETIME)
 	private Date date;
- 
-	private User user;
+	@FormField(editable = false, optionItemName = "name")
+	private UserModel user;
 
  
 
