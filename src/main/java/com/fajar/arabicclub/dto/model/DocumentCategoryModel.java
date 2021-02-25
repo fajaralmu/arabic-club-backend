@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@Dto(value="Document Category", entityClass=DocumentCategory.class) 
+@Dto(value="Document Category")//, entityClass=DocumentCategory.class) 
 @Data
 @Builder	
 @AllArgsConstructor

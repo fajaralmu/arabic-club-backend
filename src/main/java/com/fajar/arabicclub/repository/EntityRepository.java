@@ -81,7 +81,7 @@ public class EntityRepository {
 //					log.info(" SKIP {}, cause = customEntity is null", type);
 //					continue;
 //				}
-				Class<? extends BaseModel> modelClass = BaseEntity.getTypeArgumentOfGenericSuperClass(entityClass);
+				Class<? extends BaseModel> modelClass = BaseEntity.getModelClass(entityClass);
 				if (null == modelClass.getAnnotation(Dto.class)) {
 					log.info(" SKIP {}, cause = {}'s Dto is null", type, modelClass);
 					continue;

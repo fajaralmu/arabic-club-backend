@@ -18,7 +18,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
  
-@Dto(entityClass=QuizQuestion.class)
+@Dto 
 @Data
 @Builder
 @AllArgsConstructor

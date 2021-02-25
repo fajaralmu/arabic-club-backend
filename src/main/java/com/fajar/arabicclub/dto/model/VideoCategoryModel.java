@@ -9,20 +9,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@Dto(value="Video Category", entityClass=VideoCategory.class) 
+
+@Dto(value = "Video Category")
 @Data
-@Builder	
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class VideoCategoryModel extends BaseModel<VideoCategory> {  
+public class VideoCategoryModel extends BaseModel<VideoCategory> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8604334009301906788L;
-	@FormField  
+	@FormField
 	private String code;
-	@FormField  
+	@FormField
 	private String name;
-	@FormField ( type= FieldType.FIELD_TYPE_TEXTAREA, required = false)  
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, required = false)
 	private String description;
 }

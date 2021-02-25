@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Dto(entityClass = User.class, updateService = "memberUpdateService")
+@Dto( updateService = "memberUpdateService")
 @Builder
 @Data
 @AllArgsConstructor

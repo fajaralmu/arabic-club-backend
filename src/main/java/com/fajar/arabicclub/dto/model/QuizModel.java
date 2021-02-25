@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j; 
-@Dto(creatable = false, entityClass=Quiz.class, updateService = "quizUpdateService") 
+@Dto(creatable = false, updateService = "quizUpdateService") 
 @Data
 @Builder	
 @AllArgsConstructor

@@ -13,7 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(entityClass=Lesson.class, updateService =  "lessonUpdateService") 
+@Dto( updateService =  "lessonUpdateService") 
 @Data
 @Builder
 @AllArgsConstructor

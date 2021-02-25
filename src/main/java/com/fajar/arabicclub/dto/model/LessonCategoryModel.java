@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@Dto(value="Lesson Category", entityClass=LessonCategory.class) 
+@Dto(value="Lesson Category" ) 
 @Data
 @Builder	
 @AllArgsConstructor

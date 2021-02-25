@@ -10,7 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(entityClass=Images.class, updateService =  "imagesUpdateService")
+@Dto( updateService =  "imagesUpdateService")
 @Data
 @Builder
 @AllArgsConstructor

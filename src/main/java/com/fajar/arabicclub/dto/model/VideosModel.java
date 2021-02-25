@@ -12,31 +12,29 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(entityClass=Videos.class) 
+@Dto
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class VideosModel extends BaseModel<Videos> {
- 
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5237543073310094900L;
- 
+
 	@FormField
 	private String title;
-	 
-	@FormField 
-	private String url; 
+
+	@FormField
+	private String url;
 	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, required = false)
 	private String description;
-	 
+
 	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_FIXED_LIST)
-	private VideoCategoryModel category; 
-	
-	
+	private VideoCategoryModel category;
+
 	private Snippet videoSnippet;
- 
 
 }

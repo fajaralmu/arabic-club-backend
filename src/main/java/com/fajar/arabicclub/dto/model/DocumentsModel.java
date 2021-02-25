@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(entityClass=Documents.class)//, updateService =  "documentUpdateService")
+@Dto//(entityClass=Documents.class)//, updateService =  "documentUpdateService")
  
 @Data
 @Builder

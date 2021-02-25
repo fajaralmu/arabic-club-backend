@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @JsonInclude(value = Include.NON_NULL)
-@Dto(entityClass = QuizHistory.class, editable = false)
+@Dto(editable = false)
 @Builder
 @Data
 @AllArgsConstructor

@@ -7,12 +7,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.math3.stat.descriptive.summary.Product;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -20,12 +17,13 @@ import org.springframework.ui.Model;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.entity.BaseEntity;
+import com.fajar.arabicclub.entity.Images;
 import com.fajar.arabicclub.entity.setting.EntityManagementConfig;
 import com.fajar.arabicclub.entity.setting.EntityProperty;
 import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.util.CollectionUtil;
 import com.fajar.arabicclub.util.EntityPropertyBuilder;
-import com.fajar.arabicclub.util.EntityUtil; 
+import com.fajar.arabicclub.util.EntityUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,12 +50,17 @@ public class EntityManagementPageService {
 		 
 		return model;
 	}
+	
+	public static void main(String[] args) {
+		List<Field> fields = EntityUtil.getFixedListFields(Images.class);
+		System.out.println("FIELDS: "+fields.size());
+	}
 
 	private HashMap<String, List<?>> getFixedListObjects(Class<? extends BaseEntity> entityClass) {
 		HashMap<String, List<?>> listObject = new HashMap<>();
 		try {
 			List<Field> fixedListFields = EntityUtil.getFixedListFields(entityClass);
-
+			log.info("fixedListFields size: {}", fixedListFields.size());
 			for (int i = 0; i < fixedListFields.size(); i++) {
 				Field field = fixedListFields.get(i);
 				Class<? extends BaseEntity> type;
