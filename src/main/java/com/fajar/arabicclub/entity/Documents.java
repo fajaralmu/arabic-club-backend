@@ -5,8 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import com.fajar.arabicclub.dto.AttachmentInfo;
 import com.fajar.arabicclub.dto.model.DocumentsModel;
+import com.fajar.arabicclub.entity.setting.SingleDocumentModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Documents extends BaseEntity<DocumentsModel> {
+public class Documents extends BaseEntity<DocumentsModel> implements SingleDocumentModel{
 
 	/**
 	* 
@@ -36,5 +39,17 @@ public class Documents extends BaseEntity<DocumentsModel> {
 	private DocumentCategory category; 
 	@Column 
 	private String fileName;
+	@Transient
+	private AttachmentInfo attachmentInfo;
+	@Override
+	public void setDocumentName(String doc) {
+		this.fileName = doc;
+		
+	}
+	@Override
+	public String getDocumentName() { 
+		return fileName;
+	}
+	
 
 }

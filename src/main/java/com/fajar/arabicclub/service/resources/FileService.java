@@ -30,7 +30,6 @@ import com.fajar.arabicclub.service.config.WebConfigService;
 import com.fajar.arabicclub.util.IconWriter;
 import com.fajar.arabicclub.util.StringUtil;
 import com.fajar.arabicclub.util.ThreadUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,10 +45,12 @@ public class FileService {
 	@Value("${app.resources.uploadType}")
 	private String uploadType;
 	@Value("${app.resources.apiUploadEndpoint}")
-	private String apiUploadEndpoint; 
+	private String apiUploadEndpoint;
+	@Value("${app.resources.apiUploadDocumentEndpoint}")
+	private String apiUploadDocumentEndpoint;
 	@Autowired
 	private ProgressService progressService;
-	
+
 	RestTemplate restTemplate = new RestTemplate();
 
 	@PostConstruct
@@ -68,17 +69,17 @@ public class FileService {
 
 	public String writeIcon(String code, String data, @Nullable HttpServletRequest httpServletRequest)
 			throws Exception {
-		System.out.println("Writing Icon with code: "+code);
+		System.out.println("Writing Icon with code: " + code);
 		String[] imageData = data.split(",");
 		if (imageData == null || imageData.length < 2) {
-			
-			System.out.println("Invalid icon image string: "+imageData);
+
+			System.out.println("Invalid icon image string: " + imageData);
 			return null;
 		}
 		// create a buffered image
 		String imageString = imageData[1];
 		BufferedImage image = IconWriter.getImageFromBase64String(imageString);
-		
+
 		String iconName;
 		if ("api".equals(uploadType)) {
 			String iconBase64String = IconWriter.getIconBase64String(image);
@@ -111,26 +112,25 @@ public class FileService {
 
 	private String writeImageApi(String code, String data, HttpServletRequest httpServletRequest) {
 		String[] imageDataSplitted = data.split(",");
-		System.out.println("writeImageApi with code: "+code);
+		System.out.println("writeImageApi with code: " + code);
 		if (imageDataSplitted == null || imageDataSplitted.length < 2) {
-			System.out.println("Invalid image string: "+data);
+			System.out.println("Invalid image string: " + data);
 			return null;
 		}
 		progressService.sendProgress(10, httpServletRequest);
 		// extract image name
 		String imageIdentity = imageDataSplitted[0];
 		String imageType = imageIdentity.replace("data:image/", "").replace(";base64", "");
-		String randomId = String.valueOf(new Date().getTime()) + StringUtil.generateRandomNumber(5) + "_"
-				+ getCounter();
+		
 		progressService.sendProgress(10, httpServletRequest);
-		String imageFileName = code + "_" + randomId + "." + imageType;
+		String imageFileName = code + "_" + getRandomId() + "." + imageType;
 		addCounter();
 
 		System.out.println("Post file to :" + apiUploadEndpoint);
 		try {
-			List<AttachmentInfo> attachments = AttachmentInfo.extractAttachmentInfos(data, imageFileName, imageType);
+			List<AttachmentInfo> attachments = AttachmentInfo.extractAttachmentInfos(data, imageFileName );
 			for (int i = 0; i < attachments.size(); i++) {
-				String response = uploadViaAPIv2(attachments.get(i));
+				String response = uploadViaAPIv2(attachments.get(i), apiUploadEndpoint);
 				System.out.println("response: " + i + " => " + response);
 				progressService.sendProgress(1, attachments.size(), 80, httpServletRequest);
 			}
@@ -142,15 +142,43 @@ public class FileService {
 		return imageFileName;
 	}
 
+	public String writeDocumentApi(String code, final AttachmentInfo data, HttpServletRequest httpServletRequest) {
+
+		progressService.sendProgress(10, httpServletRequest);
+		
+		String fileName = code + "_" + getRandomId() + "_" + data.getName();
+		addCounter();
+
+		progressService.sendProgress(10, httpServletRequest);
+		try {
+			List<AttachmentInfo> attachments = AttachmentInfo.extractAttachmentInfos(data.getPureBase64Data(), fileName );
+			for (int i = 0; i < attachments.size(); i++) {
+				String response = uploadViaAPIv2(attachments.get(i), apiUploadDocumentEndpoint);
+				System.out.println("response: " + i + " => " + response);
+				progressService.sendProgress(1, attachments.size(), 80, httpServletRequest);
+			}
+			progressService.sendComplete(httpServletRequest);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fileName;
+	}
+
+	private String getRandomId() {
+		 
+		return String.valueOf(new Date().getTime()) + StringUtil.generateRandomNumber(5) + "_" + getCounter();
+	}
+
 	public static void main(String[] args) throws Exception {
 		AttachmentInfo request = (AttachmentInfo.builder().name("TEST.jpg").data("dddd").extension("jpg").build());
 	}
 
-	public String uploadViaAPIv2(AttachmentInfo request ) {
+	public String uploadViaAPIv2(AttachmentInfo request, String URL) {
 
 		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		String response;
-		
+
 		try {
 			map.add("partialData", request.getData());
 			map.add("order", request.getOrder());
@@ -162,7 +190,7 @@ public class FileService {
 			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 			HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
-			ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUploadEndpoint, requestEntity, String.class);
+			ResponseEntity<String> responseEntity = restTemplate.postForEntity(URL, requestEntity, String.class);
 			log.info("code: {}", responseEntity.getStatusCode());
 			response = responseEntity.getBody();
 

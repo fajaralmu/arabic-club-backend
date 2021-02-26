@@ -20,7 +20,7 @@ import com.fajar.arabicclub.repository.QuizChoiceRepository;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressService;
-import com.fajar.arabicclub.service.resources.ImageRemovalService;
+import com.fajar.arabicclub.service.resources.FileRemovalService;
 import com.fajar.arabicclub.service.resources.ImageUploadService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class QuizDataService {
 	@Autowired
 	private ImageUploadService imageUploadService;
 	@Autowired
-	private ImageRemovalService imageRemovalService;
+	private FileRemovalService imageRemovalService;
 	@Autowired
 	private ProgressService progressService;
 	@Autowired
@@ -57,7 +57,7 @@ public class QuizDataService {
 		}
 
 		quizQuestion.validateNullValues();
-		imageUploadService.uploadImage(quizQuestion);
+		imageUploadService.upload(quizQuestion);
 		
 		QuizQuestion savedQuestion = DatabaseProcessor.save(quizQuestion, session);
 		if (null == savedQuestion) {
@@ -84,7 +84,7 @@ public class QuizDataService {
 
 	private QuizChoice saveChoice(QuizChoice choice, Session session) {
 		choice.validateNullValues();
-		imageUploadService.uploadImage(choice);
+		imageUploadService.upload(choice);
 		return DatabaseProcessor.save(choice, session);
 	}
 
@@ -132,7 +132,7 @@ public class QuizDataService {
 		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
 		try {
-			imageUploadService.uploadImage(quiz);
+			imageUploadService.upload(quiz);
 			Quiz savedQuiz = DatabaseProcessor.save(quiz, session);
 			progressService.sendProgress(10, httpServletRequest);
 			

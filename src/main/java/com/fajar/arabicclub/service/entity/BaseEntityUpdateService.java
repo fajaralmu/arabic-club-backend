@@ -18,9 +18,11 @@ import com.fajar.arabicclub.entity.BaseEntity;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.entity.setting.EntityUpdateInterceptor;
 import com.fajar.arabicclub.entity.setting.MultipleImageModel;
+import com.fajar.arabicclub.entity.setting.SingleDocumentModel;
 import com.fajar.arabicclub.entity.setting.SingleImageModel;
 import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.service.SessionValidationService;
+import com.fajar.arabicclub.service.resources.DocumentUploadService;
 import com.fajar.arabicclub.service.resources.FileService;
 import com.fajar.arabicclub.service.resources.ImageUploadService;
 import com.fajar.arabicclub.util.EntityUtil;
@@ -39,6 +41,8 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 	private SessionValidationService sessionValidationService; 
 	@Autowired
 	private ImageUploadService imageUploadService;
+	@Autowired
+	private DocumentUploadService documentUploadService;
 	
 	@PostConstruct
 	public void init() {
@@ -139,18 +143,29 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 						log.info("!! Skipping null-valued field: {}", field.getName());
 						continue;
 					}
+					boolean isUpdateRecord =  newRecord == false;
 					switch (formfield.type()) {
+					case FIELD_TYPE_DOCUMENT:
+						if (isUpdateRecord &&  fieldValue.equals(field.get(existingEntity))) { 
+							field.set(object, field.get(existingEntity));
+							break; 
+						} 
+						if (object instanceof SingleDocumentModel && ((SingleDocumentModel) object).getAttachmentInfo()!=null) {
+							log.info("{} is instance of SingleDocumentModel", object.getClass());
+							documentUploadService.upload((SingleDocumentModel) object, httpServletRequest);
+						}
+						break;
 					case FIELD_TYPE_IMAGE:
 						
-						boolean isUpdateRecord =  newRecord == false;
 						if (isUpdateRecord &&  fieldValue.equals(field.get(existingEntity))) { 
 							field.set(object, field.get(existingEntity));
 							break; 
 						} 
 						if (object instanceof SingleImageModel) {
 							log.info("{} is instance of SingleImageModel", object.getClass());
-							imageUploadService.uploadImage((SingleImageModel) object, httpServletRequest);
+							imageUploadService.upload((SingleImageModel) object, httpServletRequest);
 						}
+						
 						if (object instanceof MultipleImageModel) {
 							log.info("{} is multiple image model", object.getClass());
 							if (newRecord) {

@@ -14,9 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class ImageRemovalService {
+public class FileRemovalService {
 	@Value("${app.resources.apiRemoveEndpoint}")
 	private String apiRemoveEndpoint; 
+	@Value("${app.resources.apiRemoveDocumentEndpoint}")
+	private String apiRemoveDocumentEndpoint; 
 	RestTemplate restTemplate = new RestTemplate();
 	
 	public boolean removeImage(String imageName) {
@@ -46,6 +48,34 @@ public class ImageRemovalService {
 			log.info("remove image response: {}", response);
 		}
 		 
+	}
+	public boolean removeDocument(String imageName) {
+		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+		String response = null;
+		log.info("Post delete {} request to :{}", imageName, apiRemoveDocumentEndpoint);
+		try {
+			map.add("name", imageName);
+			
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+			
+			HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+			ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiRemoveDocumentEndpoint, requestEntity, String.class);
+			log.info("remove Document code: {}", responseEntity.getStatusCode());
+			response = responseEntity.getBody();
+			return true;
+		} catch (HttpStatusCodeException e) {
+			e.printStackTrace();
+			response = e.getResponseBodyAsString();
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			response = e.getMessage();
+			return false;
+		} finally {
+			log.info("remove Document response: {}", response);
+		}
+		
 	}
 
 }

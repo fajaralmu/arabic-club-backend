@@ -25,10 +25,10 @@ public class ImageUploadService {
 	@Autowired
 	private EntityRepository entityRepository;
 	@Autowired
-	private ImageRemovalService imageRemovalService;
+	private FileRemovalService imageRemovalService;
 
-	public String uploadImage(SingleImageModel singleImageModel) {
-		return uploadImage(singleImageModel, null);
+	public String upload(SingleImageModel singleImageModel) {
+		return upload(singleImageModel, null);
 	}
 	/**
 	 * upload single image
@@ -36,7 +36,7 @@ public class ImageUploadService {
 	 * @param singleImageModel
 	 * @return
 	 */
-	public String uploadImage(SingleImageModel singleImageModel, HttpServletRequest httpServletRequest) {
+	public String upload(SingleImageModel singleImageModel, HttpServletRequest httpServletRequest) {
 
 		String image = singleImageModel.getImage();
 		if (image != null && image.startsWith("data:image")) {
