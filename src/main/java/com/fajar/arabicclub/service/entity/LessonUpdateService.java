@@ -1,8 +1,5 @@
 package com.fajar.arabicclub.service.entity;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,11 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Lesson;
 import com.fajar.arabicclub.repository.LessonRepository;
 import com.fajar.arabicclub.service.resources.ImageUploadService;
-import com.fajar.arabicclub.util.CollectionUtil;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -83,5 +83,11 @@ public class RestPublicController extends BaseController {
 		WebResponse response = galleryService.getVideos(webRequest, httpRequest);
 		return response;
 	}
+	@PostMapping(value = "/gallery/documents", consumes=MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public WebResponse getDocuments(@RequestBody WebRequest webRequest, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+		 
+		WebResponse response = galleryService.getDocuments(webRequest);
+		return response;
+	}
 	
 }

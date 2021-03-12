@@ -44,9 +44,9 @@ public class FileService {
 	private FtpResourceService ftpResourceService;
 	@Value("${app.resources.uploadType}")
 	private String uploadType;
-	@Value("${app.resources.apiUploadEndpoint}")
-	private String apiUploadEndpoint;
-	@Value("${app.resources.apiUploadDocumentEndpoint}")
+	@Value("${app.resources.file.api.upload.image}")
+	private String apiUploadImageEndpoint;
+	@Value("${app.resources.file.api.upload.document}")
 	private String apiUploadDocumentEndpoint;
 	@Autowired
 	private ProgressService progressService;
@@ -110,50 +110,45 @@ public class FileService {
 		return writeImageToDisk(code, data);
 	}
 
-	private String writeImageApi(String code, String data, HttpServletRequest httpServletRequest) {
-		String[] imageDataSplitted = data.split(",");
+	private String writeImageApi(String code, final String data, HttpServletRequest httpServletRequest) {
+
 		System.out.println("writeImageApi with code: " + code);
-		if (imageDataSplitted == null || imageDataSplitted.length < 2) {
+		if (data.split(";base64,").length < 2) {
 			System.out.println("Invalid image string: " + data);
 			return null;
 		}
 		progressService.sendProgress(10, httpServletRequest);
 		// extract image name
-		String imageIdentity = imageDataSplitted[0];
-		String imageType = imageIdentity.replace("data:image/", "").replace(";base64", "");
-		
+		String imageType = getImageType(data);
+
 		progressService.sendProgress(10, httpServletRequest);
 		String imageFileName = code + "_" + getRandomId() + "." + imageType;
 		addCounter();
 
-		System.out.println("Post file to :" + apiUploadEndpoint);
-		try {
-			List<AttachmentInfo> attachments = AttachmentInfo.extractAttachmentInfos(data, imageFileName );
-			for (int i = 0; i < attachments.size(); i++) {
-				String response = uploadViaAPIv2(attachments.get(i), apiUploadEndpoint);
-				System.out.println("response: " + i + " => " + response);
-				progressService.sendProgress(1, attachments.size(), 80, httpServletRequest);
-			}
-			progressService.sendComplete(httpServletRequest);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		uploadBase64Strings(data, imageFileName, apiUploadImageEndpoint, httpServletRequest);
 		return imageFileName;
+	}
+
+	private static String getImageType(String fullBase64String) {
+		String imageIdentity = fullBase64String.split(";base64,")[0];
+		return imageIdentity.replace("data:image/", "");
 	}
 
 	public String writeDocumentApi(String code, final AttachmentInfo data, HttpServletRequest httpServletRequest) {
 
 		progressService.sendProgress(10, httpServletRequest);
-		
 		String fileName = code + "_" + getRandomId() + "_" + data.getName();
 		addCounter();
-
 		progressService.sendProgress(10, httpServletRequest);
+		uploadBase64Strings(data.getUrl(), fileName, apiUploadDocumentEndpoint, httpServletRequest);
+		return fileName;
+	}
+
+	private void uploadBase64Strings(String data, String name, String URL, HttpServletRequest httpServletRequest) {
 		try {
-			List<AttachmentInfo> attachments = AttachmentInfo.extractAttachmentInfos(data.getPureBase64Data(), fileName );
+			List<AttachmentInfo> attachments = AttachmentInfo.extractAttachmentInfos(data, name);
 			for (int i = 0; i < attachments.size(); i++) {
-				String response = uploadViaAPIv2(attachments.get(i), apiUploadDocumentEndpoint);
+				String response = uploadViaAPIv2(attachments.get(i), URL);
 				System.out.println("response: " + i + " => " + response);
 				progressService.sendProgress(1, attachments.size(), 80, httpServletRequest);
 			}
@@ -162,16 +157,16 @@ public class FileService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return fileName;
 	}
 
 	private String getRandomId() {
-		 
+
 		return String.valueOf(new Date().getTime()) + StringUtil.generateRandomNumber(5) + "_" + getCounter();
 	}
 
 	public static void main(String[] args) throws Exception {
-		AttachmentInfo request = (AttachmentInfo.builder().name("TEST.jpg").data("dddd").extension("jpg").build());
+		String base64 = "data:image/png;base64,skddjfdkfd";
+		System.out.println(getImageType(base64));
 	}
 
 	public String uploadViaAPIv2(AttachmentInfo request, String URL) {

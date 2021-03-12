@@ -17,6 +17,7 @@ import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.dto.model.BaseModel;
 import com.fajar.arabicclub.entity.BaseEntity;
+import com.fajar.arabicclub.exception.ApplicationException;
 import com.fajar.arabicclub.util.CollectionUtil;
 import com.fajar.arabicclub.util.EntityUtil;
 import com.fajar.arabicclub.util.MyJsonUtil;
@@ -351,8 +352,8 @@ public class EntityElement implements Serializable {
 
 			List<? extends BaseModel> referenceEntityList = (List<? extends BaseModel>) additionalMap.get(field.getName());
 			if (null == referenceEntityList || referenceEntityList.size() == 0) {
-				throw new RuntimeException(
-						"Invalid object list provided for key: " + field.getName() + " in EntityElement.AdditionalMap");
+				throw new ApplicationException(
+						"Invalid object list provided for key: " + field.getName() + " in EntityElement.AdditionalMap, probably not exist TRY to Add record to DB");
 			}
 			log.info("Additional map with key: {} . Length: {}", field.getName(), referenceEntityList.size());
 			if (referenceEntityList != null) {

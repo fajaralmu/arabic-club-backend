@@ -22,6 +22,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 
 import com.fajar.arabicclub.annotation.FormField;
+import com.fajar.arabicclub.config.HibernateSessionConfig;
 import com.fajar.arabicclub.dto.Filter;
 import com.fajar.arabicclub.dto.KeyValue;
 import com.fajar.arabicclub.entity.BaseEntity;
@@ -367,8 +368,18 @@ public class CriteriaBuilder {
 		
 		if (field.getAnnotation(Transient.class)!=null) return null;
 		String columnName = QueryUtil.getColumnName(field);
-		//TODO: change to Like if using mysql
-		Criterion sqlRestriction = Restrictions.sqlRestriction(tableName+"."+columnName + "::varchar(255) ILIKE '%" + value + "%'");
+		 
+		return likeRestriction(tableName+"."+columnName, value);
+	}
+
+	private Criterion likeRestriction(String field, Object value) {
+		Criterion sqlRestriction = null;
+		if (HibernateSessionConfig.isMysql()) {
+			sqlRestriction = Restrictions.sqlRestriction(field + " LIKE '%" + value + "%'");
+		} else if (HibernateSessionConfig.isPostgres()) {
+			sqlRestriction = Restrictions.sqlRestriction(field+ "::varchar(255) ILIKE '%" + value + "%'");
+		}
+		
 
 		return sqlRestriction;
 	}
@@ -402,15 +413,21 @@ public class CriteriaBuilder {
 			}
 			Object value = fieldsFilter.get(key);
 			String columnName = QueryUtil.getColumnName(field);
-			log.info("mode: {}. value: {}", mode, value);
-//			TODO: mysql
-//			Criterion restriction = Restrictions.sqlRestriction(mode + "(" + columnName + ")=" + value);
-//			TODO: postgres
-			Criterion restriction = Restrictions.sqlRestriction("date_part('"+mode+"', " + getAlias(entityClass.getSimpleName())+"."+ columnName + ")=" + value);
-
-			return restriction;
+			log.info("mode: {}. value: {}", mode, value); 
+			return dateRestriction(mode, getAlias(entityClass.getSimpleName())+"."+columnName , value);
 		}
 
+		return null;
+	}
+
+	private Criterion dateRestriction(String mode, String field, Object value) {
+		if (HibernateSessionConfig.isMysql()) {
+			return Restrictions.sqlRestriction(mode + "(" + field + ")=" + value);
+		}
+		if (HibernateSessionConfig.isPostgres()) {
+			return Restrictions.sqlRestriction("date_part('"+mode+"', " + field+ ")=" + value);
+
+		}
 		return null;
 	}
 

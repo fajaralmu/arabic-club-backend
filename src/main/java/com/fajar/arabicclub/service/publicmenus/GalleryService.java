@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.dto.model.VideosModel;
+import com.fajar.arabicclub.entity.Documents;
 import com.fajar.arabicclub.entity.Images;
 import com.fajar.arabicclub.entity.Videos;
+import com.fajar.arabicclub.repository.DocumentRepository;
 import com.fajar.arabicclub.repository.ImageRepository;
 import com.fajar.arabicclub.repository.VideoRepository;
 import com.fajar.arabicclub.service.ProgressService;
@@ -25,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GalleryService {
 	
+	@Autowired
+	private DocumentRepository documentRepository;
 	@Autowired
 	private ImageRepository imageRepository;
 	@Autowired
@@ -65,6 +69,23 @@ public class GalleryService {
 		List<VideosModel> models = youtubeVideoPreviewService.getSnippets(videos.getContent(), httpServletRequest);
 		WebResponse response = new WebResponse();
 		response.setItemsModel(models);
+		response.setTotalData(totalData);
+		response.setFilter(webRequest.getFilter());
+		return response ;
+	}
+
+	public WebResponse getDocuments(WebRequest webRequest) {
+		int size = webRequest.getFilter().getLimit();
+		int page = webRequest.getFilter().getPage();
+		log.info("Get pictures page: {}, size:{}", page,size);
+		int totalData = 0;
+		Page<Documents> list = documentRepository.findAll(PageRequest.of(page, size));
+		try {
+			totalData = documentRepository.findCount().intValue();
+		} catch (Exception e) { 
+		}
+		WebResponse response = new WebResponse();
+		response.setItems(CollectionUtil.convertList(list.getContent()));
 		response.setTotalData(totalData);
 		response.setFilter(webRequest.getFilter());
 		return response ;

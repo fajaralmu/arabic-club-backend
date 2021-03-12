@@ -32,7 +32,7 @@ public class DocumentUploadService {
 	 * @return
 	 */
 	public String upload(SingleDocumentModel SingleDocumentModel, HttpServletRequest httpServletRequest) {
-
+		log.info("Upload document: {}", SingleDocumentModel.getDocumentName());
 		AttachmentInfo document = SingleDocumentModel.getAttachmentInfo();
 		if (document != null) {
 

@@ -13,6 +13,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HibernateSessionConfig {
 	private static SessionFactory factory;
+	
+	private static String dialect = "org.hibernate.dialect.MySQLDialect";
 
 	@Autowired
 	private DriverManagerDataSource driverManagerDataSource;
@@ -67,10 +70,19 @@ public class HibernateSessionConfig {
 		}
 
 	}
+	
+	public static boolean isMysql() {
+		
+		return  (HibernateSessionConfig.getDialect().equals("org.hibernate.dialect.MySQLDialect"));
+	}
+	public static boolean isPostgres() {
+		return (HibernateSessionConfig.getDialect().equals("org.hibernate.dialect.PostgreSQLDialect")) ;
+	}
 
 	private Properties additionalProperties() throws Exception {
 
 		String dialect = entityManagerFactoryBean.getProperties().get("hibernate.dialect").toString();
+		setDialect(dialect);
 		String ddlAuto = entityManagerFactoryBean.getProperties().get("hibernate.hbm2ddl.auto").toString();
 		String use_jdbc_metadata_defaults = entityManagerFactoryBean.getProperties().get("hibernate.temp.use_jdbc_metadata_defaults").toString();
 		Class<? extends Driver> driverClass;// = com.mysql.jdbc.Driver.class;
@@ -98,7 +110,12 @@ public class HibernateSessionConfig {
 		properties.setProperty("hbm2ddl.auto", ddlAuto);
 		return properties;
 	}
-
+	public static void setDialect(String dialect) {
+		HibernateSessionConfig.dialect = dialect;
+	}
+	public static String getDialect() {
+		return dialect;
+	}
 	private void printProps(Map props, String name) {
 		if (null != props) {
 			for (Object key : props.keySet()) {
