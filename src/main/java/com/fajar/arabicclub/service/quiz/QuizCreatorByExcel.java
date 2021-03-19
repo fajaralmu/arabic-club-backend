@@ -57,13 +57,13 @@ public class QuizCreatorByExcel {
 		setQuestions();
 		return quiz;
 	}
+	
 	private void setQuestions() {
 		for (int i = 6; i < rows.size(); i++) {
 			QuizQuestion question = getQuestion(rows.get(i));
 			quiz.addQuestion(question);
 			updateProgress(1,rows.size()-6, 90);
 		}
-		
 	}
 
 	private QuizQuestion getQuestion(Row row) {
@@ -94,6 +94,7 @@ public class QuizCreatorByExcel {
 			try {
 				QuizChoice choice = new QuizChoice();
 				choice.setStatement(row.getCell(offset + i).getStringCellValue());
+				choice.setAnswerCode(AnswerCode.values()[i]);
 				choices.add(choice);
 			} catch (Exception e) {
 				// TODO: handle exception
