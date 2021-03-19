@@ -21,6 +21,7 @@ import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.service.LogProxyFactory;
 import com.fajar.arabicclub.service.config.DefaultCategoriesService;
+import com.fajar.arabicclub.service.config.DefaultUserService;
 import com.fajar.arabicclub.service.publicmenus.GalleryService;
 import com.fajar.arabicclub.service.publicmenus.LessonService;
 
@@ -34,6 +35,8 @@ public class RestPublicController extends BaseController {
  
 	@Autowired
 	private DefaultCategoriesService defaultCategoriesService;
+	@Autowired
+	private DefaultUserService defaultUserService;
 	@Autowired
 	private LessonService lessonService;
 	@Autowired
@@ -87,6 +90,13 @@ public class RestPublicController extends BaseController {
 	public WebResponse getDocuments(@RequestBody WebRequest webRequest, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
 		 
 		WebResponse response = galleryService.getDocuments(webRequest);
+		return response;
+	}
+	@PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public WebResponse register(@RequestBody WebRequest webRequest, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+		
+		log.info("register }");
+		WebResponse response = defaultUserService.register(webRequest);
 		return response;
 	}
 	

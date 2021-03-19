@@ -5,6 +5,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +34,15 @@ public class CollectionUtil {
 			result.add((KeyValue<T, T>) KeyValue.builder().key(el).value(el).build());
 		}
 		return result ;
+	}
+	
+	public static <T> List<T> fromIterator(Iterator<T> it) {
+		List<T> list = new LinkedList<T>();
+		while (it.hasNext()) {
+			list.add(it.next());
+		}
+		// TODO Auto-generated method stub
+		return list;
 	}
 
 	public static void main(String[] args) {

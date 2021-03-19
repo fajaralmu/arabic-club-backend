@@ -14,9 +14,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.fajar.arabicclub.annotation.FormField;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.fajar.arabicclub.constants.AuthorityType;
-import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.dto.model.UserModel;
 import com.fajar.arabicclub.entity.setting.SingleImageModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -95,5 +95,8 @@ public class User extends BaseEntity<UserModel> implements SingleImageModel {
 		return false;
 	}
 	 
+	public void encodePassword(PasswordEncoder passwordEncoder) {
+		 setPassword(passwordEncoder.encode(getPassword()));
+	}
 
 }

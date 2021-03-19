@@ -1,24 +1,23 @@
 package com.fajar.arabicclub.service.quiz;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fajar.arabicclub.dto.AttachmentInfo;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Quiz;
-import com.fajar.arabicclub.entity.QuizQuestion;
+import com.fajar.arabicclub.exception.ApplicationException;
 import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fajar.arabicclub.repository.QuizChoiceRepository;
 import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
+import com.fajar.arabicclub.service.ProgressNotifier;
 import com.fajar.arabicclub.service.ProgressService;
 import com.fajar.arabicclub.service.entity.QuizUpdateService;
 
@@ -30,8 +29,6 @@ public class QuizCreationService {
 
 	@Autowired
 	private ProgressService progressService;
-	@Autowired
-	private SessionFactory sessionFactory;
 	@Autowired
 	private QuizRepository quizRepository;
 	@Autowired
@@ -112,6 +109,40 @@ public class QuizCreationService {
 	 */
 	public WebResponse deleteQuiz(Long id, HttpServletRequest httpServletRequest) throws Exception {
 		 return quizUpdateService.deleteEntity(id, Quiz.class, httpServletRequest);
+	}
+
+	public WebResponse uploadquiz(WebRequest webRequest, HttpServletRequest httpServletRequest) {
+		
+		try {
+			log.info("uploadquiz");
+			AttachmentInfo attachment = webRequest.getAttachmentInfo();
+			String base64 = attachment.getData();
+			QuizCreatorByExcel creator = new QuizCreatorByExcel(base64);
+			creator.setNotifier(notifier(httpServletRequest));
+			Quiz quiz = creator.read();
+			Quiz savedQuiz = quizDataService.saveFullQuiz(quiz, httpServletRequest);
+			savedQuiz.preventStackOverFlowError();
+			
+			WebResponse response = new WebResponse();
+			response.setQuiz(savedQuiz.toModel());
+			return response;
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ApplicationException(e);
+		}
+	}
+
+	private ProgressNotifier notifier(HttpServletRequest httpServletRequest) {
+		 
+		return new ProgressNotifier() {
+			
+			@Override
+			public void updateProgress(int progress, int max, int totalProportion) {
+				progressService.sendProgress(progress, max, totalProportion, httpServletRequest);
+				
+			}
+		};
 	}
 
 	 

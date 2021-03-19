@@ -71,6 +71,12 @@ public class RestQuizManagementController extends BaseController {
 		log.info("Delete id {}", id);
 		return quizService.deleteQuiz(id, httpRequest);
 	}
+	@PostMapping(value = "/uploadquiz" , produces = MediaType.APPLICATION_JSON_VALUE)
+	@CustomRequestInfo(withRealtimeProgress = true)
+	public WebResponse uploadquiz(@RequestBody WebRequest webRequest,HttpServletRequest httpRequest) throws Exception {
+		 
+		return quizService.uploadquiz(webRequest, httpRequest);
+	}
  
 
 }

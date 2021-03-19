@@ -1,6 +1,5 @@
 package com.fajar.arabicclub.service.config;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,11 +13,11 @@ import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Authority;
 import com.fajar.arabicclub.entity.User;
+import com.fajar.arabicclub.exception.ApplicationException;
 import com.fajar.arabicclub.repository.AuthorityRepository;
 import com.fajar.arabicclub.repository.EntityRepository;
 import com.fajar.arabicclub.repository.UserRepository;
 import com.fajar.arabicclub.service.SessionValidationService;
-import com.fajar.arabicclub.service.resources.FileService;
 import com.fajar.arabicclub.service.resources.ImageUploadService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -130,5 +129,21 @@ public class DefaultUserService {
 			imageUploadService.upload(loggedUser, httpServletRequest);
 		}
 		entityRepository.save(loggedUser);
+	}
+
+	public WebResponse register(WebRequest webRequest) {
+		try {
+			User user = webRequest.getUser().toEntity();
+			Authority authUser = authorityRepository.findTop1ByName(AuthorityType.ROLE_USER);
+			user.addAuthority(authUser);
+			user.encodePassword(passwordEncoder);
+			userRepository.save(user);
+			
+			WebResponse response = new WebResponse();
+			return response;
+
+		} catch (Exception e) {
+			throw new ApplicationException(e);
+		}
 	}
 }
