@@ -46,8 +46,10 @@
 			value="jdbc:postgresql://localhost:5432/arabic-club" />
 		<property name="username" value="postgres" />
 		<property name="password" value="root" />
-	</bean>    -->
-	   <bean id="dataSource_postgres"
+	</bean>  -->
+	 
+	 
+	   <!--  <bean id="dataSource_postgres"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName"
 			value="org.postgresql.Driver" />
@@ -55,21 +57,33 @@
 			value="jdbc:postgresql://ec2-18-204-101-137.compute-1.amazonaws.com:5432/d95v9noaukbskn" />
 		<property name="username" value="tzwewrfgfvnmym" />
 		<property name="password" value="2de6a0667dedcf76c44fb3bc4dca645f24191baced618d002159f8f73046a505" />
-	</bean>   
+	</bean>    --> 
+	<!-- heroku_pg_MPI  -->
+
+ 	<bean id="dataSource_postgres"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="org.postgresql.Driver" />
+		<property name="url"
+			value="jdbc:postgresql://ec2-52-1-115-6.compute-1.amazonaws.com:5432/d34hip3irhn3n4" />
+		<property name="username" value="tzwewrfgfvnmym" />
+		<property name="password" value="9ff89d1e062887021b6fd8adb45430ea53c2470d7d96f904133f51ba5605848d" />
+	</bean>    
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="packagesToScan"
-			value="com.fajar.arabicclub*" />
-		<property name="dataSource" ref="dataSource_postgres" /><!-- <property 
+		<property name="packagesToScan" value="com.fajar.arabicclub*" />
+ 		<property name="dataSource" ref="dataSource_postgres" />
+ <!--		<property name="dataSource" ref="dataSource_mysql" /> -->
+		<!-- <property 
 			name="sessionFactory" ref="sessionFactory"></property> -->
 		<property name="jpaProperties">
 			<props>
 				<prop key="hibernate.show_sql">none</prop>
 				<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
-				 <prop key="hibernate.hbm2ddl.auto">none</prop>  
+				 <prop key="hibernate.hbm2ddl.auto">update</prop>  
 <!-- 				 <prop key="hibernate.hbm2ddl.auto">update</prop>  //or none -->
-				<!--  <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop> -->
-				 <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop> 
+				 <!--  <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop> -->
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop> 
 				<prop key="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext
 				</prop>
 			</props>
