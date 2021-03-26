@@ -26,6 +26,7 @@ import com.fajar.arabicclub.service.resources.DocumentUploadService;
 import com.fajar.arabicclub.service.resources.FileService;
 import com.fajar.arabicclub.service.resources.ImageUploadService;
 import com.fajar.arabicclub.util.EntityUtil;
+import com.fajar.arabicclub.util.ThreadUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -152,7 +153,9 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 						} 
 						if (object instanceof SingleDocumentModel && ((SingleDocumentModel) object).getAttachmentInfo()!=null) {
 							log.info("{} is instance of SingleDocumentModel", object.getClass());
-							documentUploadService.upload((SingleDocumentModel) object, httpServletRequest);
+							ThreadUtil.run(()->{
+								documentUploadService.upload((SingleDocumentModel) object, httpServletRequest);
+							});
 						}
 						break;
 					case FIELD_TYPE_IMAGE:

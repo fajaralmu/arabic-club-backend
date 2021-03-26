@@ -92,10 +92,16 @@ public class RestPublicController extends BaseController {
 		WebResponse response = galleryService.getDocuments(webRequest);
 		return response;
 	}
+	@PostMapping(value = "/gallery/documents/{id}/unlock/{accessCode}", consumes=MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public WebResponse unlockDocument(@PathVariable Long id, @PathVariable String accessCode, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+		 
+		WebResponse response = galleryService.unlockDocument(id, accessCode);
+		return response;
+	}
 	@PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse register(@RequestBody WebRequest webRequest, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
 		
-		log.info("register }");
+		log.info("register");
 		WebResponse response = defaultUserService.register(webRequest);
 		return response;
 	}

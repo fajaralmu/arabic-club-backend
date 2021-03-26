@@ -1,6 +1,7 @@
 package com.fajar.arabicclub.service.publicmenus;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +16,7 @@ import com.fajar.arabicclub.dto.model.VideosModel;
 import com.fajar.arabicclub.entity.Documents;
 import com.fajar.arabicclub.entity.Images;
 import com.fajar.arabicclub.entity.Videos;
+import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fajar.arabicclub.repository.DocumentRepository;
 import com.fajar.arabicclub.repository.ImageRepository;
 import com.fajar.arabicclub.repository.VideoRepository;
@@ -79,16 +81,36 @@ public class GalleryService {
 		int page = webRequest.getFilter().getPage();
 		log.info("Get pictures page: {}, size:{}", page,size);
 		int totalData = 0;
-		Page<Documents> list = documentRepository.findAll(PageRequest.of(page, size));
+		Page<Documents> records = documentRepository.findAll(PageRequest.of(page, size));
 		try {
 			totalData = documentRepository.findCount().intValue();
 		} catch (Exception e) { 
 		}
+		List<Documents> list = records.getContent();
+		
+		for (Documents documents : list) {
+			if (documents.getAccessCode() != null) {
+				documents.setAccessCode("PROTECTED");
+				documents.setFileName(null);
+			}
+		}
+		
 		WebResponse response = new WebResponse();
-		response.setItems(CollectionUtil.convertList(list.getContent()));
+		response.setItems(CollectionUtil.convertList(list));
 		response.setTotalData(totalData);
 		response.setFilter(webRequest.getFilter());
 		return response ;
+	}
+
+	public WebResponse unlockDocument(Long id, String accessCode) {
+		Optional<Documents> record = documentRepository.findById(id);
+		if (record.isPresent() == false) {
+			throw new DataNotFoundException("Document not foound");
+		}
+		if (null == record.get().getAccessCode() || record.get().getAccessCode().equals(accessCode)) {
+			return WebResponse.builder().message(record.get().getFileName()).build();
+		}
+		throw new DataNotFoundException("Invalid code");
 	}
 
 }
