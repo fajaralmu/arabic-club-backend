@@ -21,6 +21,7 @@ import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizHistory;
 import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.exception.ApplicationException;
+import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fajar.arabicclub.repository.QuizHistoryRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.repository.UserRepository;
@@ -39,6 +40,8 @@ public class QuizHistoryService {
 	private QuizRepository quizRepository;
 	@Autowired
 	private SessionValidationService sessionValidationService;
+	@Autowired
+	private QuizDataService quizDataService;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -142,6 +145,20 @@ public class QuizHistoryService {
 		return response ;
 	}
 	
+	public WebResponse getOneHistoryDetail(Long id, HttpServletRequest httpServletRequest) throws Exception {
+		
+		Optional<QuizHistory> historyOptional = quizHistoryRepository.findById(id);
+		if (historyOptional.isPresent() == false) {
+			throw new DataNotFoundException("History not found");
+		}
+		QuizHistory history = historyOptional.get();
+		Quiz quiz = quizDataService.getFullQuiz(history.getQuiz().getId(), httpServletRequest, true);
+		quiz.mapAnswers(history);
+		
+		WebResponse response = new WebResponse();
+		response.setQuiz(quiz.toModel());
+		return response;
+	}
 	
 	public QuizHistory getLatestHistory(Long quizId, String token) {
 		String username = sessionValidationService.getUserNameFromJwtToken(token);
