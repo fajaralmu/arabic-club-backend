@@ -10,6 +10,8 @@ import javax.persistence.Transient;
 import com.fajar.arabicclub.dto.AttachmentInfo;
 import com.fajar.arabicclub.dto.model.DocumentsModel;
 import com.fajar.arabicclub.entity.setting.SingleDocumentModel;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +23,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @AllArgsConstructor
+@JsonInclude(value = Include.NON_NULL)
 @NoArgsConstructor
 public class Documents extends BaseEntity<DocumentsModel> implements SingleDocumentModel{
 
