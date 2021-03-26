@@ -76,5 +76,12 @@ public class RestMemberQuizController extends BaseController{
 		WebResponse response = quizHistoryService.getHistory(webRequest, httpServletRequest);
 		return response;
 	}
+	@PostMapping(value = "/validateaccesscode/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public WebResponse validateAccessCode (@PathVariable Long id, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+		
+		log.info("validateAccessCode By ID : {}", id);
+		WebResponse response = publicQuizService.validateAccessCode(id, httpRequest);
+		return response;
+	}
 
 }

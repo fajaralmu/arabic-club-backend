@@ -50,7 +50,7 @@ public class RestPublicQuizController extends BaseController {
 		return response;
 	}
 	@PostMapping(value = "/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public WebResponse getQuizList(@PathVariable Long id, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+	public WebResponse getQuiz (@PathVariable Long id, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
 		
 		log.info("getQuiz By ID : {}", id);
 		WebResponse response = publicQuizService.getQuiz(id, httpRequest);
@@ -64,6 +64,12 @@ public class RestPublicQuizController extends BaseController {
 		WebResponse response = publicQuizService.submitAnswers(webRequest, httpRequest);
 		return response;
 	}
-	 
+	@PostMapping(value = "/validateaccesscode/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public WebResponse validateAccessCode (@PathVariable Long id, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+		
+		log.info("validateAccessCode By ID : {}", id);
+		WebResponse response = publicQuizService.validateAccessCode(id, httpRequest);
+		return response;
+	}
 	
 }

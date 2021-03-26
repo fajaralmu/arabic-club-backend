@@ -5,14 +5,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Column;
-
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.annotation.FormField;
-import com.fajar.arabicclub.constants.AnswerCode;
 import com.fajar.arabicclub.constants.FieldType;
 import com.fajar.arabicclub.entity.Quiz;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -63,6 +59,7 @@ public class QuizModel extends BaseModel<Quiz>   {
 	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, required =  false)
 	private String afterCompletionMessage;
 	@FormField(required = false)
+	@Setter(value = AccessLevel.NONE)
 	private String accessCode;
 	
 	private boolean available;
@@ -80,7 +77,16 @@ public class QuizModel extends BaseModel<Quiz>   {
 	private Map<Integer, String> mappedAnswer;
 //	private Map<Integer, AnswerCode> mappedAnswer;
 	 
-	
+	public boolean isProtectedByCode() {
+		return null != accessCode;
+	}
+	public void setAccessCode(String accessCode) {
+		if (null == accessCode || accessCode.trim().equals("")) {
+			this.accessCode = null;
+		} else {
+			this.accessCode = accessCode;
+		}
+	}
 	public String[] getAnswers() {
 		if (null == mappedAnswer) {
 			return null;

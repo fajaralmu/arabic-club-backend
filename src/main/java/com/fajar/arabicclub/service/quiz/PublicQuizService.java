@@ -275,4 +275,21 @@ public class PublicQuizService {
 		return 0;
 	}
 
+
+
+	public WebResponse validateAccessCode(Long id, HttpServletRequest httpRequest) {
+		Optional<Quiz> quiz = quizRepository.findById(id);
+		if (quiz.isPresent()==false) {
+			throw new DataNotFoundException("Not found");
+		}
+		String code = httpRequest.getParameter("code");
+		
+		log.info("requested code: {}, actual code: {}", code,  quiz.get().getAccessCode());
+		
+		if (quiz.get().getAccessCode() == null || quiz.get().getAccessCode().equals(code)) {
+			return new WebResponse();
+		}
+		throw new ApplicationException("Code invalid");
+	}
+
 }
