@@ -153,9 +153,9 @@ public class BaseEntityUpdateService<T extends BaseEntity> {
 						} 
 						if (object instanceof SingleDocumentModel && ((SingleDocumentModel) object).getAttachmentInfo()!=null) {
 							log.info("{} is instance of SingleDocumentModel", object.getClass());
-							ThreadUtil.run(()->{
+//							ThreadUtil.run(()->{
 								documentUploadService.upload((SingleDocumentModel) object, httpServletRequest);
-							});
+//							});
 						}
 						break;
 					case FIELD_TYPE_IMAGE:
