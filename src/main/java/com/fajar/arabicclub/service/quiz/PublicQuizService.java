@@ -202,9 +202,9 @@ public class PublicQuizService {
 		QuizResult result = new QuizResult();
 
 		final List<QuizQuestion> questions = fullQuiz.getQuestions();
-		int totalQuestion = questions.size(), correctAnswer = 0, wrongAnswer = 0;
-
-		if (submittedQuiz.hasEssay() == false)
+		
+		if (submittedQuiz.hasEssay() == false) {
+			int totalQuestion = questions.size(), correctAnswer = 0, wrongAnswer = 0;
 			for (int i = 0; i < totalQuestion; i++) {
 				try {
 					final QuizQuestion actualQuestion = questions.get(i);
@@ -217,16 +217,19 @@ public class PublicQuizService {
 				progressService.sendProgress(1, totalQuestion, 80, httpServletRequest);
 		
 			}
-		wrongAnswer = totalQuestion - correctAnswer;
-
+			wrongAnswer = totalQuestion - correctAnswer;
+			result.setCorrectAnswer(correctAnswer);
+			result.setWrongAnswer(wrongAnswer);
+		} else {
+			result.setDisplayScore(false);
+		}
 		result.setSubmittedQuiz(submittedQuiz);
 		result.setMessage(submittedQuiz.getAfterCompletionMessage());
-		result.setCorrectAnswer(correctAnswer);
-		result.setWrongAnswer(wrongAnswer);
+		
 		result.calculateScore();
 		log.info("Correct answer: {}", result.getCorrectAnswer());
 		log.info("Wrong answer: {}", result.getWrongAnswer());
-		log.info("totalQuestion: {}", totalQuestion);
+		
 		return result;
 	}
 

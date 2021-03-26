@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder.Default;
 
 @Data
 @Builder
@@ -29,6 +30,8 @@ public class QuizResult implements Serializable {
 	private int totalQuestion;
 	private double score;
 	
+	@Default
+	private boolean displayScore = true;
 	private String message;
 	
 	public void calculateScore() {
