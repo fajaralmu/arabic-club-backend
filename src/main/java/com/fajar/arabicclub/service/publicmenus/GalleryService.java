@@ -89,7 +89,7 @@ public class GalleryService {
 		List<Documents> list = records.getContent();
 		
 		for (Documents documents : list) {
-			if (documents.getAccessCode() != null && documents.getAccessCode().trim()!="") {
+			if (documents.getAccessCode() != null && documents.getAccessCode().trim().isEmpty() == false) {
 				documents.setAccessCode("PROTECTED");
 				documents.setFileName(null);
 			} else {
