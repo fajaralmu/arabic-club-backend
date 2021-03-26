@@ -29,6 +29,8 @@ public class QuizResult implements Serializable {
 	private int totalQuestion;
 	private double score;
 	
+	private String message;
+	
 	public void calculateScore() {
 		Double correct = Double.valueOf(correctAnswer);
 		Double wrong = Double.valueOf(wrongAnswer);

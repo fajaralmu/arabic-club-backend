@@ -67,6 +67,8 @@ public class QuizHistoryModel extends BaseModel<QuizHistory> {
 
 	private int remainingDuration;
 	private Integer maxQuestionNumber;
+	
+	private String answerData;
 
 	/**
 	 * required when updating answer via websocket

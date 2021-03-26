@@ -1,7 +1,7 @@
 package com.fajar.arabicclub.constants;
 
 public enum AnswerCode {
-	A, B,C, D, E;
+	A, B,C, D, E, ESSAY;
 
 	static boolean isExist(String value) {
 		AnswerCode[] values = AnswerCode.values();

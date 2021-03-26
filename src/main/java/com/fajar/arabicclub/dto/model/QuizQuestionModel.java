@@ -3,6 +3,7 @@ package com.fajar.arabicclub.dto.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 
 import com.fajar.arabicclub.annotation.Dto;
@@ -29,13 +30,18 @@ public class QuizQuestionModel extends BaseModel<QuizQuestion> {
 	 * 
 	 */
 	private static final long serialVersionUID = -4139597408148041771L;
- 
-	private AnswerCode answerCode;
- 
+	
+
 	private String statement;
+	
+	private AnswerCode answerCode;
+	private Boolean essay;
+	private String answerEssay;
 	private Integer number;
+	
 	private QuizModel quiz; 
 	private String image;
+	
 	private long duration;
 
 	private List<QuizChoiceModel> choices;

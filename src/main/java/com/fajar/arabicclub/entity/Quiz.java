@@ -54,6 +54,10 @@ public class Quiz extends BaseEntity<QuizModel> implements SingleImageModel {
 	@Column(name="question_timered")
 	private boolean questionsTimered;
 	
+	@Column(name="after_completion_message")
+	private String afterCompletionMessage;
+	@Column(name="access_code")
+	private String accessCode;
 	@Transient
 	@Default
 	private boolean available = true;
@@ -117,5 +121,17 @@ public class Quiz extends BaseEntity<QuizModel> implements SingleImageModel {
 			}
 		}
 		return true;
+	}
+	
+	public boolean hasEssay() {
+		if (questions == null) {
+			return false;
+		}
+		for (QuizQuestion quizQuestion : questions) {
+			if (quizQuestion.getEssay() == Boolean.TRUE) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

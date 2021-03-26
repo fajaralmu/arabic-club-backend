@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +13,6 @@ import com.fajar.arabicclub.dto.WebResponse;
 import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.exception.ApplicationException;
 import com.fajar.arabicclub.exception.DataNotFoundException;
-import com.fajar.arabicclub.repository.QuizChoiceRepository;
-import com.fajar.arabicclub.repository.QuizQuestionRepository;
 import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressNotifier;
 import com.fajar.arabicclub.service.ProgressService;
@@ -31,10 +28,6 @@ public class QuizCreationService {
 	private ProgressService progressService;
 	@Autowired
 	private QuizRepository quizRepository;
-	@Autowired
-	private QuizQuestionRepository quizQuestionRepository;
-	@Autowired
-	private QuizChoiceRepository quizChoiceRepository;
 	@Autowired
 	private QuizDataService quizDataService;
 	@Autowired
@@ -68,7 +61,7 @@ public class QuizCreationService {
 		}
 		Optional<Quiz> existingQuiz = quizRepository.findById(quiz.getId());
 		if (existingQuiz.isPresent() == false) {
-			throw new RuntimeException("Existing record not found!");
+			throw new DataNotFoundException("Existing record not found!");
 		}
 
 	}

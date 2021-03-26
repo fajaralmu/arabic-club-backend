@@ -12,6 +12,7 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fajar.arabicclub.constants.AnswerCode;
 import com.fajar.arabicclub.entity.Quiz;
 import com.fajar.arabicclub.entity.QuizChoice;
 import com.fajar.arabicclub.entity.QuizQuestion;
@@ -114,6 +115,7 @@ public class QuizDataService {
 
 			if (hideAnswer) {
 				quizQuestion.setAnswerCode(null);
+				quizQuestion.setAnswerEssay(null);
 			}
 
 			progressService.sendProgress(1, questions.size(), 80, httpServletRequest);
@@ -140,7 +142,14 @@ public class QuizDataService {
 			for (QuizQuestion quizQuestion : submittedQuestions ) {
 				quizQuestion.setNumber(number);
 				quizQuestion.setQuiz(quiz);
-				QuizQuestion savedQuestion = saveQuestionAndItsChoices(quizQuestion, session);
+				QuizQuestion savedQuestion;
+				if (quizQuestion.getEssay() == true) {
+					quizQuestion.setAnswerCode(AnswerCode.ESSAY);
+					savedQuestion = DatabaseProcessor.save(quizQuestion,session);
+				}
+				else {	
+					savedQuestion= saveQuestionAndItsChoices(quizQuestion, session);
+				}
 				if (null != savedQuestion) {
 					savedQuestions.add(savedQuestion);
 					number++;

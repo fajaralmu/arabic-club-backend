@@ -116,13 +116,7 @@ public class PublicQuizService {
 			quizHistoryService.updateHistoryStart(quizRecord.get(), httpServletRequest);
 			response.setQuiz(fullQuiz.toModel());
 			if (null != history) {
-				QuizHistoryModel historyModel = QuizHistoryModel.builder().started(history.getStarted())
-						.remainingDuration(history.getRemainingDuration())
-						.maxQuestionNumber(history.getMaxQuestionNumber())
-						.updated(history.getUpdated())
-						.build();
-				historyModel.setId(history.getId());
-				response.setQuizHistory(historyModel);
+				response.setQuizHistory(copyHistory(history));
 				response.setMessage("Success getting quiz synchronized with latest history");
 			} else {
 				response.setMessage("Success getting quiz");
@@ -134,6 +128,19 @@ public class PublicQuizService {
 			throw new DataNotFoundException(e.getMessage());
 		}
 	}
+
+	private QuizHistoryModel copyHistory(QuizHistory history) {
+		 
+		QuizHistoryModel model = QuizHistoryModel.builder().started(history.getStarted())
+				.remainingDuration(history.getRemainingDuration())
+				.maxQuestionNumber(history.getMaxQuestionNumber())
+				.updated(history.getUpdated())
+				.build();
+		model.setId(history.getId());
+		return model;
+	}
+
+
 
 	private QuizHistory synchronizeLatestHistory(Quiz fullQuiz, HttpServletRequest httpServletRequest) {
 		QuizHistory history = quizHistoryService.getLatestHistory(fullQuiz,
@@ -197,21 +204,23 @@ public class PublicQuizService {
 		final List<QuizQuestion> questions = fullQuiz.getQuestions();
 		int totalQuestion = questions.size(), correctAnswer = 0, wrongAnswer = 0;
 
-		for (int i = 0; i < totalQuestion; i++) {
-			try {
-				final QuizQuestion actualQuestion = questions.get(i);
-				int correctAnswerC = isCorrectAnswer(actualQuestion, submittedQuiz.getQuestions().get(i));
-				correctAnswer += correctAnswerC;
-				submittedQuiz.getQuestions().get(i).setChoices(actualQuestion.getChoices());
-
-			} catch (Exception e) {
+		if (submittedQuiz.hasEssay() == false)
+			for (int i = 0; i < totalQuestion; i++) {
+				try {
+					final QuizQuestion actualQuestion = questions.get(i);
+					int correctAnswerC = isCorrectAnswer(actualQuestion, submittedQuiz.getQuestions().get(i));
+					correctAnswer += correctAnswerC;
+					submittedQuiz.getQuestions().get(i).setChoices(actualQuestion.getChoices());
+		
+				} catch (Exception e) {
+				}
+				progressService.sendProgress(1, totalQuestion, 80, httpServletRequest);
+		
 			}
-			progressService.sendProgress(1, totalQuestion, 80, httpServletRequest);
-
-		}
 		wrongAnswer = totalQuestion - correctAnswer;
 
 		result.setSubmittedQuiz(submittedQuiz);
+		result.setMessage(submittedQuiz.getAfterCompletionMessage());
 		result.setCorrectAnswer(correctAnswer);
 		result.setWrongAnswer(wrongAnswer);
 		result.calculateScore();

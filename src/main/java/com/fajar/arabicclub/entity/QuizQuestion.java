@@ -39,10 +39,15 @@ public class QuizQuestion extends BaseEntity<QuizQuestionModel> implements Singl
 	* 
 	*/
 	private static final long serialVersionUID = 3494963248002164943L;
+	
 	@Column(nullable = false, name = "answer_code")
 	@Enumerated(EnumType.STRING)
 	private AnswerCode answerCode;
-
+	@Column
+	private Boolean essay;
+	@Column(name="answer_essay")
+	private String answerEssay;
+	
 	@Column(nullable = false)
 	private String statement;
 	@Column

@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Column;
+
 import com.fajar.arabicclub.annotation.Dto;
 import com.fajar.arabicclub.annotation.FormField;
 import com.fajar.arabicclub.constants.AnswerCode;
@@ -57,6 +59,11 @@ public class QuizModel extends BaseModel<Quiz>   {
 	private boolean showAllQuestion;
 	@FormField(type = FieldType.FIELD_TYPE_CHECKBOX)
 	private boolean questionsTimered;
+	
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, required =  false)
+	private String afterCompletionMessage;
+	@FormField(required = false)
+	private String accessCode;
 	
 	private boolean available;
 	private List<QuizQuestionModel> questions;
