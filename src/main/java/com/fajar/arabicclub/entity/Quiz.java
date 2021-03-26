@@ -112,11 +112,19 @@ public class Quiz extends BaseEntity<QuizModel> implements SingleImageModel {
 	
 	public boolean mapAnswers(QuizHistory quizHistory) {
 		if (questions == null) return false;
-		Map<Integer, AnswerCode> mappedAnswer = quizHistory.mappedAnswer();
+		Map<Integer, String> mappedAnswer = quizHistory.mappedAnswer();
 		for (Integer number : mappedAnswer.keySet()) {
 			for (QuizQuestion quizQuestion : questions) {
 				if (number.equals(quizQuestion.getNumber())) {
-					quizQuestion.setAnswerCode(mappedAnswer.get(number));
+					if (quizQuestion.getEssay() == Boolean.TRUE) {
+						quizQuestion.setAnswerEssay(mappedAnswer.get(number));
+					} else {
+						try {
+							quizQuestion.setAnswerCode(AnswerCode.parse(mappedAnswer.get(number)));
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+					}
 				}
 			}
 		}
