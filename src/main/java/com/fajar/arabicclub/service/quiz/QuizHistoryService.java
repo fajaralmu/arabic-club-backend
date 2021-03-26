@@ -152,11 +152,18 @@ public class QuizHistoryService {
 			throw new DataNotFoundException("History not found");
 		}
 		QuizHistory history = historyOptional.get();
+		User user = sessionValidationService.getLoggedUser(httpServletRequest);
+		if (user.getId().equals(history.getUser().getId()) == false && user.isAdmin() == false) {
+			
+			throw new ApplicationException("Not Allowed");
+		}
 		Quiz quiz = quizDataService.getFullQuiz(history.getQuiz().getId(), httpServletRequest, true);
 		quiz.mapAnswers(history);
+		history.setQuiz(quiz);
 		
 		WebResponse response = new WebResponse();
-		response.setQuiz(quiz.toModel());
+//		response.setQuiz(quiz.toModel());
+		response.setQuizHistory(history.toModel());
 		return response;
 	}
 	
