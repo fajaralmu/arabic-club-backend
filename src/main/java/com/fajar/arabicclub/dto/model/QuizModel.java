@@ -77,7 +77,8 @@ public class QuizModel extends BaseModel<Quiz>   {
 	private int questionCount;
 	private Date submittedDate;
 	private Date startedDate; 
-	private Map<Integer, AnswerCode> mappedAnswer;
+	private Map<Integer, String> mappedAnswer;
+//	private Map<Integer, AnswerCode> mappedAnswer;
 	 
 	
 	public String[] getAnswers() {
