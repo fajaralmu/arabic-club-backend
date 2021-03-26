@@ -29,6 +29,9 @@ public class DocumentsModel extends BaseModel<Documents> {
 
 	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, required = false)
 	private String description;
+	
+	@FormField(required = false)
+	private String accessCode;
 
 	@FormField(optionItemName = "name", type = FieldType.FIELD_TYPE_FIXED_LIST)
 	private DocumentCategoryModel category;

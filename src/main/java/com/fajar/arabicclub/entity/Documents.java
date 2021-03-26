@@ -34,6 +34,9 @@ public class Documents extends BaseEntity<DocumentsModel> implements SingleDocum
 	@Column 
 	private String description;
 	
+	@Column
+	private String accessCode;
+	
 	@JoinColumn(name = "category_id", nullable = false)
 	@ManyToOne 
 	private DocumentCategory category; 
