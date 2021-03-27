@@ -81,12 +81,12 @@ public class GalleryService {
 		int page = webRequest.getFilter().getPage();
 		log.info("Get pictures page: {}, size:{}", page,size);
 		int totalData = 0;
-		Page<Documents> records = documentRepository.findAll(PageRequest.of(page, size));
+		List<Documents> list = documentRepository.findByOrderByName(PageRequest.of(page, size));
 		try {
 			totalData = documentRepository.findCount().intValue();
 		} catch (Exception e) { 
 		}
-		List<Documents> list = records.getContent();
+		 
 		
 		for (Documents documents : list) {
 			if (documents.getAccessCode() != null && documents.getAccessCode().trim().isEmpty() == false) {
