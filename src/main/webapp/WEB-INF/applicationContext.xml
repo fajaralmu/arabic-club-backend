@@ -49,7 +49,7 @@
 	</bean>  -->
 	 
 	 
-	   <!--  <bean id="dataSource_postgres"
+	<bean id="dataSource_postgres"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName"
 			value="org.postgresql.Driver" />
@@ -57,10 +57,10 @@
 			value="jdbc:postgresql://ec2-18-204-101-137.compute-1.amazonaws.com:5432/d95v9noaukbskn" />
 		<property name="username" value="tzwewrfgfvnmym" />
 		<property name="password" value="2de6a0667dedcf76c44fb3bc4dca645f24191baced618d002159f8f73046a505" />
-	</bean>    --> 
+	</bean>   
 	<!-- heroku_pg_MPI  -->
 
- 	<bean id="dataSource_postgres"
+ 	<!-- <bean id="dataSource_postgres"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName"
 			value="org.postgresql.Driver" />
@@ -68,7 +68,7 @@
 			value="jdbc:postgresql://ec2-52-1-115-6.compute-1.amazonaws.com:5432/d34hip3irhn3n4" />
 		<property name="username" value="diqknantivniqg" />
 		<property name="password" value="9ff89d1e062887021b6fd8adb45430ea53c2470d7d96f904133f51ba5605848d" />
-	</bean>    
+	</bean> -->    
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="packagesToScan" value="com.fajar.arabicclub*" />
