@@ -29,7 +29,10 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 			throws Exception {
 
 		log.info("[preHandle][" + request + "]" + "[" + request.getMethod() + "]");
-
+		
+		response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+		response.setHeader("Access-Control-Allow-Credentials", "true");
+		
 		HandlerMethod handlerMethod = interceptorProcessor.getHandlerMethod(request);
 
 		if (handlerMethod != null && interceptorProcessor.isApi(handlerMethod)) {

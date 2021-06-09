@@ -26,12 +26,12 @@ public class MvcAppController extends BaseController{
 	}
  
 	@RequestMapping(value = { "/dashboard"})
-	@CustomRequestInfo(pageUrl = "pages/app/dashboard", title = "Dashboard")
+	@CustomRequestInfo(pageUrl = "pages/member/dashboard", title = "Dashboard")
 	public String wallPage(Model model, HttpServletRequest request, HttpServletResponse response)  { 
 		return basePage;
 	}
 	@RequestMapping(value = { "/profile"})
-	@CustomRequestInfo(pageUrl = "pages/app/profile", title="Profile")
+	@CustomRequestInfo(pageUrl = "pages/member/profile", title="Profile")
 	public String profile(Model model, HttpServletRequest request, HttpServletResponse response)  { 
 		return basePage;
 	}

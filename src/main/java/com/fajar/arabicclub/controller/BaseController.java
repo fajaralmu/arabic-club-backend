@@ -21,6 +21,7 @@ import com.fajar.arabicclub.entity.User;
 import com.fajar.arabicclub.service.SessionValidationService;
 import com.fajar.arabicclub.service.UserSessionService;
 import com.fajar.arabicclub.service.config.BindedValues;
+import com.fajar.arabicclub.service.config.DefaultApplicationProfileService;
 import com.fajar.arabicclub.util.DateUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,24 +40,27 @@ public class BaseController {
 	protected UserSessionService userSessionService;
 	 
 	@Autowired
+	private DefaultApplicationProfileService defaultApplicationProfileService;
+	
+	@Autowired
 	protected BindedValues bindedValues;
 	
 	@ModelAttribute("applicationHeaderLabel")
 	public String applicationHeaderLabel(HttpServletRequest request) {
-		
-		return bindedValues.getApplicationHeaderLabel();
+
+		return defaultApplicationProfileService.getApplicationProfile().getName();
 	}
-	
+
 	@ModelAttribute("applicationDescription")
 	public String applicationDescription(HttpServletRequest request) {
-		
-		return bindedValues.getApplicationDescription();
+
+		return defaultApplicationProfileService.getApplicationProfile().getShortDescription();
 	}
-	
+
 	@ModelAttribute("applicationFooterLabel")
 	public String applicationFooterLabel(HttpServletRequest request) {
-		
-		return bindedValues.getApplicationFooterLabel();
+
+		return applicationHeaderLabel(request);
 	}
 	 
 	@ModelAttribute("isPhone")
@@ -88,6 +92,13 @@ public class BaseController {
 	@ModelAttribute("userPrincipal")
 	public Object getUserPrincipal(HttpServletRequest request) {
 		return sessionValidationService.getUserPrincipal(request);
+	}
+	@ModelAttribute("greeting")
+	public String greeting(HttpServletRequest request) {
+		User user = loggedUser(request);
+		String name = user == null ? "" : user.getDisplayName();
+		return "Good " + DateUtil.getTimeGreeting() + ", " + name;
+
 	}
 	
 	@ModelAttribute("navigationMenus")
