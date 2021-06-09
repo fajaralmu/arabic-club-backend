@@ -26,15 +26,15 @@
 	</servlet>
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy
-		</filter-class>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<async-supported>true</async-supported>
 	</filter>
 	
 	<filter>
 		<filter-name>apiFilter</filter-name>
 		<async-supported>true</async-supported>
-		<filter-class>com.fajar.arabicclub.config.CustomFilter
-		</filter-class>
+		<filter-class>com.fajar.arabicclub.config.CustomFilter</filter-class>
+		<async-supported>true</async-supported>
 	</filter>
 
 	<filter-mapping>

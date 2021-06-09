@@ -11,8 +11,6 @@
 	content="text/html; charset=windows-1256">
 <meta name="description" content="${applicationDescription }">
 <meta property="og:title" content="${applicationHeaderLabel }">
-<meta property="og:url"
-	content="https://realtime-videocall.herokuapp.com/">
 <meta property="og:description" content="${applicationDescription }">
 <meta property="og:site_name" content="${applicationHeaderLabel }">
 <meta property="og:image" itemprop="image"
@@ -65,18 +63,13 @@
 	</div>
 	<div id="loading-div"></div>
 	<jsp:include page="include/headerv2.jsp"></jsp:include>
-	 
-		<jsp:include page="include/sidebarv2.jsp"></jsp:include>
-	 
+
+	<jsp:include page="include/sidebarv2.jsp"></jsp:include>
+
 	<div id="page-content" class="container-fluid" style="min-height: 80vh">
-		<div class="row">
-			<div class="col-lg-12">
-				<jsp:include
-					page="${pageUrl == null? 'error/notfound': pageUrl}.jsp"></jsp:include>
-			</div>
-		</div>
+		<jsp:include page="${pageUrl == null? 'error/notfound': pageUrl}.jsp"></jsp:include>
 	</div>
-	 
+
 	<jsp:include page="include/foot.jsp"></jsp:include>
 </body>
 </html>

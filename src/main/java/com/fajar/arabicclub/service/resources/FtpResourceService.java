@@ -19,7 +19,7 @@ public class FtpResourceService {
 	@Value("${app.resources.ftpServer}")
 	private String ftpServer;
 	@Value("${app.resources.ftpPort}")
-	private int ftpPort;
+	private String ftpPort;
 	@Value("${app.resources.ftpUser}")
 	private String ftpUser;
 	@Value("${app.resources.ftpPassword}")
@@ -67,7 +67,7 @@ public class FtpResourceService {
 	}
 
 	private FtpClient ftpClientInstance() {
-		FtpClient ftpClient = new FtpClient(ftpServer, ftpPort, ftpUser, ftpPassword);
+		FtpClient ftpClient = new FtpClient(ftpServer, Integer.valueOf(ftpPort), ftpUser, ftpPassword);
 		ftpClient.setBaseDirectory(ftpBaseDirectory);
 		return ftpClient;
 	}

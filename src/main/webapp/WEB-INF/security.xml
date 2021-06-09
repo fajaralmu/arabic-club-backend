@@ -9,6 +9,7 @@
  
 	<http pattern="/res/**" security="none" />
 	<http pattern="/assets/**" security="none" />
+	<http pattern="/realtime-app/**" security="none" />
 	
 	<beans:bean id="userDetailsService" class="com.fajar.arabicclub.config.security.UserDetailServiceImpl"/>
  	<beans:bean id="jwtAuthFilter" class="com.fajar.arabicclub.config.security.JWTAuthFilter">
