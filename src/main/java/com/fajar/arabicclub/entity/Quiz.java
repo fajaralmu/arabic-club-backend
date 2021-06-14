@@ -84,12 +84,6 @@ public class Quiz extends BaseEntity<QuizModel> implements SingleImageModel {
 		return model;
 	}
 
-	public static void main(String[] args) {
-		Quiz q = Quiz.builder().description("QUIZ 123").build();
-		q.addQuestion(QuizQuestion.builder().correctChoice(AnswerCode.B).build());
-
-		System.out.println(q.toModel());
-	}
 
 	public void preventStackOverFlowError() {
 		if (null == questions)

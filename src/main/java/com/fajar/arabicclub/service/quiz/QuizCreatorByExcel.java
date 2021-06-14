@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -33,6 +32,7 @@ public class QuizCreatorByExcel {
 	private Sheet sheet;
 	private List<Row> rows;
 	private ProgressNotifier notifier;
+	private boolean essay = false;
 	
 	public void setNotifier(ProgressNotifier notifier) {
 		this.notifier = notifier;
@@ -60,7 +60,7 @@ public class QuizCreatorByExcel {
 	
 	private void setQuestions() {
 		for (int i = 6; i < rows.size(); i++) {
-			QuizQuestion question = getQuestion(rows.get(i));
+			QuizQuestion question = essay? getQuestionEssay(rows.get(i)) : getQuestion(rows.get(i));
 			quiz.addQuestion(question);
 			updateProgress(1,rows.size()-6, 90);
 		}
@@ -81,6 +81,20 @@ public class QuizCreatorByExcel {
 		question.setNumber(number.intValue());
 		question.setAnswerCode(AnswerCode.valueOf(answer));
 		question.setChoices(getChoices(row));
+		
+		System.out.println("QST: "+question);
+		
+		return question;
+	}
+	private QuizQuestion getQuestionEssay(Row row) {
+		QuizQuestion question = new QuizQuestion();
+		question.setEssay(essay);
+		Double number = row.getCell(0).getNumericCellValue();
+		String statement = row.getCell(1).getStringCellValue();
+		String answer = row.getCell(2).getStringCellValue();
+		question.setStatement(statement);
+		question.setNumber(number.intValue());
+		question.setAnswerEssay(answer);
 		
 		System.out.println("QST: "+question);
 		
@@ -109,7 +123,16 @@ public class QuizCreatorByExcel {
 	private void setQuizInfo() {
 		quiz = new Quiz();
 		String title = getRowAt(1).getCell(1).getStringCellValue();
-		System.out.println("TITLE:"+title);
+		String quizModeString =getRowAt(1).getCell(2).getStringCellValue(); 
+
+		QuizMode quizMode = QuizMode.MULTIPLE_CHOICE;
+		try {
+			quizMode = QuizMode.valueOf(quizModeString);
+		} catch (Exception e) { }
+		if (quizMode.equals(QuizMode.ESSAY)) {
+			this.essay = true;
+		}
+		
 		String timerMode = getRowAt(2).getCell(1).getStringCellValue();
 		TimerMode mode;
 		try {
@@ -157,5 +180,8 @@ public class QuizCreatorByExcel {
 	
 	static enum TimerMode {
 		NO_TIMER, FULL_TIMER, QUESTION_TIMER
+	}
+	static enum QuizMode {
+		ESSAY, MULTIPLE_CHOICE
 	}
 }

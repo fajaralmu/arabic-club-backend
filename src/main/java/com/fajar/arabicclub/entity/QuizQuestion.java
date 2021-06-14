@@ -29,9 +29,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "quiz_question")
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @JsonInclude(value = Include.NON_NULL)
 public class QuizQuestion extends BaseEntity<QuizQuestionModel> implements SingleImageModel {
 
@@ -44,7 +41,7 @@ public class QuizQuestion extends BaseEntity<QuizQuestionModel> implements Singl
 	@Enumerated(EnumType.STRING)
 	private AnswerCode answerCode;
 	@Column
-	private Boolean essay;
+	private Boolean essay = false;
 	@Column(name="answer_essay")
 	private String answerEssay;
 	

@@ -15,8 +15,6 @@ import org.springframework.web.util.NestedServletException;
 
 import com.fajar.arabicclub.config.security.JWTAuthFilter;
 import com.fajar.arabicclub.dto.WebResponse;
-import com.fajar.arabicclub.exception.ApplicationException;
-import com.fajar.arabicclub.exception.DataNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,9 +47,10 @@ public class UtilitiesController extends BaseController{
 			return null;
 		}
 
+		JWTAuthFilter.setCorsHeaders(httpResponse);
 		errorPage.addObject("errorCode", httpErrorCode);
 		errorPage.addObject("errorMessage", getErrorMessage(httpRequest ));
-		JWTAuthFilter.setCorsHeaders(httpResponse);
+		
 		printHttpRequestAttrs(httpRequest);
 		return errorPage;
 	}
@@ -65,14 +64,14 @@ public class UtilitiesController extends BaseController{
 			httpResponse.sendRedirect(httpRequest.getContextPath()+"/index");
 			return;
 		}
-
+		JWTAuthFilter.setCorsHeaders(httpResponse);
 		
 		WebResponse payload = WebResponse.failed(getErrorMessage(httpRequest));
 		payload.setCode("404");
 		httpResponse.setStatus(404);
 
 		String jsonString = objectMapper.writeValueAsString(payload); 
-		JWTAuthFilter.setCorsHeaders(httpResponse);
+		
 		httpResponse.getWriter().write(jsonString);
 		printHttpRequestAttrs(httpRequest);
 		
@@ -102,6 +101,7 @@ public class UtilitiesController extends BaseController{
 			httpResponse.sendRedirect(httpRequest.getContextPath()+"/index");
 			return;
 		}
+		JWTAuthFilter.setCorsHeaders(httpResponse);
 
 		Object message = getErrorMessage(httpRequest );
 		WebResponse payload = WebResponse.failed(String.valueOf(message));
@@ -110,7 +110,7 @@ public class UtilitiesController extends BaseController{
 
 		String jsonString = objectMapper.writeValueAsString(payload); 
 		httpResponse.getWriter().write(jsonString);
-		JWTAuthFilter.setCorsHeaders(httpResponse);
+		
 		printHttpRequestAttrs(httpRequest);
 		
 	}
