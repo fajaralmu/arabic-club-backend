@@ -1,10 +1,17 @@
 package com.fajar.arabicclub.service.quiz;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.fajar.arabicclub.dto.AttachmentInfo;
@@ -32,6 +39,9 @@ public class QuizCreationService {
 	private QuizDataService quizDataService;
 	@Autowired
 	private QuizUpdateService quizUpdateService;
+	
+	@Value("/resources/quiz_template.xlsx")
+	private Resource quizTemplate;
 
 	/**
 	 * create or update quiz
@@ -136,6 +146,23 @@ public class QuizCreationService {
 				
 			}
 		};
+	}
+
+	public void downloadTemplate(HttpServletResponse httpServletResponse) throws IOException {
+		// TODO Auto-generated method stub
+		httpServletResponse.setContentType("text/xls");
+		httpServletResponse.setHeader("content-disposition", "attachment;filename=quiztemplate.xlsx");
+		InputStream in = quizTemplate.getInputStream();
+		OutputStream out = httpServletResponse.getOutputStream();
+
+		byte[] buffer = new byte[8192]; // use bigger if you want
+		int length = 0;
+
+		while ((length = in.read(buffer)) > 0) {
+			out.write(buffer, 0, length);
+		}
+		in.close();
+		out.close();
 	}
 
 	 

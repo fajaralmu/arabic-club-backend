@@ -18,7 +18,7 @@ import com.fajar.arabicclub.dto.AttachmentInfo;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.util.ThreadUtil;
 
-/*
+/**
 	*<p>
 	* Trivial implementation of the {@link MultipartFile} interface to wrap a byte[] decoded
 	* from a BASE64 encoded String

@@ -5,9 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +18,7 @@ import com.fajar.arabicclub.annotation.CustomRequestInfo;
 import com.fajar.arabicclub.controller.BaseController;
 import com.fajar.arabicclub.dto.WebRequest;
 import com.fajar.arabicclub.dto.WebResponse;
-import com.fajar.arabicclub.entity.setting.EntityProperty;
 import com.fajar.arabicclub.service.LogProxyFactory;
-import com.fajar.arabicclub.service.entity.EntityManagementPageService;
-import com.fajar.arabicclub.service.entity.MasterDataService;
 import com.fajar.arabicclub.service.quiz.PublicQuizService;
 import com.fajar.arabicclub.service.quiz.QuizCreationService;
 
@@ -77,6 +74,8 @@ public class RestQuizManagementController extends BaseController {
 		 
 		return quizService.uploadquiz(webRequest, httpRequest);
 	}
+	
+	
  
 
 }

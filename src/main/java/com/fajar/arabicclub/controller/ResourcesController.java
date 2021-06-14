@@ -11,9 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fajar.arabicclub.service.quiz.QuizCreationService;
 import com.fajar.arabicclub.service.resources.FtpResourceService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,8 @@ public class ResourcesController extends BaseController{
 	
 	@Autowired
 	private FtpResourceService resourceService;
+	@Autowired
+	private QuizCreationService quizService;
 
 	@RequestMapping(value = { "/images/{name:.+}"}) 
 	public void images(@PathVariable(name="name") String name, HttpServletRequest request, HttpServletResponse response) throws Exception  { 
@@ -54,5 +58,11 @@ public class ResourcesController extends BaseController{
 		    if (input != null) try { input.close(); } catch (IOException logOrIgnore) {}
 		}
 		 
+	}
+	
+	@GetMapping(value = "/quiztemplate.xlsx")
+	public void quiztemplate( HttpServletResponse httpServletResponse) throws Exception {
+		 
+		quizService.downloadTemplate(httpServletResponse); 
 	}
 }
