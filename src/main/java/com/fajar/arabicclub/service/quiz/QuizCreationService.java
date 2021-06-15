@@ -9,6 +9,10 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -24,6 +28,7 @@ import com.fajar.arabicclub.repository.QuizRepository;
 import com.fajar.arabicclub.service.ProgressNotifier;
 import com.fajar.arabicclub.service.ProgressService;
 import com.fajar.arabicclub.service.entity.QuizUpdateService;
+import com.fajar.arabicclub.util.StringUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -148,21 +153,27 @@ public class QuizCreationService {
 		};
 	}
 
-	public void downloadTemplate(HttpServletResponse httpServletResponse) throws IOException {
-		// TODO Auto-generated method stub
+	public void downloadTemplate(String quizMode, HttpServletResponse httpServletResponse) throws IOException, InvalidFormatException {
+
 		httpServletResponse.setContentType("text/xls");
-		httpServletResponse.setHeader("content-disposition", "attachment;filename=quiztemplate.xlsx");
-		InputStream in = quizTemplate.getInputStream();
-		OutputStream out = httpServletResponse.getOutputStream();
+		httpServletResponse.setHeader("content-disposition", "attachment;filename=quiztemplate_"+quizMode+".xlsx");
+		
+		Workbook workbook = WorkbookFactory.create(quizTemplate.getFile());
+		
+		setTitleAndSheetOrderByMode(quizMode ,workbook);
+		
+		workbook.write(httpServletResponse.getOutputStream());
+	}
 
-		byte[] buffer = new byte[8192]; // use bigger if you want
-		int length = 0;
-
-		while ((length = in.read(buffer)) > 0) {
-			out.write(buffer, 0, length);
+	private void setTitleAndSheetOrderByMode(String quizMode, Workbook workbook) {
+		 
+		if ("essay".equals(quizMode.toLowerCase())) {
+			workbook.setSheetOrder("ESSAY", 0);
+		} else {
+			workbook.setSheetOrder("MULTIPLE_CHOICE", 0);
 		}
-		in.close();
-		out.close();
+		Sheet activeSheet = workbook.getSheetAt(0);
+		activeSheet.getRow(1).getCell(1).setCellValue("Sample Quiz "+quizMode.toUpperCase()+" "+StringUtil.generateRandomNumber(5));
 	}
 
 	 

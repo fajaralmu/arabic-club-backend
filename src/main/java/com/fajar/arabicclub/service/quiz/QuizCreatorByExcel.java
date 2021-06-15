@@ -43,6 +43,7 @@ public class QuizCreatorByExcel {
 		notifier.updateProgress(val, max, proportion);
 	}
 	
+	
 	public QuizCreatorByExcel(String base64) {
 		this.base64 = base64;
 	}

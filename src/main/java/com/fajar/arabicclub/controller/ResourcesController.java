@@ -60,9 +60,9 @@ public class ResourcesController extends BaseController{
 		 
 	}
 	
-	@GetMapping(value = "/quiztemplate.xlsx")
-	public void quiztemplate( HttpServletResponse httpServletResponse) throws Exception {
-		 
-		quizService.downloadTemplate(httpServletResponse); 
+	@GetMapping(value = "/quiztemplate")
+	public void quiztemplate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+		String mode = httpServletRequest.getParameter("mode");
+		quizService.downloadTemplate(mode == null?"multiple_choice":mode, httpServletResponse); 
 	}
 }
